@@ -535,6 +535,10 @@ int g2_PS_arc(int pid, void *pdp,
 	      double a1, double a2)
 {
     g2_PS_device *ps=&g2_PS_dev[pid];
+    if(a1==a2) {
+	a1=0;
+	a2=360;
+    }
     fprintf(ps->fp,"%.4g %.4g %.4g %.4g %.4g %.4g A\n",
 	    a1, a2, r1, r2, x, y);
 	g2_PS_bbox_add(ps,x+r1,y+r2,ps->w);
@@ -550,6 +554,10 @@ int g2_PS_filled_arc(int pid, void *pdp,
 		     double a1, double a2)
 {
     g2_PS_device *ps=&g2_PS_dev[pid];
+    if(a1==a2) {
+	a1=0;
+	a2=360;
+    }
     fprintf(ps->fp,"%.4g %.4g %.4g %.4g %.4g %.4g FA\n",
 	    a1, a2, r1, r2, x, y);
 	g2_PS_bbox_add(ps,x+r1,y+r2,ps->w);
