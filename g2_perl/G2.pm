@@ -60,26 +60,26 @@ G2 - A simple graphics library ported to Perl.
   use G2;
 
   $dev1 = newX11 G2::Device(775, 575);
-  $dev2 = newGIF G2::Device("test.gif",600,200);
+  $dev2 = newGD  G2::Device("test.png",600,200);
 
   $dev1->rectangle(20,20,150,150);
   $dev1->circle(100,150,60);
 
   $dev2->circle(100,150,60);
-  $dev2->string(100,50,"A circle in a GIF file");
+  $dev2->string(100,50,"A circle in a PNG file");
 
 =head1 DESCRIPTION
 
 g2 is a simple to use graphics library for 2D graphical applications.
 This library provides a comprehensive set of functions for
 simultaneous generation of graphical output on different types of devices.
-Presently, following devices are currently supported by g2: X11, GIF,
+Presently, following devices are currently supported by g2: X11, PNG,
 PostScript (xfig is in developement).
 One major feature of the g2_library is the concept of virtual devices. An
-arbitrary number of physical devices (such as GIF, or X11) can be grouped to
+arbitrary number of physical devices (such as PNG, or X11) can be grouped to
 create a so-called virtual device. Commands sent to such a virtual devices
 will automatically issued to all attached physical devices. This allows for
-example simultaneous output to a GIF file and a Postscript file. A virtual
+example simultaneous output to a PNG file and a Postscript file. A virtual
 device in turn can be attached to another virtual device, allowing to
 construct trees of devices.
 Virtual devices can also be useful when using different user-coordinate
@@ -120,24 +120,25 @@ orientation: paper orientation. Either g2_PS_land for
 landscape or g2_PS_port  for  portrait
 returns : a new PostScript device.
 
-=item C<newGIF>
+=item C<newGD>
 
-C<G2::Device::newGIF(filename,width,height)> I<class method>
+C<G2::Device::newGD(filename,width,height,type)> I<class method>
 
-open a new GIF device
-width,height: width and height of GIF image in pixels
-filename: name of GIF file.
-returns : a new GIF device
+open a new GD device
+width,height: width and height of the image in pixels
+filename: name of the output file.
+type: file type, 0-jpeg, 1-png
+returns : a new GD device
 
 =item C<newVD>
 
 C<G2::Device::newVD()> I<class method>
 
 Create a new Virtual Device.  An arbitrary number of physical devices
-(such as GIF, or X11) can be grouped to
+(such as PNG, or X11) can be grouped to
 create a so-called virtual device. Commands sent to such a virtual devices
 will automatically issued to all attached physical devices. This allows for
-example simultaneous output to a GIF file and a Postscript file. A virtual
+example simultaneous output to a PNG file and a Postscript file. A virtual
 device in turn can be attached to another virtual device, allowing to
 construct trees of devices.
 Virtual devices can also be useful when using different user-coordinate
@@ -335,16 +336,25 @@ C<G2::Device::plot_QP(x, y)> I<object method>
 
 =head1 AUTHORS
 
-Horst Wagner (wagner@iap.tuwien.ac.at) and Ljubomir Milanovic (ljubo@ap.univie.ac.at)
+Horst Wagner (wagner/users-sourceforge.net) and Ljubomir Milanovic (ljubo/users-sourceforge-net)
 
 =head1 COPYRIGHT
 
-This program is covered with GNU General Public License (GPL) and  not with
-GNU Library General Public License (LGPL)! It is allowed only for GPL
-programs to use (static/dynamic linkage or any other using of code) the g2
-library. If you want to develop a non GPL application and want to use g2
-please contact the authors.
+Copyright (C) 1998-2001  Ljubomir Milanovic & Horst Wagner
+This file is part of the g2 library
 
-See the  GNU General Public License (GPL) for details.
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
 
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    
 =cut

@@ -21,14 +21,24 @@ print "ok 1\n";
 
 $d = newvd G2::Device();
 
+#
+# comment following two lines if X11 is not supported
+#
 $dev[1] = newX11 G2::Device(775, 575);
 $d->attach($dev[1]);
 
-$dev[2] = newGIF G2::Device("test.gif", 775, 575);
+#
+# comment following two lines if GD is not supported
+#
+$dev[2] = newGD G2::Device("test.png", 775, 575, 1);
 $d->attach($dev[2]);
 	
+#
+# comment following two lines if PS is not supported
+#
 $dev[0] = newPS  G2::Device("test.ps", 4, 0);
 $d->attach($dev[0]);
+
 
 $d->set_auto_flush(0);
 	
@@ -100,6 +110,9 @@ for($j=0;$j<$#dev;$j++)
     $pts[6]=225.; $pts[7]=$y+100.;
     $pts[8]=250.; $pts[9]=$y;
     $d->poly_line(5, \@pts);
+    $d->pen(19);
+    $d->b_spline(5, \@pts, 20);
+    $d->pen(1);
     
     $pts[0]=300; $pts[1]=$y;
     $pts[2]=350; $pts[3]=$y;
@@ -118,10 +131,12 @@ for($j=0;$j<$#dev;$j++)
     
     $d->line(225, 448, 200+19*25, 448);
     for($i=1;$i<20;$i++) {
+        $d->pen($i+1);
 	$d->set_line_width($i);
 	$d->move(200+$i*25, 450);
 	$d->line_to(200+$i*25, 550);
     }
+    $d->pen(1);
 
     $d->set_line_width(5);
     for($i=1;$i<10;$i++) {

@@ -20,9 +20,9 @@ extern "C" {
 #include <g2_X11.h>
 #endif /* DO_X11 */
 
-#ifdef DO_GIF
-#include <g2_GIF.h>
-#endif /* DO_GIF */
+#ifdef DO_GD
+#include <g2_gd.h>
+#endif /* DO_GD */
 
 static int
 not_here(s)
@@ -132,6 +132,8 @@ constant(name,arg)
 
 MODULE = G2		PACKAGE = G2::Device		PREFIX = g2_
 
+#ifdef DO_X11
+
 G2::Device
 g2_newX11(packname="G2::Device", width=100,height=100)
 	char * packname
@@ -148,22 +150,31 @@ g2_newX11(packname="G2::Device", width=100,height=100)
 	OUTPUT:
 	RETVAL
 
+#endif /* DO_X11 */
+	
+#ifdef DO_GD
+
 G2::Device
-g2_newGIF(packname="G2::Device", filename="g2.gif", width=100,height=100)
+g2_newGD(packname="G2::Device", filename="g2.png", width=100, height=100, type=1)
 	char * packname
 	char * filename
 	int width
 	int height
+	int type
         PROTOTYPE: $;$$$
 	CODE:
 	{
 		DevType theDevice;
 		theDevice = (int *)malloc(sizeof(int));
-		*theDevice = g2_open_GIF(filename, width, height);
+		*theDevice = g2_open_gd(filename, width, height, type);
 		RETVAL = theDevice;
 	}
 	OUTPUT:
 	RETVAL
+
+#endif /* DO_GD */
+
+#ifdef DO_PS
 
 G2::Device
 g2_newPS(packname="G2::Device", filename="g2.gif", paper=1,orientation=1)
@@ -181,7 +192,9 @@ g2_newPS(packname="G2::Device", filename="g2.gif", paper=1,orientation=1)
 	}
 	OUTPUT:
 	RETVAL
-
+	
+#endif /* DO_PS */
+	
 G2::Device
 g2_newvd(packname="G2::Device")
 	char * packname
@@ -315,7 +328,7 @@ g2_set_dash(dev, N, dashes=NULL)
 	CODE:
 	{
 		g2_set_dash(*dev, N, dashes);
-	free(dashes);
+		free(dashes);
 	}
 
 void
@@ -392,7 +405,7 @@ g2_move(dev, x, y)
 	PROTOTYPE: $$
 	CODE:
 	{
-	g2_move(*dev, x, y);
+		g2_move(*dev, x, y);
 	}
 
 void
@@ -474,8 +487,8 @@ g2_poly_line(dev, N_pt, points)
 	PROTOTYPE: $$
 	CODE:
 	{
-	g2_poly_line(*dev, N_pt, points);
-	free(points);
+		g2_poly_line(*dev, N_pt, points);
+		free(points);
 	}
 
 void
@@ -544,8 +557,8 @@ g2_polygon(dev, N_pt, points)
 	PROTOTYPE: $$
 	CODE:
 	{
-	g2_polygon(*dev, N_pt, points);
-	free(points);
+		g2_polygon(*dev, N_pt, points);
+		free(points);
 	}
 
 void
@@ -556,8 +569,8 @@ g2_filled_polygon(dev, N_pt, points)
 	PROTOTYPE: $$
 	CODE:
 	{
-	g2_filled_polygon(*dev, N_pt, points);
-	free(points);
+		g2_filled_polygon(*dev, N_pt, points);
+		free(points);
 	}
 
 void
@@ -683,4 +696,143 @@ g2_query_pointer(dev)
 		double x, y;
 		unsigned int button;
 		g2_query_pointer(*dev, &x, &y, &button);
+	}
+
+
+
+
+
+void
+g2_spline(dev, N_pt, points, o)
+	G2::Device	dev
+	int	N_pt
+	double * points
+	int o
+	PROTOTYPE: $$
+	CODE:
+	{
+		g2_spline(*dev, N_pt, points, o);
+		free(points);
+	}
+
+
+void
+g2_b_spline(dev, N_pt, points, o)
+	G2::Device	dev
+	int	N_pt
+	double * points
+	int o
+	PROTOTYPE: $$
+	CODE:
+	{
+		g2_b_spline(*dev, N_pt, points, o);
+		free(points);
+	}
+
+
+void
+g2_raspln(dev, N_pt, points, tn)
+	G2::Device	dev
+	int	N_pt
+	double * points
+	double tn
+	PROTOTYPE: $$
+	CODE:
+	{
+		g2_raspln(*dev, N_pt, points, tn);
+		free(points);
+	}
+
+
+void
+g2_para_3(dev, N_pt, points)
+	G2::Device	dev
+	int	N_pt
+	double * points
+	PROTOTYPE: $$
+	CODE:
+	{
+		g2_para_3(*dev, N_pt, points);
+		free(points);
+	}
+
+
+void
+g2_para_5(dev, N_pt, points)
+	G2::Device	dev
+	int	N_pt
+	double * points
+	PROTOTYPE: $$
+	CODE:
+	{
+		g2_para_5(*dev, N_pt, points);
+		free(points);
+	}
+
+
+void
+g2_filled_spline(dev, N_pt, points, o)
+	G2::Device	dev
+	int	N_pt
+	double * points
+	int o
+	PROTOTYPE: $$
+	CODE:
+	{
+		g2_filled_spline(*dev, N_pt, points, o);
+		free(points);
+	}
+
+
+void
+g2_filled_b_spline(dev, N_pt, points, o)
+	G2::Device	dev
+	int	N_pt
+	double * points
+	int o
+	PROTOTYPE: $$
+	CODE:
+	{
+		g2_filled_b_spline(*dev, N_pt, points, o);
+		free(points);
+	}
+
+
+void
+g2_filled_raspln(dev, N_pt, points, tn)
+	G2::Device	dev
+	int	N_pt
+	double * points
+	double tn
+	PROTOTYPE: $$
+	CODE:
+	{
+		g2_filled_raspln(*dev, N_pt, points, tn);
+		free(points);
+	}
+
+
+void
+g2_filled_para_3(dev, N_pt, points)
+	G2::Device	dev
+	int	N_pt
+	double * points
+	PROTOTYPE: $$
+	CODE:
+	{
+		g2_filled_para_3(*dev, N_pt, points);
+		free(points);
+	}
+
+
+void
+g2_filled_para_5(dev, N_pt, points)
+	G2::Device	dev
+	int	N_pt
+	double * points
+	PROTOTYPE: $$
+	CODE:
+	{
+		g2_filled_para_5(*dev, N_pt, points);
+		free(points);
 	}

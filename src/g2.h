@@ -20,7 +20,7 @@
 #define _G2_H
 
 
-#define G2_VERSION "0.50"
+#define G2_VERSION "0.51"
 
 
 #if defined(__cplusplus)

@@ -4,7 +4,7 @@
 #
 #
 
-G2_VERSION = 0.50
+G2_VERSION = 0.51
 
 #
 # g2 installation directories
@@ -102,6 +102,8 @@ clean:
 	-$(FIND) . -name "*~" -exec rm -f {} \;
 	-(cd ./g2_perl ; make clean)
 	-rm -f ./g2_perl/test.ps
+	-rm -f ./g2_perl/test.png
+	-rm -f ./g2_perl/Makefile.old
 	-rm -f ./libg2.@LD_SHARED_EXT@
 	-rm -f libg2.$(G2_VERSION).a
 	-rm -f a.out
