@@ -5,13 +5,14 @@
 #
 #
 
-G2_VERSION = 0.51
+G2_VERSION = 0.52a
 
 #
 # g2 installation directories
 #
 LIBDIR = /usr/local/lib
 INCDIR = /usr/local/include
+
 
 #LIBDIR = $(HOME)/local/lib
 #INCDIR = $(HOME)/local/include
@@ -66,6 +67,14 @@ OBJ = $(SRC:.c=.o)
 
 INS =  $(BASE_INS) $(PS_INS) $(X11_INS) $(WIN32_INS) $(GD_INS)
 
+#
+# define some phony targets demo
+#
+.PHONY: all shared clean doc release
+
+#
+# major rule
+#
 .c.o:  
 	$(CC) $(CFLAGS) -c $< -o $@
 
