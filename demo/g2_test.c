@@ -47,14 +47,7 @@ int main()
     double pts[10];
     double y;
 #include "penguin.c"
-    int image[64]={ 0, 0, 2, 2, 2, 2, 0, 0,
-		    0, 2, 0, 0, 0, 0, 2, 0,
-		    2, 0, 3, 0, 0, 3, 0, 2,
-		    2, 0, 0, 0, 0, 0, 0, 2,
-		    2, 3, 0, 0, 0, 0, 3, 2,
-		    2, 0, 3, 3, 3, 3, 0, 2,
-		    0, 2, 0, 0, 0, 0, 2, 0,
-		    0, 0, 2, 2, 2, 2, 0, 0 };
+
     d=g2_open_vd();				  /* open virtual device */
 
     printf("\nAdding..");
