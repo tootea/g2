@@ -69,6 +69,7 @@ shared: libg2.so
 
 libg2.a: $(OBJ)
 	$(AR) $(ARFLAGS) libg2.a $(OBJ)
+	ln -s libg2.a libg2.0.40.a
 
 libg2.so: $(OBJ)
 	$(CC) -shared -o libg2.so $(OBJ) -lc -lm
