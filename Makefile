@@ -22,7 +22,7 @@ INCDIR = /usr/local/include
 SHELL = /bin/sh
 
 CC           = gcc
-CFLAGS       = -I./src -Wall  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
+CFLAGS       = -I./src -g -O2  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
 INSTALL      = /usr//bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 FIND         = find

@@ -19,11 +19,14 @@
 #ifndef _G2_H
 #define _G2_H
 
+
+#define G2_VERSION "0.50"
+
+
 #if defined(__cplusplus)
 extern "C"
 {
 #endif
-
 
 /* Common Library header for DLL and application */
 #ifdef WIN32
@@ -45,8 +48,6 @@ extern "C"
 #define G2L
 #endif
 
-
-#define G2_VERSION "0.41a"
 
 #define G2LD g2_ld()
 

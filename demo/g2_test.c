@@ -48,9 +48,11 @@ int main()
     double y;
 #include "penguin.c"
 
+    printf("\nG2_VERSION %s\n", G2_VERSION);
+    
     d=g2_open_vd();				  /* open virtual device */
 
-    printf("\nAdding..");
+    printf("Adding..");
     
 #ifdef DO_PS
     printf("..PS");
