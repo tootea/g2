@@ -94,7 +94,7 @@ SOURCE=.\src\g2_fif.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\GIF\g2_GIF.c
+SOURCE=.\src\gd\g2_gd.c
 # End Source File
 # Begin Source File
 
