@@ -21,30 +21,63 @@ print "ok 1\n";
 
 $d = newvd G2::Device();
 
-#
-# comment following two lines if PS is not supported
-#
-$dev[0] = newPS  G2::Device("test.ps", 4, 0);
-$d->attach($dev[0]);
+#PS
+if ($d->can(newPS))
+  {
+  $dev[0] = newPS  G2::Device("test.ps", 4, 0);
+  $d->attach($dev[0]);
+  }
+else
+  {  
+    print "Not supported: PS\n";
+  }
 
-#
-# comment following two lines if FIG is not supported
-#
-$dev[1] = newFIG  G2::Device("test.fig");
-$d->attach($dev[1]);
 
-#
-# comment following two lines if X11 is not supported
-#
-$dev[2] = newX11 G2::Device(775, 575);
-$d->attach($dev[2]);
+#FIG
+if ($d->can(newFIG))
+  {
+  $dev[1] = newFIG  G2::Device("test.fig");
+  $d->attach($dev[1]);
+}
+else
+  {  
+    print "Not supported: FIG\n";
+  }
 
-#
-# comment following two lines if GD is not supported
-#
-$dev[3] = newGD G2::Device("test.png", 775, 575, 1);
-$d->attach($dev[3]);
-	
+
+#X11
+if ($d->can(newX11))
+  {
+  $dev[2] = newX11 G2::Device(775, 575);
+  $d->attach($dev[2]); 
+  }
+else
+  {  
+    print "Not supported: X11\n";
+  }
+
+
+#Win32
+if ($d->can(newWin32))
+  {
+  $dev[2] = newWin32 G2::Device(775, 575);
+  $d->attach($dev[2]);
+  }
+else
+  {  
+    print "Not supported: Win32\n";
+  }
+
+#GD
+if ($d->can(newGD))
+  {
+  $dev[3] = newGD G2::Device("test.png", 775, 575, 1);
+  $d->attach($dev[3]);
+  }	
+else
+  {  
+    print "Not supported: GD\n";
+  }
 
 $d->set_auto_flush(0);
 	
