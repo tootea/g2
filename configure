@@ -586,7 +586,7 @@ EOF
 ;;
     *-aix*)
 		LD_SHARED='ld'
-		LD_SHARED_FLAGS='-bM:SRE -T512 -H512'
+		LD_SHARED_FLAGS='-bM:SRE -bnoentry -bexpall'
 		LD_SHARED_OPT='$(LDFLAGS) -lc'
 		LD_SHARED_EXT='so'
 		cat >> confdefs.h <<\EOF
@@ -596,7 +596,7 @@ EOF
     *-osf*)
 		LD_SHARED='ld'
 		LD_SHARED_FLAGS='-shared'
-		LD_SHARED_OPT='$(LDFLAGS)'
+		LD_SHARED_OPT='$(LDFLAGS) -lc'
 		LD_SHARED_EXT='so'
 		cat >> confdefs.h <<\EOF
 #define OSF 1

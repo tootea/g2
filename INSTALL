@@ -66,3 +66,14 @@ PERL SUPPORT
 	perl Makefile.PL
 	make
 	make test
+
+
+SHARED LIBRARIES
+----------------
+Support for shared libraries is tested on Linux and OSF
+(DigitalUnix). To build shared libraries type 'make shared'. If you
+want to run demo applications without installed shared libraries, you
+should add to LD_LIBRARY_PATH the path to the g2 shared library
+(e.g. 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/some/path/to/g2')
+
+
