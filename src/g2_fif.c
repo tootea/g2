@@ -129,7 +129,7 @@ void FIF(g2_close)(F_REAL *dev)
 
 void FIF(g2_set_auto_flush)(F_REAL *dev, F_REAL *on_off)
 {
-    g2_set_auto_flush(dtoi(*dev), *on_off);
+    g2_set_auto_flush(dtoi(*dev), dtoi(*on_off));
 }
 
 
@@ -334,7 +334,7 @@ void FIF(g2_reset_palette)(F_REAL *dev)
 
 void FIF(g2_set_background)(F_REAL *dev, F_REAL *color)
 {
-    g2_set_background(dtoi(*dev), *color);
+    g2_set_background(dtoi(*dev), dtoi(*color));
 }
 
 
@@ -365,7 +365,7 @@ void FIF(g2_triangle)(F_REAL *dev, F_REAL *x1, F_REAL *y1,
 
 void FIF(g2_set_qp)(F_REAL *dev, F_REAL *d, F_REAL *shape)
 {
-    g2_set_QP(dtoi(*dev), *d, *shape);
+    g2_set_QP(dtoi(*dev), *d, dtoi(*shape));
 }
 
 
