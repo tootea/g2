@@ -63,8 +63,8 @@ LINK32=link.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "g2dll___Win32_Debug"
-# PROP Intermediate_Dir "g2dll___Win32_Debug"
+# PROP Output_Dir "Debug"
+# PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "G2DLL_EXPORTS" /YX /FD /GZ /c
 # ADD CPP /nologo /MD /W3 /Gm /GX /ZI /Od /I "../gd" /I "./src" /I "../src" /D "_DEBUG" /D "MAKEDLL" /D "G2DLL" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "G2DLL_EXPORTS" /YX /FD /GZ /c
