@@ -23,11 +23,14 @@
 #ifdef DO_PS
 #include <g2_PS.h>
 #endif
+#ifdef DO_EPSF
+#include <g2_PS.h>
+#endif
 #ifdef DO_X11
 #include <g2_X11.h>
 #endif
-#ifdef DO_GIF
-#include <g2_GIF.h>
+#ifdef DO_GD
+#include <g2_gd.h>
 #endif
 #ifdef DO_WIN32
 #include <g2_win32.h>
@@ -36,12 +39,13 @@
 #include <g2_win32.h>
 #endif
 
-#define ndev 5
+#define maxdev 10
 
 int main()
 {
     int i, j;
-    int d, dev[ndev]={-1, -1, -1, -1, -1};
+    int d, dev[maxdev]={-1, -1, -1, -1, -1,-1, -1, -1, -1, -1};
+	int ndev=0;
     char str[256];
     double pts[10];
     double y;
@@ -60,30 +64,51 @@ int main()
     
 #ifdef DO_PS
     printf("..PS");
-    dev[0]=g2_open_PS("g2_test.ps", g2_A4, g2_PS_land);
-    g2_attach(d, dev[0]);
+    dev[ndev]=g2_open_PS("g2_test.ps", g2_A4, g2_PS_land);
+    g2_attach(d, dev[ndev]);
+	ndev++;
+#endif
+#ifdef DO_EPSF
+    printf("..EPSF");
+    dev[ndev]=g2_open_EPSF("g2_test.eps");
+    g2_attach(d, dev[ndev]);
+	ndev++;
+#endif
+#ifdef DO_EPSF_CLIP
+    printf("..EPSF_CLIP");
+    dev[ndev]=g2_open_EPSF_CLIP("g2_test_clip.eps",200,200);
+    g2_attach(d, dev[ndev]);
+	ndev++;
 #endif
 #ifdef DO_X11
     printf("..X11");
-    dev[1]=g2_open_X11(775, 575);
-    g2_attach(d, dev[1]);
+    dev[ndev]=g2_open_X11(775, 575);
+    g2_attach(d, dev[ndev]);
+	ndev++;
 #endif
-#ifdef DO_GIF
-    printf("..GIF");
-    dev[2]=g2_open_GIF("g2_test.gif", 775, 575);
-    g2_attach(d, dev[2]);
+#ifdef DO_GD
+    printf("..GD(png)");
+    dev[ndev]=g2_open_gd("g2_test.png", 775, 575,g2_gd_png);
+    g2_attach(d, dev[ndev]);
+	ndev++;
+    printf("..GD(jpeg)");
+    dev[ndev]=g2_open_gd("g2_test.jpg", 775, 575,g2_gd_jpeg);
+    g2_attach(d, dev[ndev]);
+	ndev++;
 #endif
 #ifdef DO_WIN32
     printf("..WIN32");
-    dev[3]=g2_open_win32(775, 575,"g2_test",0);
-	g2_set_auto_flush(dev[3],0);
-    g2_attach(d, dev[3]);
+    dev[ndev]=g2_open_win32(775, 575,"g2_test",0);
+	g2_set_auto_flush(dev[ndev],0);
+    g2_attach(d, dev[ndev]);
+	ndev++;
 #endif
 #ifdef DO_WMF32
     printf("..WMF32");
-    dev[4]=g2_open_win32(775, 575,"g2_test.emf",1);
-	g2_set_auto_flush(dev[3],0);
-    g2_attach(d, dev[4]);
+    dev[ndev]=g2_open_win32(775, 575,"g2_test.emf",1);
+	g2_set_auto_flush(dev[ndev],0);
+    g2_attach(d, dev[ndev]);
+	ndev++;
 #endif
     g2_set_auto_flush(d,0);
 

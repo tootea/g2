@@ -33,6 +33,11 @@ typedef struct _g2_PS_device {
     FILE                    *fp;		/* output file pointer */
     enum g2_PS_paper        paper;		/* paper type */
     enum g2_PS_orientation  orient;		/* page orientation */
+	enum g2_PS_format		format;		/* PS or EPSF format */
+	long width,height;					/* width and height for EPSF */
+	double x1,y1,x2,y2;					/* min. Bounding Box */
+	int bbox;							/* Bounding Box empty flag */
+	double w,size;						/* line width/font size (required for Bbox) */
 
     g2_PS_inks     *inks;			/* allocated colors */
     int            N_ink;			/* number of allocated colors*/
@@ -42,6 +47,7 @@ typedef struct _g2_PS_device {
 
 
 
+void g2_PS_bbox_add(g2_PS_device *ps,double x,double y,double size);
 int g2_PS_write_file_header(g2_PS_device *psd);
 int g2_PS_delete(int pid, void *pdp);
 int g2_PS_ink(int pid, void *pdp,

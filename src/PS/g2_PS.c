@@ -19,6 +19,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <limits.h>
+#include <math.h>
+#include <string.h>
 
 #include "g2.h"
 #include "g2_device.h"
@@ -34,14 +36,18 @@ static int N_PS=0;
 static g2_PS_device *g2_PS_dev=NULL;
 
 
+
 /*
  *
- * Attach PS device
+ * Attach generic PS device
  *
  */
-int g2_open_PS(const char *file_name,
+G2L g2_open_PS_generic(const char *file_name,
 	       enum g2_PS_paper paper,
-	       enum g2_PS_orientation orientation)
+	       enum g2_PS_orientation orientation,
+		   enum g2_PS_format format,
+		   long width,
+		   long height)
 {
     g2_PS_device *psout=NULL;
     int pid=-1, i;
@@ -83,11 +89,15 @@ int g2_open_PS(const char *file_name,
     psout->fp=fp;			      /* init PostScript structures */
     psout->paper=paper;
     psout->orient=orientation;
+	psout->format=format;
+	psout->width=width;
+	psout->height=height;
     psout->inks=NULL;
     psout->N_ink=0;
     psout->pen=0;
     psout->page_counter=0;
- 
+	psout->bbox = 0;
+	
     g2_PS_write_file_header(psout);
     
     g2_PS_set_line_width(pid, NULL, 0.0);
@@ -100,6 +110,38 @@ int g2_open_PS(const char *file_name,
     return vid;
 }
 
+/*
+ *
+ * Attach PS device
+ *
+ */
+G2L g2_open_PS(const char *file_name,
+	       enum g2_PS_paper paper,
+	       enum g2_PS_orientation orientation)
+{
+    return g2_open_PS_generic(file_name,paper,orientation,g2_PS_PostScript,0,0);
+}
+
+/*
+ *
+ * Attach EPSF device
+ *
+ */
+G2L int g2_open_EPSF(const char *file_name)
+{
+    return g2_open_PS_generic(file_name,0,0,g2_PS_EPSF,0,0);
+}
+
+/*
+ *
+ * Attach EPSF device with clipping
+ *
+ */
+G2L int g2_open_EPSF_CLIP(const char *file_name,
+			long width, long height)
+{
+    return g2_open_PS_generic(file_name,0,0,g2_PS_EPSF_CLIP,width,height);
+}
 
 /*
  *
@@ -109,32 +151,84 @@ int g2_open_PS(const char *file_name,
 int g2_PS_write_file_header(g2_PS_device *ps)
 {
     int i;
-    fprintf(ps->fp,"%%!PS-Adobe-2.0\n");
+	if (ps->format == g2_PS_PostScript)
+		{
+		fprintf(ps->fp,"%%!PS-Adobe-2.0\n");
+	    switch(ps->orient) 
+			{
+			case g2_PS_land:
+				fprintf(ps->fp,"%%%%Orientation: Landscape\n");
+				break;
+			case g2_PS_port:
+				fprintf(ps->fp,"%%%%Orientation: Portrait\n");
+				break;
+			}
+		}
+	else if (ps->format == g2_PS_EPSF_CLIP)
+		{
+		fprintf(ps->fp,"%%!PS-Adobe-2.0 EPSF-2.0\n");
+		fprintf(ps->fp,"%%%%BoundingBox: 0 0 %d %d\n",ps->width,ps->height);
+		}
+	else if (ps->format == g2_PS_EPSF)
+		{
+		fprintf(ps->fp,"%%!PS-Adobe-2.0 EPSF-2.0\n");
+		fprintf(ps->fp,"%%%%BoundingBox: (atend)\n");
+		}
+	
     fprintf(ps->fp,"%%%%Creator: g2 %s\n", G2_VERSION);
-    switch(ps->orient) {
-      case g2_PS_land:
-	fprintf(ps->fp,"%%%%Orientation: Landscape\n");
-	break;
-      case g2_PS_port:
-	fprintf(ps->fp,"%%%%Orientation: Portrait\n");
-	break;
-    }
     fprintf(ps->fp, "%%%%EndComments\n");
     
-    for(i=0;g2_PS_operators[i]!=NULL;i++)
+	if (ps->format == g2_PS_EPSF_CLIP)
+		{
+		fprintf(ps->fp,"0 0 moveto\n");
+		fprintf(ps->fp,"0 %d rlineto\n",ps->height);
+		fprintf(ps->fp,"%d 0 rlineto\n",ps->width);
+		fprintf(ps->fp,"0 %d rlineto\n",-ps->height);
+		fprintf(ps->fp,"closepath\n");
+		fprintf(ps->fp,"clip\n");
+		}
+    
+	for(i=0;g2_PS_operators[i]!=NULL;i++)
 	fputs(g2_PS_operators[i], ps->fp);
     
     fprintf(ps->fp,"newpath\n");
-    if(ps->orient==g2_PS_land)
-	fprintf(ps->fp,"%d 0 translate 90 rotate\n",
-		g2_PS_paper_size[ps->paper][0]);
+    if(ps->orient==g2_PS_land && ps->format == g2_PS_PostScript)
+		fprintf(ps->fp,"%d 0 translate 90 rotate\n",
+			g2_PS_paper_size[ps->paper][0]);
 
     fputs("%%PageTrailer\n%%Page: 0 0\n", ps->fp);
     
     return 0;
 }
 
+/*
+ *
+ *    Add circle at (x,y) of dimension size to bounding box
+ *
+ */
+void g2_PS_bbox_add(g2_PS_device *ps,double x,double y,double size)
+	{
+	if (ps->bbox = 0) /* bbox is empty */
+		{
+		ps->x1=x-size;
+		ps->x2=x+size;
+		ps->y1=y-size;
+		ps->y2=y+size;
+		ps->bbox=1;
+		return;
+		}
 
+	if (ps->x1 > x-size)
+		ps->x1=x-size;
+	else if (ps->x2 < x+size)
+		ps->x2=x+size;
+
+	if (ps->y1 > y-size)
+		ps->y1=y-size;
+	else if (ps->y2 < y+size)
+		ps->y2=y+size;
+	return;
+	}
 
 /*
  *
@@ -144,10 +238,18 @@ int g2_PS_write_file_header(g2_PS_device *ps)
 int g2_PS_delete(int pid, void *pdp)
 {
     g2_PS_device *ps=&g2_PS_dev[pid];
-    fprintf(ps->fp,"\nshowpage\n");
+	fprintf(ps->fp,"\nshowpage\n");
     fprintf(ps->fp,"%%%%PageTrailer\n");
     fprintf(ps->fp,"%%%%EndPage\n");
-    fclose(ps->fp);
+	fprintf(ps->fp,"%%%%Trailer\n");
+	if (ps->format == g2_PS_EPSF)
+		{
+		fprintf(ps->fp,"%%%%BoundingBox: %d %d %d %d\n",
+				(int)floor(ps->x1),(int)floor(ps->y1),
+				(int)ceil(ps->x2),(int)ceil(ps->y2));
+		}
+    fprintf(ps->fp,"%%%%EOF\n");
+	fclose(ps->fp);
     free(ps->inks);
     
     ps->fp=NULL;				  /* free place */
@@ -216,6 +318,7 @@ int g2_PS_set_line_width(int pid, void *pdp, double w)
 {
     g2_PS_device *ps=&g2_PS_dev[pid];
     fprintf(ps->fp,"%.4g setlinewidth\n", w);
+	ps->w = w;
     return 0;
 }
 
@@ -242,6 +345,7 @@ int g2_PS_set_font_size(int pid, void *pdp, double size)
 	return -1;
     fprintf(ps->fp,"%s findfont %.4g scalefont setfont\n",
 	    G2_PSFONT, size);
+	ps->size = size;
     return 0;
 }
 
@@ -273,6 +377,7 @@ int g2_PS_plot(int pid, void *pdp, double x, double y)
 {
     g2_PS_device *ps=&g2_PS_dev[pid];
     fprintf(ps->fp,"%.4g %.4g P\n", x, y);
+	g2_PS_bbox_add(ps,x,y,1);
     return 0;
 }
 
@@ -283,6 +388,8 @@ int g2_PS_line(int pid, void *pdp, double x1, double y1, double x2, double y2)
     g2_PS_device *ps=&g2_PS_dev[pid];
     fprintf(ps->fp,"%.4g %.4g M %.4g %.4g L St\n",
 	    x1, y1, x2, y2);
+	g2_PS_bbox_add(ps,x1,y1,ps->w);
+	g2_PS_bbox_add(ps,x2,y2,ps->w);
     return 0;
 }
 
@@ -293,8 +400,12 @@ int g2_PS_poly_line(int pid, void *pdp, int N, double *points)
     g2_PS_device *ps=&g2_PS_dev[pid];
     int i;
     fprintf(ps->fp,"%.4g %.4g M\n", points[0], points[1]); 
+	g2_PS_bbox_add(ps,points[0], points[1],ps->w);
     for(i=2;i<2*N;i+=2)
-	fprintf(ps->fp, "%.4g %.4g L\n", points[i], points[i+1]);
+		{
+		fprintf(ps->fp, "%.4g %.4g L\n", points[i], points[i+1]);
+		g2_PS_bbox_add(ps,points[i], points[i+1],ps->w);
+		}
     fprintf(ps->fp, "St\n");
     return 0;
 }
@@ -306,8 +417,12 @@ int g2_PS_polygon(int pid, void *pdp, int N, double *points)
     g2_PS_device *ps=&g2_PS_dev[pid];
     int i;
     fprintf(ps->fp,"%.4g %.4g M\n",points[0], points[1]); 
+	g2_PS_bbox_add(ps,points[0], points[1],ps->w);
     for(i=2;i<2*N;i+=2)
-	fprintf(ps->fp, "%.4g %.4g L\n", points[i], points[i+1]);
+		{
+		fprintf(ps->fp, "%.4g %.4g L\n", points[i], points[i+1]);
+		g2_PS_bbox_add(ps,points[i], points[i+1],ps->w);
+		}
     fprintf(ps->fp, "%.4g %.4g L St\n", points[0], points[1]);
     return 0;
 }
@@ -319,8 +434,12 @@ int g2_PS_filled_polygon(int pid, void *pdp, int N, double *points)
     g2_PS_device *ps=&g2_PS_dev[pid];
     int i;
     fprintf(ps->fp,"newpath %.4g %.4g M\n",points[0], points[1]); 
+	g2_PS_bbox_add(ps,points[0], points[1],ps->w);
     for(i=2;i<2*N;i+=2)
-	fprintf(ps->fp, "%.4g %.4g L\n", points[i], points[i+1]);
+		{
+		fprintf(ps->fp, "%.4g %.4g L\n", points[i], points[i+1]);
+		g2_PS_bbox_add(ps,points[i], points[i+1],ps->w);
+		}
     fprintf(ps->fp, "%.4g %.4g L fill St\n", points[0], points[1]);
     return 0;
 }
@@ -333,6 +452,8 @@ int g2_PS_rectangle(int pid, void *pdp,
     g2_PS_device *ps=&g2_PS_dev[pid];
     fprintf(ps->fp,"%.4g %.4g %.4g %.4g R\n",
 	    x2, y2, x1, y1);
+	g2_PS_bbox_add(ps,x1,y1,ps->w);
+	g2_PS_bbox_add(ps,x2,y2,ps->w);
     return 0;
 }
 
@@ -344,6 +465,8 @@ int g2_PS_filled_rectangle(int pid, void *pdp,
     g2_PS_device *ps=&g2_PS_dev[pid];
     fprintf(ps->fp,"%.4g %.4g %.4g %.4g FR\n",
 	    x2, y2, x1, y1);
+	g2_PS_bbox_add(ps,x1,y1,ps->w);
+	g2_PS_bbox_add(ps,x2,y2,ps->w);
     return 0;
 }
 
@@ -357,6 +480,9 @@ int g2_PS_triangle(int pid, void *pdp,
     g2_PS_device *ps=&g2_PS_dev[pid];
     fprintf(ps->fp,"%.4g %.4g %.4g %.4g %.4g %.4g T\n",
 	    x1,y1,x2,y2,x3,y3);
+	g2_PS_bbox_add(ps,x1,y1,ps->w);
+	g2_PS_bbox_add(ps,x2,y2,ps->w);
+	g2_PS_bbox_add(ps,x3,y3,ps->w);
     return 0;
 }
 
@@ -369,6 +495,9 @@ int g2_PS_filled_triangle(int pid, void *pdp,
     g2_PS_device *ps=&g2_PS_dev[pid];
     fprintf(ps->fp,"%.4g %.4g %.4g %.4g %.4g %.4g FT\n",
 	    x1,y1,x2,y2,x3,y3);
+	g2_PS_bbox_add(ps,x1,y1,ps->w);
+	g2_PS_bbox_add(ps,x2,y2,ps->w);
+	g2_PS_bbox_add(ps,x3,y3,ps->w);
     return 0;
 }
 
@@ -382,6 +511,8 @@ int g2_PS_arc(int pid, void *pdp,
     g2_PS_device *ps=&g2_PS_dev[pid];
     fprintf(ps->fp,"%.4g %.4g %.4g %.4g %.4g %.4g A\n",
 	    a1, a2, r1, r2, x, y);
+	g2_PS_bbox_add(ps,x+r1,y+r2,ps->w);
+	g2_PS_bbox_add(ps,x-r1,y-r2,ps->w);
     return 0;
 }
 
@@ -395,6 +526,8 @@ int g2_PS_filled_arc(int pid, void *pdp,
     g2_PS_device *ps=&g2_PS_dev[pid];
     fprintf(ps->fp,"%.4g %.4g %.4g %.4g %.4g %.4g FA\n",
 	    a1, a2, r1, r2, x, y);
+	g2_PS_bbox_add(ps,x+r1,y+r2,ps->w);
+	g2_PS_bbox_add(ps,x-r1,y-r2,ps->w);
     return 0;
 }
 
@@ -407,6 +540,8 @@ int g2_PS_ellipse(int pid, void *pdp,
     g2_PS_device *ps=&g2_PS_dev[pid];
     fprintf(ps->fp,"0 360 %.4g %.4g %.4g %.4g A\n",
 	    r1, r2, x, y);
+	g2_PS_bbox_add(ps,x+r1,y+r2,ps->w);
+	g2_PS_bbox_add(ps,x-r1,y-r2,ps->w);
     return 0;
 }
  
@@ -420,6 +555,8 @@ int g2_PS_filled_ellipse(int pid, void *pdp,
     g2_PS_device *ps=&g2_PS_dev[pid];
     fprintf(ps->fp,"0 360 %.4g %.4g %.4g %.4g FA\n",
 	    r1, r2, x, y);
+	g2_PS_bbox_add(ps,x+r1,y+r2,ps->w);
+	g2_PS_bbox_add(ps,x-r1,y-r2,ps->w);
     return 0;
 }
 
@@ -446,6 +583,8 @@ int g2_PS_draw_string(int pid, void *pdp,
 	    break;
 	}
     fprintf(ps->fp,") %.4g %.4g S\n", x, y);
+	g2_PS_bbox_add(ps,x,y,ps->size);
+	g2_PS_bbox_add(ps,x+ps->size*strlen(text),y,ps->size);
     return 0;
 }
 

@@ -67,6 +67,15 @@ enum g2_PS_orientation {
     g2_PS_port			/* portrait */
 };
 
+/*
+ *  g2 Format
+ */
+enum g2_PS_format {
+    g2_PS_PostScript,			/* PostScript  */
+    g2_PS_EPSF,					/* EPSF format */
+    g2_PS_EPSF_CLIP				/* EPSF format with predefined Bounding Box*/
+};
+
 /* Common Library header for DLL and application */
 #ifdef WIN32
 #ifdef G2DLL
@@ -91,6 +100,10 @@ G2L int g2_open_PS(const char *file_name,
 		   enum g2_PS_paper paper,
 		   enum g2_PS_orientation orientation);
 
+G2L int g2_open_EPSF(const char *file_name);
+
+G2L int g2_open_EPSF_CLIP(const char *file_name,
+			long width, long height);
 
 #if defined(__cplusplus)
 } /* end extern "C" */
