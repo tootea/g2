@@ -28,6 +28,11 @@ extern "C" {
 #include <g2_gd.h>
 #endif /* DO_GD */
 
+#ifdef DO_WIN32
+#include <g2_Win32.h>
+#endif /* DO_WIN32 */
+
+
 static int
 not_here(s)
 char *s;
@@ -156,6 +161,29 @@ g2_newX11(packname="G2::Device", width=100,height=100)
 
 #endif /* DO_X11 */
 	
+
+#ifdef DO_WIN32
+
+G2::Device
+g2_newWin32(packname="G2::Device", width=100,height=100,filename="Win32 window",type=0)
+	char * packname
+	int width
+	int height
+	char * filename	
+        int type
+        PROTOTYPE: $;$$
+	CODE:
+	{
+		DevType theDevice;
+		theDevice = (int *)malloc(sizeof(int));
+		*theDevice = g2_open_win32(width, height, filename, type);
+		RETVAL = theDevice;
+	}
+	OUTPUT:
+	RETVAL
+
+#endif /* DO_WIN32 */
+
 #ifdef DO_GD
 
 G2::Device
