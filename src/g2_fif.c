@@ -34,7 +34,7 @@
 
 #define F_REAL         float    /* everything is float (real) !!!!!!!!!!!!!! */
 #define F_CHAR         char     /* only char is char */
-#define F_CHAR_LENGTH  int      /* and char length is integer */
+#define F_CHAR_LENGTH  int      /* and char length is integer (it is automatically supplied */
 
 
 /**********************************************************/
@@ -42,6 +42,10 @@
 #ifdef DO_PS
 
 #include "PS/g2_PS.h"
+
+
+
+
 
 F_REAL FIF(g2_open_ps)(F_CHAR *text, F_REAL *paper, F_REAL *orientation,
 		       F_CHAR_LENGTH length)
@@ -71,7 +75,7 @@ F_REAL FIF(g2_open_x11)(F_REAL *width, F_REAL *height)
     return (F_REAL)g2_open_X11(*width, *height);
 }
 
-/* g2_open_x11x will be implemented in next releases */
+/* g2_open_x11x is missing */
 
 #endif /* DO_X11 */
 
@@ -254,18 +258,30 @@ void FIF(g2_line)(F_REAL *dev, F_REAL *x1, F_REAL *y1, F_REAL *x2, F_REAL *y2)
 }
 
 
-void FIF(g2_poly_line)(F_REAL *dev, F_REAL N, F_REAL **points)
+void FIF(g2_poly_line)(F_REAL *dev, F_REAL *N_pt, F_REAL *points)
 {
+    double *d;
+    d=g2_floatp2doublep(points, dtoi(*N_pt)*2);
+    g2_poly_line(dtoi(*dev), dtoi(*N_pt), d);
+    g2_free(d);
 }
 
 
-void FIF(g2_polygon)(F_REAL *dev, F_REAL N, F_REAL **points)
+void FIF(g2_polygon)(F_REAL *dev, F_REAL *N_pt, F_REAL *points)
 {
+    double *d;
+    d=g2_floatp2doublep(points, dtoi(*N_pt)*2);
+    g2_polygon(dtoi(*dev), dtoi(*N_pt), d);
+    g2_free(d);
 }
 
 
-void FIF(g2_filled_polygon)(F_REAL *dev, F_REAL N, F_REAL **points)
+void FIF(g2_filled_polygon)(F_REAL *dev, F_REAL *N_pt, F_REAL *points)
 {
+    double *d;
+    d=g2_floatp2doublep(points, dtoi(*N_pt)*2);
+    g2_filled_polygon(dtoi(*dev), dtoi(*N_pt), d);
+    g2_free(d);
 }
 
 
@@ -339,8 +355,12 @@ void FIF(g2_set_background)(F_REAL *dev, F_REAL *color)
 }
 
 
-void FIF(g2_set_dash)(F_REAL *dev, F_REAL *N, F_REAL **dashes)
+void FIF(g2_set_dash)(F_REAL *dev, F_REAL *N, F_REAL *dashes)
 {
+    double *d;
+    d=g2_floatp2doublep(dashes, dtoi(*N));
+    g2_set_dash(dtoi(*dev), dtoi(*N), d);
+    g2_free(d);
 }
 
 
@@ -374,3 +394,106 @@ void FIF(g2_plot_qp)(F_REAL *dev, F_REAL *x, F_REAL *y)
 {
     g2_plot_QP(dtoi(*dev), *x, *y);
 }
+
+
+/* thanks to Yuri Sbitnev for contributing the g2_image code for FORTRAN */
+void FIF(g2_image)(F_REAL *dev, F_REAL *x, F_REAL *y, F_REAL *x_size, F_REAL *y_size,
+		   F_REAL pens[dtoi(*y_size)][dtoi(*x_size)])
+{
+    int i, j, xs, ys;
+    int *mypens;
+    xs=dtoi(*x_size);
+    ys=dtoi(*y_size);
+    mypens=(int *) g2_malloc(xs*ys*sizeof(int));
+    for(j=0;j<ys;j++) 
+      for(i=0;i<xs;i++) 
+        mypens[(xs*j)+i]=dtoi(pens[j][i]);
+    g2_image(dtoi(*dev), *x, *y, xs, ys, mypens);
+    g2_free(mypens);
+}
+
+
+
+
+
+
+void FIF(g2_spline)(F_REAL *dev, F_REAL *N_pt, F_REAL *points, F_REAL *o)
+{
+    double *d;
+    d=g2_floatp2doublep(points, dtoi(*N_pt)*2);
+    g2_spline(dtoi(*dev), dtoi(*N_pt), d, dtoi(*o));
+    g2_free(d);
+}
+
+void FIF(g2_b_spline)(F_REAL *dev, F_REAL *N_pt, F_REAL *points, F_REAL *o)
+{
+    double *d;
+    d=g2_floatp2doublep(points, dtoi(*N_pt)*2);
+    g2_b_spline(dtoi(*dev), dtoi(*N_pt), d, dtoi(*o));
+    g2_free(d);
+}
+
+void FIF(g2_raspln)(F_REAL *dev, F_REAL *N_pt, F_REAL *points, F_REAL *tn)
+{
+    double *d;
+    d=g2_floatp2doublep(points, dtoi(*N_pt)*2);
+    g2_raspln(dtoi(*dev), dtoi(*N_pt), d, *tn);
+    g2_free(d);
+}
+
+void FIF(g2_para_3)(F_REAL *dev, F_REAL *N_pt, F_REAL *points)
+{
+    double *d;
+    d=g2_floatp2doublep(points, dtoi(*N_pt)*2);
+    g2_para_3(dtoi(*dev), dtoi(*N_pt), d);
+    g2_free(d);
+}
+
+void FIF(g2_para_5)(F_REAL *dev, F_REAL *N_pt, F_REAL *points)
+{
+    double *d;
+    d=g2_floatp2doublep(points, dtoi(*N_pt)*2);
+    g2_para_5(dtoi(*dev), dtoi(*N_pt), d);
+    g2_free(d);
+}
+
+void FIF(g2_filled_spline)(F_REAL *dev, F_REAL *N_pt, F_REAL *points, F_REAL *o)
+{
+    double *d;
+    d=g2_floatp2doublep(points, dtoi(*N_pt)*2);
+    g2_filled_spline(dtoi(*dev), dtoi(*N_pt), d, dtoi(*o));
+    g2_free(d);
+}
+
+void FIF(g2_filled_b_spline)(F_REAL *dev, F_REAL *N_pt, F_REAL *points, F_REAL *o)
+{
+    double *d;
+    d=g2_floatp2doublep(points, dtoi(*N_pt)*2);
+    g2_filled_b_spline(dtoi(*dev), dtoi(*N_pt), d, dtoi(*o));
+    g2_free(d);
+}
+
+void FIF(g2_filled_raspln)(F_REAL *dev, F_REAL *N_pt, F_REAL *points, F_REAL *tn)
+{
+    double *d;
+    d=g2_floatp2doublep(points, dtoi(*N_pt)*2);
+    g2_filled_raspln(dtoi(*dev), dtoi(*N_pt), d, *tn);
+    g2_free(d);
+}
+
+void FIF(g2_filled_para_3)(F_REAL *dev, F_REAL *N_pt, F_REAL *points)
+{
+    double *d;
+    d=g2_floatp2doublep(points, dtoi(*N_pt)*2);
+    g2_filled_para_3(dtoi(*dev), dtoi(*N_pt), d);
+    g2_free(d);
+}
+
+void FIF(g2_filled_para_5)(F_REAL *dev, F_REAL *N_pt, F_REAL *points)
+{
+    double *d;
+    d=g2_floatp2doublep(points, dtoi(*N_pt)*2);
+    g2_filled_para_5(dtoi(*dev), dtoi(*N_pt), d);
+    g2_free(d);
+}
+

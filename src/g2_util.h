@@ -40,5 +40,6 @@ void *g2_malloc(size_t size);
 void *g2_realloc(void *p, size_t size);
 void g2_free(void *p);
 
+double *g2_floatp2doublep(float *f, int N);
 
 #endif /* _G2_UTIL_H */

@@ -185,3 +185,21 @@ void g2_free(void *p)
     if(p!=NULL)
 	free(p);
 }
+
+
+/*
+ *
+ * transform float* to double* for N elements
+ *
+ * Note: don't forget to free d
+ *
+ */
+double *g2_floatp2doublep(float *f, int N)
+{
+    int i;
+    double *d;
+    d=(double *)g2_malloc(N*sizeof(double));
+    for(i=0;i<N;++i)
+	d[i]=f[i];
+    return d;
+}
