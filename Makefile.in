@@ -93,8 +93,6 @@ shared: libg2.@LD_SHARED_EXT@
 libg2.a: $(OBJ)
 	$(AR) $(ARFLAGS) libg2.a $(OBJ)
 	test ! -n "$(RANLIB)" || $(RANLIB) $@
-	test ! -f ./libg2.$(G2_VERSION).a || rm ./libg2.$(G2_VERSION).a
-	ln -s libg2.a libg2.$(G2_VERSION).a
 
 libg2.@LD_SHARED_EXT@: $(OBJ)
 	@LD_SHARED@ @LD_SHARED_FLAGS@ -o $@ $(OBJ) @LD_SHARED_OPT@
@@ -126,6 +124,8 @@ clean:
 	-(cd ./g2_perl ; make clean)
 	-rm -f ./g2_perl/test.ps
 	-rm -f ./g2_perl/test.png
+	-rm -f ./g2_perl/test.jpg
+	-rm -f ./g2_perl/test.fig
 	-rm -f ./g2_perl/Makefile.old
 	-rm -f ./libg2.@LD_SHARED_EXT@
 	-rm -f libg2.$(G2_VERSION).a

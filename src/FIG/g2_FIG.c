@@ -40,8 +40,8 @@ static int N_FIG=0;
 static g2_FIG_device *g2_FIG_dev=NULL;
 
 /**
- * \ingroup interface
- * \defgroup FIG Fig
+ * \ingroup physdev
+ * \defgroup FIG FIG
  *
  * FIG devices generate output in the FIG 3.2 format. For more details
  * about FIG format and xfig application please visit http://www.xfig.org .
@@ -53,7 +53,7 @@ static g2_FIG_device *g2_FIG_dev=NULL;
 
 /**
  *
- * Create a FIG device.
+ * Create a FIG device. g2 uses A4 paper size (landscape orientation) as default.
  *
  * \param file_name fig file name
  *

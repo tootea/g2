@@ -9,6 +9,15 @@ documentation in the doxygen format */
  * \defgroup interface g2 User Interface
  */
 
+/**
+ * \ingroup interface
+ * \defgroup physdev g2 Physical devices
+ *
+ * g2 physical devices are drivers for different output
+ * formats.
+ *
+ */
+
 
 
 /** \mainpage

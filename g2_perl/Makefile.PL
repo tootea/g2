@@ -5,7 +5,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     'NAME'	=> 'G2',
     'VERSION_FROM' => 'G2.pm', # finds $VERSION
-    'LIBS'	=> ['-L./.. -lg2.0.51   -L/usr/X11R6/lib -L/usr/local/lib -lm -lX11 -lgd'],  # e.g., '-lm' 
-    'DEFINE'	=> ' -DLINUX=1 -DDO_PS=1 -DDO_FIG=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 ',                    # e.g., '-DHAVE_SOMETHING' 
-    'INC'	=> '-I./../include',               # e.g., '-I/usr/local/include' 
+    'LIBS'	=> ['-L./.. -lg2   -L/usr/X11R6/lib -L/usr/local/lib -lm -lX11 -lgd'],  # e.g., '-lm' 
+    'DEFINE'	=> ' -DLINUX=1 -DDO_PS=1 -DDO_FIG=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 ',                   # e.g., '-DHAVE_SOMETHING' 
+    'INC'	=> '-I./../include',           # e.g., '-I/usr/local/include' 
 );

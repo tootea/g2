@@ -87,6 +87,7 @@ systems. E.g. one X11 window showing an overview of a graphical output, and
 a second window showing  a zoom of a more detailed area of the graphic.
 Drawing in both windows is performed by one single command to the virtual
 device.
+Please see g2 documentation (C interface) for up to date version.
 
 =head1 Exported constants
 

@@ -4,7 +4,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     'NAME'	=> 'G2',
     'VERSION_FROM' => 'G2.pm', # finds $VERSION
-    'LIBS'	=> ['-L./.. -lg2.0.51 @LDFLAGS@'],  # e.g., '-lm' 
-    'DEFINE'	=> '@DEFS@',                    # e.g., '-DHAVE_SOMETHING' 
-    'INC'	=> '-I./../include',               # e.g., '-I/usr/local/include' 
+    'LIBS'	=> ['-L./.. -lg2 @LDFLAGS@'],  # e.g., '-lm' 
+    'DEFINE'	=> '@DEFS@',                   # e.g., '-DHAVE_SOMETHING' 
+    'INC'	=> '-I./../include',           # e.g., '-I/usr/local/include' 
 );

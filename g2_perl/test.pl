@@ -22,23 +22,29 @@ print "ok 1\n";
 $d = newvd G2::Device();
 
 #
-# comment following two lines if X11 is not supported
-#
-$dev[1] = newX11 G2::Device(775, 575);
-$d->attach($dev[1]);
-
-#
-# comment following two lines if GD is not supported
-#
-$dev[2] = newGD G2::Device("test.png", 775, 575, 1);
-$d->attach($dev[2]);
-	
-#
 # comment following two lines if PS is not supported
 #
 $dev[0] = newPS  G2::Device("test.ps", 4, 0);
 $d->attach($dev[0]);
 
+#
+# comment following two lines if FIG is not supported
+#
+$dev[1] = newFIG  G2::Device("test.fig");
+$d->attach($dev[1]);
+
+#
+# comment following two lines if X11 is not supported
+#
+$dev[2] = newX11 G2::Device(775, 575);
+$d->attach($dev[2]);
+
+#
+# comment following two lines if GD is not supported
+#
+$dev[3] = newGD G2::Device("test.png", 775, 575, 1);
+$d->attach($dev[3]);
+	
 
 $d->set_auto_flush(0);
 	
@@ -89,13 +95,24 @@ for($j=0;$j<$#dev;$j++)
     $d->line(147, 68, 153, 68);
 		
     $y=100;
-    $d->line(100, $y, 150, $y+50);
+    $d->line(120, $y, 170, $y+50);
     $d->triangle(150, $y, 250, $y, 200, $y+50);
     $d->rectangle(300, $y, 400, $y+50);
     $d->circle(450, $y+25, 25);
     $d->ellipse(550, $y+25, 45, 25);
     $d->arc(650, $y+25, 25, 45, 90, 360);
     
+    $pts[0]=4;
+    $pts[1]=4;
+    $d->set_dash(2, \@pts);
+    $d->line(120+5, $y, 170+5, $y+50);
+    $d->triangle(150+10, $y+4, 250-10, $y+4, 200, $y+50-5);
+    $d->rectangle(305, $y+5, 395, $y+50-5);
+    $d->circle(450, $y+25, 20);
+    $d->ellipse(550, $y+25, 40, 20);
+    $d->arc(650, $y+25, 20, 40, 90, 360);
+    $d->set_dash(0);
+
     $y=200;
     $d->filled_triangle(150, $y, 250, $y, 200, $y+50);
     $d->filled_rectangle(300, $y, 400, $y+50);
@@ -151,6 +168,11 @@ for($j=0;$j<$#dev;$j++)
     $d->set_line_width(5);
     $d->arc(740, 180, 25, 100, -45+15, -45-15);
     $d->filled_arc(740, 180, 12, 50, -45+15, -45-15);
+
+    $d->set_line_width(1);
+    $d->circle(400, 400, 20);
+    $d->ellipse(400, 400, 25, 25);
+    $d->arc(400, 400, 30, 30, 0, 360);
 
     $d->flush;
     print "\nDone.\n[Enter]\n";

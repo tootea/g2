@@ -20,6 +20,7 @@
 #define _G2_H
 
 
+/* g2 version */
 #define G2_VERSION "0.60"
 
 

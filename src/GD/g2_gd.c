@@ -39,7 +39,7 @@
 
 
 /**
- * \ingroup interface
+ * \ingroup physdev
  * \defgroup GD GD
  */
 

@@ -16,6 +16,10 @@ extern "C" {
 #include <g2_PS.h>
 #endif /* DO_PS */
 
+#ifdef DO_FIG
+#include <g2_FIG.h>
+#endif /* DO_FIG */
+
 #ifdef DO_X11
 #include <g2_X11.h>
 #endif /* DO_X11 */
@@ -194,6 +198,26 @@ g2_newPS(packname="G2::Device", filename="g2.gif", paper=1,orientation=1)
 	RETVAL
 	
 #endif /* DO_PS */
+
+#ifdef DO_FIG
+
+G2::Device
+g2_newFIG(packname="G2::Device", filename="g2.fig")
+	char * packname
+	char * filename
+        PROTOTYPE: $;$$$
+	CODE:
+	{
+		DevType theDevice;
+		theDevice = (int *)malloc(sizeof(int));
+		*theDevice = g2_open_FIG(filename);
+		RETVAL = theDevice;
+	}
+	OUTPUT:
+	RETVAL
+	
+#endif /* DO_FIG */
+
 	
 G2::Device
 g2_newvd(packname="G2::Device")

@@ -522,7 +522,7 @@ int InitApplication()
 
 
 /**
- * \ingroup interface
+ * \ingroup physdev
  * \defgroup win32 MS Windows
  */
 

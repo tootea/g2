@@ -37,7 +37,7 @@ static int N_X11=0;
 static g2_X11_device *g2_X11_dev=NULL;
 
 /**
- * \ingroup interface
+ * \ingroup physdev
  * \defgroup X11 X11
  */
 

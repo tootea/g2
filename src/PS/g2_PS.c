@@ -37,7 +37,7 @@ static int N_PS=0;
 static g2_PS_device *g2_PS_dev=NULL;
 
 /**
- * \ingroup interface
+ * \ingroup physdev
  * \defgroup PS PostScript
  */
 

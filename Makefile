@@ -23,7 +23,7 @@ INCDIR = /usr/local/include
 SHELL = /bin/sh
 
 CC           = gcc
-CFLAGS       = -I./src -g -O2  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_FIG=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
+CFLAGS       = -I./src -Wall  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_FIG=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
 INSTALL      = /usr//bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 FIND         = find
@@ -94,8 +94,6 @@ shared: libg2.so.0.$(G2_VERSION)
 libg2.a: $(OBJ)
 	$(AR) $(ARFLAGS) libg2.a $(OBJ)
 	test ! -n "$(RANLIB)" || $(RANLIB) $@
-	test ! -f ./libg2.$(G2_VERSION).a || rm ./libg2.$(G2_VERSION).a
-	ln -s libg2.a libg2.$(G2_VERSION).a
 
 libg2.so.0.$(G2_VERSION): $(OBJ)
 	ld -shared -soname libg2.so.0 -o $@ $(OBJ) 
@@ -127,6 +125,8 @@ clean:
 	-(cd ./g2_perl ; make clean)
 	-rm -f ./g2_perl/test.ps
 	-rm -f ./g2_perl/test.png
+	-rm -f ./g2_perl/test.jpg
+	-rm -f ./g2_perl/test.fig
 	-rm -f ./g2_perl/Makefile.old
 	-rm -f ./libg2.so.0.$(G2_VERSION)
 	-rm -f libg2.$(G2_VERSION).a

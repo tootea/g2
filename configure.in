@@ -101,7 +101,7 @@ AC_OUTPUT(Makefile demo/Makefile g2_perl/Makefile.PL)
 echo
 echo "Supported devices:"
 if test "$DO_PS"    != "#"; then echo "    PostScript"; fi
-if test "$DO_FIG"   != "#"; then echo "    Fig"; fi
+if test "$DO_FIG"   != "#"; then echo "    FIG"; fi
 if test "$DO_X11"   != "#"; then echo "    X11"; fi
 if test "$DO_WIN32" != "#"; then echo "    Win32"; fi
 if test "$DO_GD"    != "#"; then echo "    GD"; fi
@@ -109,7 +109,7 @@ if test "$DO_GD"    != "#"; then echo "    GD"; fi
 echo
 echo "Unsupported devices:"
 if test "$DO_PS"     = "#"; then echo "    PostScript"; fi
-if test "$DO_FIG"    = "#"; then echo "    Fig"; fi
+if test "$DO_FIG"    = "#"; then echo "    FIG"; fi
 if test "$DO_X11"    = "#"; then echo "    X11"; fi
 if test "$DO_WIN32"  = "#"; then echo "    Win32"; fi
 if test "$DO_GD"     = "#"; then echo "    GD"; fi
