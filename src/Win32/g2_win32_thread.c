@@ -122,8 +122,9 @@ RECT	Rect;
 HWND hWnd;
 MSG msg;
 HDC hDC;
-int py,px;
 HMENU hmenu;
+DWORD style;
+RECT frame;
 
 hmenu = NULL;
 if (g2res_DLL != NULL)
@@ -132,33 +133,36 @@ if (g2res_DLL != NULL)
 	if (hmenu == NULL) errhandler("Load menu failed",NULL);
 	}
 
-// enlarge window for border and menu
-py = pdp->nHeight + GetSystemMetrics(SM_CYMENU) +
-				  2 * GetSystemMetrics(SM_CYBORDER)+
-				  GetSystemMetrics(SM_CYSMCAPTION)+3;
-px = pdp->nWidth + 2 * GetSystemMetrics(SM_CXBORDER)+3;
+style = WS_POPUPWINDOW |WS_OVERLAPPED | WS_CAPTION |  WS_MINIMIZEBOX;
+frame.left = 0;
+frame.top = 0;
+frame.right = pdp->nWidth;
+frame.bottom = pdp->nHeight - ((hmenu==NULL)?GetSystemMetrics(SM_CYMENU):0);
+
+AdjustWindowRect(&frame,style,1);
 
 /* Save the instance handle in static variable, which will be used in  */
 /* many subsequence calls from this application to Windows.            */
 
   /* Create a main window for this application instance.  */
-  pdp->hinst = GetModuleHandle(NULL);
+pdp->hinst = GetModuleHandle(NULL);
 
-  hWnd = CreateWindow(
+hWnd = CreateWindow(
 	 "g2Window",           // See RegisterClass() call.
 	 pdp->title,		 // Text for window title bar.
-	 WS_POPUPWINDOW | WS_CAPTION |WS_OVERLAPPED | WS_MINIMIZEBOX,
+	 style,
 	 pdp->x, pdp->y,
-	 px, py,
+	 frame.right - frame.left,   // width
+	 frame.bottom - frame.top,   // height
 	 NULL,                  // Overlapped windows have no parent.
-	 hmenu,                  // Use the window class menu.
+	 hmenu,                 // Use the window class menu.
 	 0,                     // This instance owns this window.
 	 NULL                   // Pointer not needed.
   );
  
   // If window could not be created, return "failure" 
  
-  if (!hWnd)
+if (!hWnd)
 	 {
 	 errhandler("CreateWindow",NULL);
 	 return (FALSE);   // return failure :((
