@@ -123,6 +123,8 @@ G2L void g2_image(int dev,
 G2L void g2_set_QP(int dev, double d, enum QPshape shape);
 G2L void g2_plot_QP(int dev, double x, double y);
 
+G2L void g2_query_pointer(int dev, double *x, double *y, unsigned int *button);
+
     
  /* Tijs Michels */
  /* 06/16/99	 */
