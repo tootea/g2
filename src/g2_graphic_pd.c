@@ -558,7 +558,7 @@ void g2_arc_pd(g2_physical_device *pd,
     } else {
 	double a, da, *pt;			  /* emulate arc */
 	int N, i;
-	N=(int)fabs(a2-a1)+8;
+	N=(a2==a1)?360:(int)fabs(a2-a1)+8;
 	a=a1*2.*PI/360.;
 	da=((a2>a1)? (a2-a1):360.-(a1-a2))*2.*PI/360./(N-1);
 	pt=g2_malloc(2*N*sizeof(double));
@@ -604,7 +604,7 @@ void g2_filled_arc_pd(g2_physical_device *pd,
     } else {
 	double a, da, *pt;			  /* emulate filled arc */
 	int N, i;
-	N=(int)fabs(a2-a1)+8;
+	N=(a2==a1)?360:(int)fabs(a2-a1)+8;
 	a=a1*2.*PI/360.;
 	da=((a2>a1)? (a2-a1):360.-(a1-a2))*2.*PI/360./(N-1);
 	pt=g2_malloc(2*(N+1)*sizeof(double));
