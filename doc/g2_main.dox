@@ -11,11 +11,12 @@ documentation in the doxygen format */
 
 
 
-/**
+/** \mainpage
 
-\mainpage
 
 \section licence License Notice
+
+Copyright (C) Ljubomir Milanovic & Horst Wagner.
 
 This library is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as
@@ -288,8 +289,21 @@ same arguments as the open functions in the C version.
 See the perl documentation (perldoc G2) for more details and the test.pl
 script for a more extensive example.
 
+\section Contact
 
-\section appendix    Appendix
+You can contact the authors and contributors by e-mail (/ is @ and - is .):
+
+- Ljubomir Milanovic: 			ljubo/users-sourceforge-net
+- Horst Wagner:       			wagner/users-sourceforge-net
+- Tijs Michels (spline implementation):	tijs/vimec-nl
+
+or visit g2 home page on: http://g2.sourceforge.net/
+
+*/
+
+
+
+/** \page paper  PS paper sizes
 
 
 \subsection paper PostScript paper sizes

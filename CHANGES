@@ -6,6 +6,7 @@
 - added some new configuration parameters and slightly changed
   configuration naming convention (g2_config.h)
 - added doxygen comments for automatic docu generation
+- general documentation update
 
 0.50
 ====

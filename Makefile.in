@@ -4,7 +4,7 @@
 #
 #
 
-G2_VERSION = 0.51
+G2_VERSION = 0.52
 
 #
 # g2 installation directories
@@ -94,6 +94,14 @@ install: libg2.a
 		$(INSTALL_DATA) $$IFILE  $(INCDIR); \
 	done
 
+release: clean
+	(cd ./doc ; doxygen Doxyfile)
+	(cd ./doc/latex ; make ps ; make pdf)
+	cp ./doc/latex/refman.ps  ./doc/g2_refman.ps
+	cp ./doc/latex/refman.pdf ./doc/g2_refman.pdf
+	rm -r ./doc/latex
+
+
 clean:
 	-(cd ./demo ; make clean)
 	-rm -f $(OBJ)
@@ -107,7 +115,7 @@ clean:
 	-rm -f ./libg2.@LD_SHARED_EXT@
 	-rm -f libg2.$(G2_VERSION).a
 	-rm -f a.out
-	-rm -fr doc/doxygen_output
+	-rm -fr doc/html/ doc/latex/ doc/g2_refman.ps doc/g2_refman.pdf
 
 demo:	libg2.a
 	(cd ./demo ; make)
