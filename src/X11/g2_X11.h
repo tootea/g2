@@ -18,6 +18,12 @@
 #ifndef _G2_X11_H
 #define _G2_X11_H
 
+#if defined(__cplusplus)
+extern "C"
+{
+#endif
+
+
 int g2_open_X11(int width, int height);
 
 int g2_open_X11X(int width, int height,
@@ -25,6 +31,10 @@ int g2_open_X11X(int width, int height,
 		 char *window_name, char *icon_name,
 		 char *icon_data,
 		 int icon_width, int icon_height);
+
+#if defined(__cplusplus)
+} /* end extern "C" */
+#endif
 
 #endif /* _G2_X11_H */
 

@@ -19,8 +19,37 @@
 #ifndef _G2_GIF_H
 #define _G2_GIF_H
 
+#if defined(__cplusplus)
+extern "C"
+{
+#endif
+
 #include <stdio.h>
 
-int  g2_open_GIF(const char *filename, int width, int height);
+// Common Library header for DLL and application
+#ifdef WIN32
+#ifdef G2DLL
+#ifdef MAKEDLL
+/* Create DLL */
+#define LINKDLL __declspec( dllexport)
+#else
+/* Use DLL */
+#define LINKDLL __declspec( dllimport)
+#endif
+#else 
+/* Use static win32 */
+#define LINKDLL
+#endif
+#else
+/* Use non-win32 */
+#define LINKDLL
+#endif
+
+LINKDLL int  g2_open_GIF(const char *filename, int width, int height);
+
+#if defined(__cplusplus)
+} /* end extern "C" */
+#endif
+
 
 #endif /* _G2_GIF_H */

@@ -16,9 +16,41 @@
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ******************************************************************************/
 /* This is g2_win32.h */
+#ifndef _G2_WIN32_H
+#define _G2_WIN32_H
+
+#if defined(__cplusplus)
+extern "C"
+{
+#endif
 
 #include <stdio.h>
 
-int  g2_open_win32(int width, int height, const char *filename,int type);
+// Common Library header for DLL and application
+#ifdef WIN32
+#ifdef G2DLL
+#ifdef MAKEDLL
+/* Create DLL */
+#define LINKDLL __declspec( dllexport)
+#else
+/* Use DLL */
+#define LINKDLL __declspec( dllimport)
+#endif
+#else 
+/* Use static win32 */
+#define LINKDLL
+#endif
+#else
+/* Use non-win32 */
+#define LINKDLL
+#endif
+
+LINKDLL int  g2_open_win32(int width, int height, const char *filename,int type);
 
 
+#if defined(__cplusplus)
+} /* end extern "C" */
+#endif
+
+
+#endif /* _G2_WIN32_H */

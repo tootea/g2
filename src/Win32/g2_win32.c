@@ -42,33 +42,33 @@ HINSTANCE g2res_DLL;	/* Instance of the resource DLL */
 #endif /* PI */
 
 /* someday their might be a DLL version of g2 */
-#ifdef DLL
-BOOL WINAPI DllMain (HANDLE hDLL, DWORD dwReason, LPVOID lpReserved)
+#ifdef G2DLL
+BOOL WINAPI DllMain( HANDLE hModule, DWORD fdwreason,  LPVOID lpReserved )
 {
-
-  switch (dwReason)
-  {
+    switch(fdwreason) {
     case DLL_PROCESS_ATTACH:
-    {
-      break;
-    }
-
-
+    // The DLL is being mapped into process's address space
+    //  Do any required initialization on a per application basis, return FALSE if failed
+    MessageBox(NULL, "DLL Process Attach", "DLL Message 1", MB_OK);    
+	break;
+    case DLL_THREAD_ATTACH:
+    // A thread is created. Do any required initialization on a per thread basis
+    MessageBox(NULL, "DLL Thread Attach", "DLL Message 1", MB_OK);    
+    break;
+    case DLL_THREAD_DETACH:
+    // Thread exits with  cleanup
+    MessageBox(NULL, "DLL Thread Detach", "DLL Message 1", MB_OK);    
+    break;
     case DLL_PROCESS_DETACH:
-    {
-      break;
+    // The DLL unmapped from process's address space. Do necessary cleanup
+    MessageBox(NULL, "DLL Process Detach", "DLL Message 1", MB_OK);    
+    break;
+	default:
+	MessageBox(NULL, "DLL default", "DLL Message 1", MB_OK);    
+
     }
-
-
-    default:
-
-      if (!_CRT_INIT (hDLL, dwReason, lpReserved))
-        return FALSE;
-      break;
-  }
-  return TRUE;
+    return TRUE;
 }
-
 #endif
 
 
@@ -488,13 +488,14 @@ int InitApplication()
 	  return FALSE;
 	  }
   g2_win32_registered = TRUE;
-
+  return TRUE;
 }
 
 
 
 int  g2_open_win32(int width, int height, const char *title, int type)
 	{
+/*	const char *title = "title";*/
 	int pid=0,vid;
 	long ThreadID;
 
@@ -599,7 +600,7 @@ int  g2_open_win32(int width, int height, const char *title, int type)
 			break;
 			}
 		default:
-			return -1;
+			return height;
 		}
 		SetTextAlign(PDP->hMemDC,TA_BOTTOM | TA_LEFT);
 		vid = g2_register_physical_device(pid, pdp,
