@@ -24,7 +24,7 @@ CPP = /lib/cpp
 #F77 = f77 -n32
 #CPP = /lib/cpp -P -DFORTRAN
 
-CFLAGS = -I../src -I../src/X11 -I../src/PS -I../src/GD -I../src/FIG -Wall  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_FIG=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
+CFLAGS = -I../src -I../src/X11 -I../src/PS -I../src/GD -I../src/FIG -g -O2  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_FIG=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
 CXXFLAGS = -I../src -I../src/X11 -I../src/PS -I../src/FIG/ -I../src/GD -g -O2  -DLINUX=1 -DDO_PS=1 -DDO_FIG=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
 LDFLAGS = -L.. -lg2   -L/usr/X11R6/lib -L/usr/local/lib -lm -lX11 -lgd
 
