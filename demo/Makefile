@@ -67,6 +67,6 @@ g2testf:
 	$(F77) g2_test.f $(LDFLAGS) -o g2testf
 
 clean:
-	-rm $(DEMO) g2_testf demo_f *~ core *.ps *.gif
+	-rm $(DEMO) g2_testf demo_f *~ core *.ps *.eps *.png *.jpg *.gif
 
 
