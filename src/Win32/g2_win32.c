@@ -428,6 +428,7 @@ int g2_win32_FilledArc(int pid, void *pdp, int x, int y, int r1, int r2, double 
 int g2_win32_DrawString(int pid, void *pdp, int x, int y, const char *text)
 	{
 	SetTextColor(PDP->hMemDC,PDP->PenColor);
+	SetBkMode(PDP->hMemDC,TRANSPARENT);
 	return TextOut(PDP->hMemDC,x,y,text,strlen(text));
     }
 
@@ -505,7 +506,7 @@ int InitApplication()
 	  		errhandler("Error in LoadIcon",NULL);
 	  }
   wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-  wc.hbrBackground = GetStockObject(WHITE_BRUSH);
+  wc.hbrBackground = NULL;
   wc.lpszMenuName = "G2WIN32";	
   wc.lpszClassName = "g2Window";	// Name used in call to CreateWindow.
 
