@@ -6,6 +6,21 @@
 
 
 CC = @CC@
+##Linux
+F77 = g77
+CPP = /lib/cpp
+
+##OSF
+#F77 = f77
+#F77_FLAGS=-i8
+
+##AIX
+#F77 = xlf
+#CPP = /usr/ccs/lib/cpp
+
+##IRIX
+#F77 = f77 -n32
+#CPP = /lib/cpp -P -DFORTRAN
 
 CFLAGS = -I../src -I../src/X11 -I../src/PS -I../src/GIF @CFLAGS@ @DEFS@
 LDFLAGS = -L.. -lg2 @LDFLAGS@
@@ -40,10 +55,13 @@ simple_GIF:  simple_GIF.c
 	$(CC) $(CFLAGS) simple_GIF.c $(LDFLAGS) -o $@
 
 demo_f: demo_f.f
-	f77 -i8 demo_f.f $(LDFLAGS) -o $@
+	$(F77) $(F77_FLAGS) demo_f.f $(LDFLAGS) -o $@
 
+g2testf:
+	$(CPP) @DEFS@ -E g2_test.F >g2_test.f
+	$(F77) g2_test.f $(LDFLAGS) -o g2testf
 
 clean:
-	-rm $(DEMO) demo_f *~ core *.ps *.gif
+	-rm $(DEMO) g2_testf demo_f *~ core *.ps *.gif
 
 
