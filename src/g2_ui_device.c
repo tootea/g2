@@ -23,11 +23,19 @@
 #include "g2_device.h"
 #include "g2_util.h"
 
+/**
+ * \ingroup interface
+ * \defgroup device devices control
+ */
 
-/*
+
+/**
  *
- * Close and delete device
+ * Close and delete a device.
  *
+ * \param dev device
+ *
+ * \ingroup device
  */
 void g2_close(int dev)
 {
@@ -56,10 +64,17 @@ void g2_close(int dev)
 }
 
 
-/*
+/**
  *
- * Set auto flush mode
+ * Set auto flush mode for device \a dev. Auto flush mode means that after each graphical
+ * operation g2 library automatically calls flush function to ensure that output is realy
+ * displayed. However, freqent flushing decreases performance. Alternative is to flush
+ * output when needed by calling g2_flush function.
  *
+ * \param dev device
+ * \param on_off 1-on 0-off
+ *
+ * \ingroup device
  */
 void g2_set_auto_flush(int dev, int on_off)
 {
@@ -90,10 +105,17 @@ void g2_set_auto_flush(int dev, int on_off)
 }
 
 
-/*
+/**
  *
- * Set user coordinate system
+ * Set the user coordinate system.
  *
+ * \param dev device
+ * \param x_origin x coordinate of the new origin (expressed in the default coordinate system)
+ * \param y_origin x coordinate of the new origin (expressed in the default coordinate system)
+ * \param x_mul x scaling factor
+ * \param y_mul y scaling factor
+ *
+ * \ingroup device
  */
 void g2_set_coordinate_system(int dev,
 			      double x_origin, double y_origin,
@@ -138,10 +160,16 @@ void g2_set_coordinate_system(int dev,
 
 
 
-/*
+/**
  *
- * Get last accessed device (lsd)
+ * Get the last accessed device. G2LD macro is defined as the g2_ld function.
  *
+ * \code
+ *   g2_open_X11(100, 100);
+ *   g2_plot(G2LD, 50, 50);
+ * \endcode
+ *
+ * \ingroup device
  */
 int g2_ld(void)
 {
@@ -150,10 +178,13 @@ int g2_ld(void)
 
 
 
-/*
+/**
  *
- * Set last accessed device (lsd)
+ * Set the last accessed device. See also g2_ld()  function.
  *
+ * \param dev device
+ *
+ * \ingroup device
  */
 void g2_set_ld(int dev)
 {

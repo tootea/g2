@@ -23,9 +23,37 @@
 #include "g2_virtual_device.h"
 #include "g2_util.h"
 
-
-/*
+/**
+ * \ingroup interface
+ * \defgroup vd virtual device related functions
  *
+ * Virtual device is a method to redirect g2 output to multiple devices. Here is an example:
+ *
+ * \code
+ *    int d1 = g2_open_X11(100, 100);      create first X11 window
+ *    int d2 = g2_open_X11(100, 100);      create 2nd X11 window
+ *
+ *    int vd = g2_open_vd();               open a new virtual device
+ *
+ *    g2_attach(vd, d1);                   attach d1 (1st window) to virtual device
+ *    g2_attach(vd, d2);                   attach d2 (2nd window) to virtual device
+ *
+ *    g2_plot(d1, 11, 11);                 output to the 1st X11 window
+ *    g2_plot(d2, 12, 12);                 output to the 2nd X11 window 
+ *    g2_plot(vd, 13, 13);                 output to both X11 windows
+ * \endcode
+ *
+ */
+
+
+
+/**
+ *
+ * Create a new virtual device.
+ *
+ * \return virtual device ID
+ *
+ * \ingroup vd
  */
 int g2_open_vd(void)
 {
@@ -36,8 +64,13 @@ int g2_open_vd(void)
 }
 
 
-/*
+/**
+ * Attach a device to virtual device \a vd_dev.
  *
+ * \param vd_dev virtual device (create virtual device by calling g2_open_vd() )
+ * \param dev device
+ *
+ * \ingroup vd
  */
 void g2_attach(int vd_dev, int dev)
 {
@@ -76,8 +109,14 @@ void g2_attach(int vd_dev, int dev)
 }
 
 
-/*
+/**
  *
+ * Dettach a device from the virtual device \a vd_dev.
+ *
+ * \param vd_dev virtual device
+ * \param dev device
+ *
+ * \ingroup vd
  */
 void g2_detach(int vd_dev, int dev)
 {

@@ -24,11 +24,40 @@
 #include "g2_device.h"
 #include "g2_control_pd.h"
 
+/**
+ * \ingroup interface
+ * \defgroup color color manipulations
+ *
+ * The color concept used in the g2 library is inspired by Sir Clive
+ * Sinclair solution implemented in the ZX Spectrum computer. With the
+ * g2_pen() function it is possible to choose a pen created by the
+ * g2_ink() function. Note that g2_ink function is only defined for
+ * physical devices. The predefined colors (see g2_test demo program)
+ * have pens from 0 till 26 (inclusive).
+ *
+ * Some basic colors are: 
+ *  - 0 white
+ *  - 1 black
+ *  - 3 blue
+ *  - 7 green
+ *  - 19 red
+ *  - 25 yellow
+ *
+ */
 
-/*
+
+/**
+ * \ingroup interface
+ * \defgroup control output control
+ */
+ 
+/**
  *
- * Flush output
+ * Flush output buffers.
  *
+ * \param dev device id
+ *
+ * \ingroup control
  */
 void g2_flush(int dev)
 {
@@ -58,10 +87,13 @@ void g2_flush(int dev)
 
 
 
-/*
+/**
  *
  * Save output
  *
+ * \param dev device id
+ *
+ * \ingroup control
  */
 void g2_save(int dev)
 {
@@ -91,10 +123,13 @@ void g2_save(int dev)
 
 
 
-/*
+/**
  *
  * Clear device
  *
+ * \param dev device number
+ *
+ * \ingroup control
  */
 void g2_clear(int dev)
 {
@@ -127,11 +162,14 @@ void g2_clear(int dev)
 }
 
 
-
-/*
+/**
  *
- * Set pen
+ * Set pen color for all following operations, see also g2_ink().
  *
+ * \param dev device
+ * \param color pen (either one of default pens 0-26, or a pen returned by g2_ink() )
+ *
+ * \ingroup color
  */
 void g2_pen(int dev, int color)
 {
@@ -161,10 +199,14 @@ void g2_pen(int dev, int color)
 
 
 
-/*
+/**
  *
- * Set background color
+ * Set the background color
  *
+ * \param dev device
+ * \param color pen (either one of default pens 0-26, or a pen returned by g2_ink() )
+ *
+ * \ingroup color
  */
 void g2_set_background(int dev, int color)
 {
@@ -198,10 +240,17 @@ void g2_set_background(int dev, int color)
 
 
 
-/*
+/**
  *
- * Set ink
+ * Create an ink. To put ink into the pen use g2_pen().
  *
+ * \param pd_dev physical device
+ * \param red red component (0-1) according to the RGB color model
+ * \param green green component (0-1) according to the RGB color model
+ * \param blue blue component (0-1) according to the RGB color model
+ * \return new pen, see g2_pen()
+ *
+ * \ingroup color
  */
 int g2_ink(int pd_dev, double red, double green, double blue)
 {
@@ -238,10 +287,13 @@ int g2_ink(int pd_dev, double red, double green, double blue)
 
 
 
-/*
+/**
  *
- * Reset palette
+ * Clear collor palette (remove all inks) and reallocate basic colors.
  *
+ * \param dev device
+ *
+ * \ingroup color
  */
 void g2_reset_palette(int dev)
 {
@@ -272,10 +324,13 @@ void g2_reset_palette(int dev)
 
 
 
-/*
+/**
  *
- * Clear palette
+ * Remove all inks.
  *
+ * \param dev device
+ *
+ * \ingroup color
  */
 void g2_clear_palette(int dev)
 {
@@ -304,10 +359,13 @@ void g2_clear_palette(int dev)
 }
 
 
-/*
+/**
  *
  * Allocate basic colors
  *
+ * \param dev device
+ *
+ * \ingroup color
  */
 void g2_allocate_basic_colors(int dev)
 {
@@ -336,10 +394,14 @@ void g2_allocate_basic_colors(int dev)
 }
 
 
-/*
+/**
  *
  * Set font size
  *
+ * \param dev device
+ * \param size new font size
+ *
+ * \ingroup control
  */
 void g2_set_font_size(int dev, double size)
 {
@@ -369,10 +431,14 @@ void g2_set_font_size(int dev, double size)
 
 
 
-/*
+/**
  *
- * Set line width
+ * Set line width.
  *
+ * \param dev device
+ * \param w new line width
+ *
+ * \ingroup control
  */
 void g2_set_line_width(int dev, double w)
 {
@@ -402,10 +468,15 @@ void g2_set_line_width(int dev, double w)
 
 
 
-/*
+/**
  *
- * Set dash
+ * Set line dash. Set \a N to 0 and \a dashes to NULL to restore solid line.
  *
+ * \param dev device
+ * \param N number of dash components (0 for solid line)
+ * \param dashes vector of dash lengths (black, white, black, ...)
+ *
+ * \ingroup control
  */
 void g2_set_dash(int dev, int N, double *dashes)
 {
@@ -438,10 +509,15 @@ void g2_set_dash(int dev, int N, double *dashes)
 
 
 
-/*
+/**
  *
- * Set QP size and shape
+ * Set QuasiPixel size and shape.
  *
+ * \param dev device
+ * \param d size
+ * \param shape shape (rectangle or circle, see ::QPshape )
+ *
+ * \ingroup control
  */
 void g2_set_QP(int dev, double d, enum QPshape shape)
 {
@@ -459,10 +535,17 @@ void g2_set_QP(int dev, double d, enum QPshape shape)
 }
 
 
-/*
+/**
  *
- * Query pointer position and button state
+ * Query pointer (e.g. mouse for X11) position and button state. See
+ * the demo program pointer.c for an example.
  *
+ * \param dev device
+ * \param x returns pointer x coordinate
+ * \param y returns pointer y coordinate
+ * \param button returns button state
+ *
+ * \ingroup control
  */
 void g2_query_pointer(int dev, double *x, double *y, unsigned int *button)
 {

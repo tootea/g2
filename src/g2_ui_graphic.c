@@ -22,10 +22,24 @@
 #include "g2_graphic_pd.h"
 #include "g2_util.h"
 
-/*
+/**
+ * \defgroup interface g2 User Interface
+ */
+
+/**
+ * \ingroup interface
+ * \defgroup graphic graphical output
+ */
+
+/**
  *
- * Move graphic cursor
+ * Move graphic cursor.
  *
+ * \param dev device
+ * \param x x coordinate
+ * \param y y coordinate
+ *
+ * \ingroup graphic
  */
 void g2_move(int dev, double x, double y)
 {
@@ -57,10 +71,15 @@ void g2_move(int dev, double x, double y)
 
 
 
-/*
+/**
  *
- * Move graphic cursor relative to gc
+ * Move graphic cursor relative to the currner graphical cursor position.
  *
+ * \param dev device
+ * \param dx x coordinate increment
+ * \param dy y coordinate increment
+ *
+ * \ingroup graphic
  */
 void g2_move_r(int dev, double dx, double dy)
 {
@@ -92,10 +111,15 @@ void g2_move_r(int dev, double dx, double dy)
 
 
 
-/*
+/**
  *
- * Plot
+ * Plot a point
  *
+ * \param dev device
+ * \param x x coordinate
+ * \param y y coordinate
+ *
+ * \ingroup graphic
  */
 void g2_plot(int dev, double x, double y)
 {
@@ -132,10 +156,15 @@ void g2_plot(int dev, double x, double y)
 
 
 
-/*
+/**
  *
- * Plot relative
+ * Plot a point relative to graphical cursor.
  *
+ * \param dev device
+ * \param rx relative x coordinate 
+ * \param ry relative y coordinate
+ *
+ * \ingroup graphic
  */
 void g2_plot_r(int dev, double rx, double ry)
 {
@@ -153,10 +182,17 @@ void g2_plot_r(int dev, double rx, double ry)
 
 
 
-/*
+/**
  *
- * Draw line
+ * Draw a line from \p x1, \p y1 to \p x2, \p y2.
  *
+ * \param dev device
+ * \param x1 see above
+ * \param y1 see above
+ * \param x2 see above
+ * \param y2 see above
+ *
+ * \ingroup graphic
  */
 void g2_line(int dev, double x1, double y1, double x2, double y2)
 {
@@ -193,10 +229,15 @@ void g2_line(int dev, double x1, double y1, double x2, double y2)
 
 
 
-/*
+/**
  *
- * Draw line relative to gc
+ * Draw line relative to the graphic cursor.
  *
+ * \param dev device
+ * \param dx relative x coordinate
+ * \param dy relative y coordinate
+ *
+ * \ingroup graphic
  */
 void g2_line_r(int dev, double dx, double dy)
 {
@@ -213,10 +254,15 @@ void g2_line_r(int dev, double dx, double dy)
 
 
 
-/*
+/**
  *
- * Draw line till point
+ * Draw line from graphic cursor to the point \a x, \a y
  *
+ * \param dev device
+ * \param x x coordinate
+ * \param y y coordinate
+ *
+ * \ingroup graphic
  */
 void g2_line_to(int dev, double x, double y)
 {
@@ -233,10 +279,15 @@ void g2_line_to(int dev, double x, double y)
 
 
 
-/*
+/**
  *
- * Draw poly line
+ * Draw a poly line.
  *
+ * \param dev device
+ * \param N_pt number of points (Note: It is not size of \a points vector!)
+ * \param points vector of coordinates: x1, y1, x2, y2, ...
+ *
+ * \ingroup graphic
  */
 void g2_poly_line(int dev, int N_pt, double *points)
 {
@@ -273,10 +324,19 @@ void g2_poly_line(int dev, int N_pt, double *points)
 
 
 
-/*
+/**
  *
- * Triangle
+ * Draw a triangle described by 3 corner points.
  *
+ * \param dev device
+ * \param x1 x coordinate of the 1st corner
+ * \param y1 y coordinate of the 1st corner
+ * \param x2 x coordinate of the 2nd corner
+ * \param y2 y coordinate of the 2nd corner
+ * \param x3 x coordinate of the 3rd corner
+ * \param y3 y coordinate of the 3rd corner
+ *
+ * \ingroup graphic
  */
 void g2_triangle(int dev,
 		 double x1, double y1,
@@ -319,10 +379,19 @@ void g2_triangle(int dev,
 
 
 
-/*
+/**
  *
- * Filled triangle
+ * Draw a filled triangle specified by the 3 corner points.
  *
+ * \param dev device
+ * \param x1 x coordinate of the 1st corner
+ * \param y1 y coordinate of the 1st corner
+ * \param x2 x coordinate of the 2nd corner
+ * \param y2 y coordinate of the 2nd corner
+ * \param x3 x coordinate of the 3rd corner
+ * \param y3 y coordinate of the 3rd corner
+ *
+ * \ingroup graphic
  */
 void g2_filled_triangle(int dev,
 			double x1, double y1,
@@ -365,10 +434,17 @@ void g2_filled_triangle(int dev,
 
 
 
-/*
+/**
  *
- * Rectangle
+ * Draw a rectangle specified by the two opposite corner points.
  *
+ * \param dev device
+ * \param x1 x coordinate of the 1st corner
+ * \param y1 y coordinate of the 1st corner
+ * \param x2 x coordinate of the 3rd corner
+ * \param y2 y coordinate of the 3rd corner
+ *
+ * \ingroup graphic
  */
 void g2_rectangle(int dev, double x1, double y1, double x2, double y2)
 {
@@ -405,10 +481,17 @@ void g2_rectangle(int dev, double x1, double y1, double x2, double y2)
 
 
 
-/*
+/**
  *
- * Filled rectangle
+ * Draw a filled rectangle specified by the two opposite corner points.
  *
+ * \param dev device
+ * \param x1 x coordinate of the 1st corner
+ * \param y1 y coordinate of the 1st corner
+ * \param x2 x coordinate of the 3rd corner
+ * \param y2 y coordinate of the 3rd corner
+ *
+ * \ingroup graphic
  */
 void g2_filled_rectangle(int dev, double x1, double y1, double x2, double y2)
 {
@@ -445,10 +528,15 @@ void g2_filled_rectangle(int dev, double x1, double y1, double x2, double y2)
 
 
 
-/*
+/**
  *
- * Polygon
+ * Draw a polygon.
  *
+ * \param dev device
+ * \param N_pt number of points (Note: It is not size of \a points vector!)
+ * \param points vector of coordinates: x1, y1, x2, y2, ...
+ *
+ * \ingroup graphic
  */
 void g2_polygon(int dev, int N_pt, double *points)
 {
@@ -482,10 +570,15 @@ void g2_polygon(int dev, int N_pt, double *points)
 
 
 
-/*
+/**
  *
- * Filled polygon
+ * Draw a filled polygon.
  *
+ * \param dev device
+ * \param N_pt number of points (Note: It is not size of \a points vector!)
+ * \param points vector of coordinates: x1, y1, x2, y2, ...
+ *
+ * \ingroup graphic
  */
 void g2_filled_polygon(int dev, int N_pt, double *points)
 {
@@ -519,10 +612,17 @@ void g2_filled_polygon(int dev, int N_pt, double *points)
 
 
 
-/*
+/**
  *
- * Ellipse
+ * Draw an ellipse.
  *
+ * \param dev device
+ * \param x  x coordinate of the center
+ * \param y  y coordinate of the center
+ * \param r1 x radius
+ * \param r2 y radius
+ *
+ * \ingroup graphic
  */
 void g2_ellipse(int dev, double x, double y, double r1, double r2)
 {
@@ -560,10 +660,17 @@ void g2_ellipse(int dev, double x, double y, double r1, double r2)
 
 
 
-/*
+/**
  *
- * Filled ellipse
+ * Draw a filled ellipse.
  *
+ * \param dev device
+ * \param x  x coordinate of the center
+ * \param y  y coordinate of the center
+ * \param r1 x radius
+ * \param r2 y radius
+ *
+ * \ingroup graphic
  */
 void g2_filled_ellipse(int dev, double x, double y, double r1, double r2)
 {
@@ -601,10 +708,16 @@ void g2_filled_ellipse(int dev, double x, double y, double r1, double r2)
 
 
 
-/*
+/**
  *
- * Circle
+ * Draw a circle.
  *
+ * \param dev device
+ * \param x  x coordinate of the center
+ * \param y  y coordinate of the center
+ * \param r  radius
+ *
+ * \ingroup graphic
  */
 void g2_circle(int dev, double x, double y, double r)
 {
@@ -642,10 +755,16 @@ void g2_circle(int dev, double x, double y, double r)
 
 
 
-/*
+/**
  *
- * Filled circle
+ * Draw a filled circle.
  *
+ * \param dev device
+ * \param x  x coordinate of the center
+ * \param y  y coordinate of the center
+ * \param r  radius
+ *
+ * \ingroup graphic
  */
 void g2_filled_circle(int dev, double x, double y, double r)
 {
@@ -682,10 +801,19 @@ void g2_filled_circle(int dev, double x, double y, double r)
 
 
 
-/*
+/**
  *
- * Arc
+ * Draw an arc.
  *
+ * \param dev device
+ * \param x  x coordinate of the center
+ * \param y  y coordinate of the center
+ * \param r1 x radius
+ * \param r2 y radius
+ * \param a1 starting angle (in deg. 0-360)
+ * \param a2 ending angle (in deg. 0-360)
+ *
+ * \ingroup graphic
  */
 void g2_arc(int dev,
 	    double x, double y,
@@ -725,10 +853,19 @@ void g2_arc(int dev,
 
 
 
-/*
+/**
  *
- * Filled arc
+ * Draw a filled arc.
  *
+ * \param dev device
+ * \param x  x coordinate of the center
+ * \param y  y coordinate of the center
+ * \param r1 x radius
+ * \param r2 y radius
+ * \param a1 starting angle (in deg. 0-360)
+ * \param a2 ending angle (in deg. 0-360)
+ *
+ * \ingroup graphic
  */
 void g2_filled_arc(int dev,
 		   double x, double y,
@@ -768,10 +905,16 @@ void g2_filled_arc(int dev,
 
 
 
-/*
+/**
  *
- * Draw string
+ * Draw string, see also g2_set_font_size().
  *
+ * \param dev device
+ * \param x  x coordinate
+ * \param y  y coordinate
+ * \param text null terminated string
+ *
+ * \ingroup graphic
  */
 void g2_string(int dev, double x, double y, const char *text)
 {
@@ -806,10 +949,20 @@ void g2_string(int dev, double x, double y, const char *text)
     __g2_last_device=dev;
 }
 
-/*
+
+
+/**
  *
  * Draw a pen image
  *
+ * \param dev device
+ * \param x  x coordinate
+ * \param y  y coordinate
+ * \param x_size  x size
+ * \param y_size  y size
+ * \param pens vector of x_size*y_size pens: p11, p21, ... pxy, ...
+ *
+ * \ingroup graphic
  */
 void g2_image(int dev, double x, double y, int x_size, int y_size, int *pens)
 {
@@ -846,10 +999,18 @@ void g2_image(int dev, double x, double y, int x_size, int y_size, int *pens)
 
 
 
-/*
+/**
  *
- * Quasi Pixel fake
+ * Quasi Pixel fake. Quasi pixel is introduced to make easier
+ * plotting of cellular automata and related pictures. QP is simple a big pixel as
+ * specified by g2_set_QP(). Coordinates are skaled accordingly, so no recalculation
+ * is needed on client side.
  *
+ * \param dev device
+ * \param x  x coordinate
+ * \param y  y coordinate
+ *
+ * \ingroup graphic
  */
 void g2_plot_QP(int dev, double x, double y)
 {

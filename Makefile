@@ -108,6 +108,7 @@ clean:
 	-rm -f ./libg2.so.0.$(G2_VERSION)
 	-rm -f libg2.$(G2_VERSION).a
 	-rm -f a.out
+	-rm -fr doc/doxygen_output
 
 demo:	libg2.a
 	(cd ./demo ; make)

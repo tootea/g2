@@ -107,6 +107,7 @@ clean:
 	-rm -f ./libg2.@LD_SHARED_EXT@
 	-rm -f libg2.$(G2_VERSION).a
 	-rm -f a.out
+	-rm -fr doc/doxygen_output
 
 demo:	libg2.a
 	(cd ./demo ; make)

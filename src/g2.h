@@ -90,8 +90,8 @@ extern "C"
 
 
 enum QPshape {
-    QPrect,
-    QPcirc
+    QPrect, /**< rectangular quasi pixel */
+    QPcirc  /**< circle as a quasi pixel */
 };
 
 /* compatibility with old versions */
