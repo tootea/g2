@@ -2,11 +2,11 @@
 
                                 Version 0.40
 
-                      (C) 1998 Lj. Milanovic, H. Wagner
+                      (C) 1999 Lj. Milanovic, H. Wagner
 
           To check for news and latest version see the g2-home page
             (http://www.ap.univie.ac.at/users/ljubo/g2/g2.shtml)
-  ------------------------------------------------------------------------
+----------------------------------------------------------------------------
 
 Contents
 
@@ -20,6 +20,7 @@ Getting Started
    * A simple example
    * More examples
    * Fortran interface
+   * Perl interface
 
 g2 Function Reference
 
@@ -31,6 +32,7 @@ g2 Function Reference
         o Triangles, Rectangles, Polygons
         o Circles, Ellipses, Arcs
         o Text
+        o Images
 
    * Style Functions
         o Colors
@@ -47,7 +49,7 @@ Appendix
 
    * PostScript paper sizes
 
-  ------------------------------------------------------------------------
+----------------------------------------------------------------------------
 License Notice
 
 This program is covered with GNU General Public License (GPL) and  not with
@@ -73,6 +75,7 @@ Short version (if you are in hurry):
    * User definable coordinate system
    * Written in ANSI-C
    * Tested under Digital Unix, AIX, Linux, VMS and Windows NT
+   * Perl support
    * Fortran interface
 
 Long version:
@@ -103,7 +106,7 @@ g2_plot---> | Virtual device: id |--------> X11:   g2_attach(id_X11,...
 
 If you don't need or like the concept of virtual devices, simply ignore it.
 
-  ------------------------------------------------------------------------
+----------------------------------------------------------------------------
 Getting Started
 
 Preinstallation tasks:
@@ -154,8 +157,17 @@ WINDOWS NT
      possible to support both X-windows and native NT/95 windows at the same
      time.
 
-VMS
+PERL
 
+   * Change to directory g2_perl
+   * Perform following steps
+        o perl Makefile.PL
+        o make
+        o make test
+        o make install
+   * See the perl interface section for more information
+
+VMS
 
    * Try to extract either the tar.gz or the zip distribution (whatever
      is easier for you)
@@ -255,46 +267,45 @@ following differences exist:
 A short Fortran example:
 
         program demo
-
         real d,color
-
         d=g2_open_PS('demo_f.ps', 4.0, 1.0)
-
         call g2_plot(d, 50.0, 50.0)
-
         call g2_string(d, 25.0, 75.0, 'TEST ')
-
         color=g2_ink(d, 1.0, 0.0, 0.0)
-
         write (6,*) color
-
         call g2_pen(d, color)
-
         call g2_circle(d, 20.0, 20.0, 10.0)
-
         call g2_flush(d)
-
         call g2_close(d)
-
         stop
-
         end
 
+Perl interface
+
+The perl interface for g2 is currently tested for Linux and Digital
+Unix/OSF.  Function names in perl are the same as in C, however the device
+itself is implemented object orientated, i.e. the device argument is ommited
+in all functions.
+E.g., following simple perl script:
 
 
+          use G2;
 
+          $d = newX11 G2::Device(100,100);
+          $d->circle(10, 10, 20);
+          $d->string(20, 40, "Hello World");
 
+          print "\nDone.\n[Enter]\n";
+          getc(STDIN);
 
+          $d->close()
 
+The creator functions are newX11, newGIF, newPS, etc. and accept the same
+arguments as the open functions in the C version.
+See the perl documentation (perldoc G2) for more details and the test.pl
+script for a more extensive example.
 
-
-
-
-
-
-
-
-  ------------------------------------------------------------------------
+----------------------------------------------------------------------------
 
 g2 Function Reference
 
@@ -357,9 +368,9 @@ Device Functions
           returns : device id of new virtual device.
 
         void g2_attach(int vd_dev, int dev)
-            attach a device to an existing virtual device
+           attach a device to an existing virtual device
                 vd_dev : device id of virtual device to attach to.
-            dev : device id of device to attach, this can be either a
+           dev : device id of device to attach, this can be either a
 physical or a virtual device.
 
         void g2_detach(int vd_dev, int dev)
@@ -392,7 +403,7 @@ Device Functions
           Returns id of last accessed device (macro G2LD is defined as
           g2_ld() )
 
-  ------------------------------------------------------------------------
+----------------------------------------------------------------------------
 
 Drawing Functions
 
@@ -511,7 +522,16 @@ Text
           x,y: Position of text
           text: pointer to text string
 
-  ------------------------------------------------------------------------
+Images
+
+     void g2_image(int dev, double x, double y,  int x_size, int y_size, int
+     *pens)
+          Draw a pen image on device dev
+          x,y: Position of image (lower left corner)
+          x_size,y_size: size of image
+          pens: integer array of size x_size x y_size specifying pen colors
+
+----------------------------------------------------------------------------
 
 Style Functions
 
@@ -545,7 +565,7 @@ Text
           set font size for device dev
           size: new font size
 
-  ------------------------------------------------------------------------
+----------------------------------------------------------------------------
 
 Device Support
 
@@ -604,9 +624,7 @@ physical devices easy and straightforward.
 (This section is obviously still in work)
 
 
-Known Bugs
-
-
+Known bugs and problems
 
 Win32:
 
@@ -619,6 +637,21 @@ Win32:
    * Dashed lines should not work with Win95 according to MS-VC++
      documentation (not tested).
 
+Perl:
+
+   * You cannot use a perl G2 device variable twice, i.e.
+
+     $d = newX11(100,100);
+     .....
+     $d->close();
+     $d = newX11(200,200);
+
+     will not work properly. This should be fixed in the next release.
+
+GIF:
+
+   * dashed lines are not yet implemented
+
 ToDo
 
 General:
@@ -628,7 +661,7 @@ General:
 
    * Documentation for implementing new physical devices.
 
-   * New
+   * Implement native image support and image import functions.
 
 Win32:
 
@@ -636,8 +669,6 @@ Win32:
      the use of g2 from applications such as Word, Excel, Access, etc.
 
 Appendix
-
-
 
 PostScript paper sizes
 
