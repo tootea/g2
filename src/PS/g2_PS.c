@@ -167,12 +167,12 @@ int g2_PS_write_file_header(g2_PS_device *ps)
 		}
 	else if (ps->format == g2_PS_EPSF_CLIP)
 		{
-		fprintf(ps->fp,"%%!PS-Adobe-2.0 EPSF-2.0\n");
+		fprintf(ps->fp,"%%!PS-Adobe-3.0 EPSF-2.0\n");
 		fprintf(ps->fp,"%%%%BoundingBox: 0 0 %d %d\n",ps->width,ps->height);
 		}
 	else if (ps->format == g2_PS_EPSF)
 		{
-		fprintf(ps->fp,"%%!PS-Adobe-2.0 EPSF-2.0\n");
+		fprintf(ps->fp,"%%!PS-Adobe-3.0 EPSF-2.0\n");
 		fprintf(ps->fp,"%%%%BoundingBox: (atend)\n");
 		}
 	
@@ -193,11 +193,11 @@ int g2_PS_write_file_header(g2_PS_device *ps)
 	fputs(g2_PS_operators[i], ps->fp);
     
     fprintf(ps->fp,"newpath\n");
-    if(ps->orient==g2_PS_land && ps->format == g2_PS_PostScript)
+    if((ps->orient==g2_PS_land) && (ps->format == g2_PS_PostScript))
 		fprintf(ps->fp,"%d 0 translate 90 rotate\n",
 			g2_PS_paper_size[ps->paper][0]);
 
-    fputs("%%PageTrailer\n%%Page: 0 0\n", ps->fp);
+    fputs("%%PageTrailer\n%%Page: 1 1\n", ps->fp);
     
     return 0;
 }
