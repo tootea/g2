@@ -25,30 +25,29 @@
 
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include "g2.h"
 #include "g2_util.h"
 
-#define eps 1.0e-12
+static void g2_split(int n, const double *points, double *x, double *y);
+static void g2_c_spline(int n, const double *points, int m, double *sxy);
+static void g2_c_b_spline(int n, const double *points, int m, double *sxy);
+static void g2_c_raspln(int n, const double *points, double tn, double *sxy);
+static void g2_c_newton(int n, const double *c1, const double *c2, int o, const double *xv, double *yv);
+static void g2_c_para_3(int n, const double *points, double *sxy);
+static void g2_c_para_5(int n, const double *points, double *sxy);
 
-void g2_split(int n, int o, double *points, double *x, double *y);
-void g2_c_spline(int n, double *points, int m, double *sxy);
-void g2_c_b_spline(int n, double *points, int m, double *sxy);
-void g2_c_raspln(int n, double *points, double tn, double *sxy);
-void g2_c_newton(int n, double *c1, double *c2, int o, double *xv, double *yv);
-void g2_c_para_3(int n, double *points, double *sxy);
-void g2_c_para_5(int n, double *points, double *sxy);
-
-void g2_split(int n, int o, double *points, double *x, double *y)
+void g2_split(int n, const double *points, double *x, double *y)
 {
    int i;
    for (i = 0; i < n; i++) {
-      x[i] = points[(o+o+i+i)];
-      y[i] = points[(o+o+i+i+1)];
+      x[i] = points[i+i];
+      y[i] = points[i+i+1];
    }
 }
 
-void g2_c_spline(int n, double *points, int m, double *sxy)
+#define eps 1.e-12
+
+void g2_c_spline(int n, const double *points, int m, double *sxy)
 
 /*
  *	FUNCTIONAL DESCRIPTION:
@@ -85,76 +84,68 @@ void g2_c_spline(int n, double *points, int m, double *sxy)
  *	AUTHORS:
  *
  *	Josef Heinen	04/06/88	<J.Heinen@KFA-Juelich.de>
- *	Tijs Michels	06/16/99	<M.H.M.Michels@kub.nl>
+ *	Tijs Michels	06/16/99	<t.michels@vimec.nl>
  */
 
 {
    int i, j;
-   double *x;
-   double *y;
-   double *g;
-   double p, w, k, u, delta_g;
+   double *x, *y, *g, *h;
+   double k, u, delta_g;
 
-   x = (double *) calloc (sizeof(double), n);
-   y = (double *) calloc (sizeof(double), n);
-   g2_split(n, 0, points, x, y);
+   x = (double *) g2_malloc(n*4*sizeof(double));
+   y = x + n;
+   g = y + n;
+   h = g + n; /* for the constant copy of g */
+   g2_split(n, points, x, y);
 
-   u = (x[(n-1)] - x[0]) / (m-1);
-   for (j = 0; j < m; j++)	sxy[(j+j)] = ((j * u) + x[0]);
+   n--; /* last value index */
+   k =  x[0]; /* look up once */
+   u = (x[n] - k) / (m - 1); /* calculate step outside loop */
+   for (j = 0; j < m; j++)	sxy[j+j] = j * u + k; /* x-coordinates */
 
-   g = (double *) calloc (sizeof(double), (n+n));
-
-   for (i = 1; i < (n-1); i++) {
-      *(g+i) = 2. * (((y[(i+1)] - y[i]) / (x[(i+1)] - x[i])) -
-		     ((y[i] - y[(i-1)]) / (x[i] - x[(i-1)])))
-		  / (x[(i+1)] - x[(i-1)]);
-      *(g+n+i) = 1.5 * *(g+i);
+   for (i = 1; i < n; i++) {
+      g[i] = 2. * ((y[i+1] - y[i]) / (x[i+1] - x[i]) -
+		   (y[i] - y[i-1]) / (x[i] - x[i-1]))
+	/ (x[i+1] - x[i-1]); /* whereas g[i] will later be changed repeatedly */
+      h[i] = 1.5 * g[i];     /* copy h[i] of g[i] will remain constant */
    }
 
-   w = 8. - (4. * sqrt(3.));
-   k = 0;
+   k = 0.;
 
-   do
-      {
-	u = 0;
+   do {
+      for (u = 0., i = 1; i < n; i++) {
+	 delta_g = .5 * (x[i] - x[i-1]) / (x[i+1] - x[i-1]);
+	 delta_g = (h[i] -
+		    g[i] -
+		    g[i-1] * delta_g -      /* 8. - 4 * sqrt(3.) */
+		    g[i+1] * (.5 - delta_g)) * 1.0717967697244907832;
+	 g[i] += delta_g;
 
-	for (i = 1; i < (n-1); i++) {
-	   p = .5 * (x[i] - x[(i-1)]) / (x[(i+1)] - x[(i-1)]);
-	   delta_g = w * (-*(g+i) - (p * *(g+i-1)) -
-			     ((.5 - p) * *(g+i+1)) + *(g+n+i));
-	   *(g+i) = *(g+i) + delta_g;
+	 if (fabs(delta_g) > u) u = fabs(delta_g);
+      }	/* On loop termination u holds the largest delta_g. */
 
-	   if (fabs(delta_g) > u)	u = fabs(delta_g);
-	}	/* On loop termination u holds the largest delta_g. */
+      if (k == 0.)	k = u * eps;
+	/* Only executed once, at the end of pass one. So k preserves
+	 * the largest delta_g of pass one, multiplied by eps.
+	 */
+   } while (u > k);
 
-	if (k == 0)	k = (u * eps);
-		/* Only executed once, at the end of pass one. So k preserves
-		 * the largest delta_g of pass one multiplied by eps.
-		 */
-      }
-   while (u > k);
+   m += m, i = 1, j = 0;
+   do {
+      u = sxy[j++]; /* x-coordinate */
 
-   for (j = 0; j < m; j++) {
-      i = 1;
+      while (x[i] < u)	i++;
 
-      while (x[i] < sxy[(j+j)])
-	   i++;
+      if (--i > n)	i = n;
 
-      i--;
-
-      if (i >= n)	i = (n-1);
-
-      sxy[((j+j)+1)] = (y[i] +
-		((sxy[(j+j)] - x[i]) * (y[(i+1)] - y[i]) / (x[(i+1)] - x[i])) +
-		((sxy[(j+j)] - x[i]) * (sxy[(j+j)] - x[(i+1)]) *
-		 ((2. * *(g+i)) + *(g+i+1) +
-		  ((sxy[(j+j)] - x[i]) * (*(g+i+1) - *(g+i)) /
-		   (x[(i+1)] - x[i])))
-		 / 6.));
-   }
-   free (x);
-   free (y);
-   free (g);
+      k = (u - x[i]) / (x[i+1] - x[i]); /* calculate outside loop */
+      sxy[j++] = y[i] +
+	(y[i+1] - y[i]) * k +
+	(u - x[i]) * (u - x[i+1]) *
+	((2. - k) * g[i] +
+	 (1. + k) * g[i+1]) / 6.; /* y-coordinate */
+   } while (j < m);
+   g2_free(x);
 }
 
 void g2_spline(int id, int n, double *points, int o)
@@ -176,9 +167,9 @@ void g2_spline(int id, int n, double *points, int o)
    int m;
    double *sxy;
 
-   m=(((n-1)*o)+1);
-   sxy=(double*)g2_malloc((m+m)*sizeof(double));
-   
+   m = (n-1)*o+1;
+   sxy = (double*)g2_malloc(m*2*sizeof(double));
+
    g2_c_spline(n, points, m, sxy);
    g2_poly_line(id, m, sxy);
 
@@ -200,17 +191,17 @@ void g2_filled_spline(int id, int n, double *points, int o)
    int m;
    double *sxy;
 
-   m=(((n-1)*o)+1);
-   sxy=(double*)g2_malloc((m+m+2)*sizeof(double));
-   
+   m = (n-1)*o+1;
+   sxy = (double*)g2_malloc((m+1)*2*sizeof(double));
+
    g2_c_spline(n, points, m, sxy);
-   sxy[(m+m)] = points[(n+n-2)];
-   sxy[(m+m+1)] = points[1];
-   g2_filled_polygon(id, (m+1), sxy);
+   sxy[m+m] = points[n+n-2];
+   sxy[m+m+1] = points[1];
+   g2_filled_polygon(id, m+1, sxy);
    g2_free(sxy);
 }
 
-void g2_c_b_spline(int n, double *points, int m, double *sxy)
+void g2_c_b_spline(int n, const double *points, int m, double *sxy)
 
 /*
  * g2_c_b_spline takes n input points. It uses parameter t
@@ -219,64 +210,55 @@ void g2_c_b_spline(int n, double *points, int m, double *sxy)
 
 {
    int i, j;
-   double *x;
-   double *y;
+   double *x, *y;
    double t, bl1, bl2, bl3, bl4;
    double interval, xi_3, yi_3, xi, yi;
 
-   interval = (double)(n-1) / (double)(m-1);
+   x = (double *) g2_malloc(n*2*sizeof(double));
+   y = x + n;
+   g2_split(n, points, x, y);
 
-   x = (double *) calloc (sizeof(double), n);
-   y = (double *) calloc (sizeof(double), n);
-   g2_split(n, 0, points, x, y);
+   m--; /* last value index */
+   n--; /* last value index */
+   interval = (double)n / m;
 
-   for (i = 2, j = 0; i <= n; i++) {
+   for (m += m, i = 2, j = 0; i <= n+1; i++) {
       if (i == 2) {
-	xi_3 = x[0] - (x[1] - x[0]);
-	yi_3 = ((y[1] * (xi_3 - x[0])) -
-		(y[0] * (xi_3 - x[1]))) /
-	       (x[1] - x[0]);
+	 xi_3 = 2 * x[0] - x[1];
+	 yi_3 = 2 * y[0] - y[1];
+      } else {
+	 xi_3 = x[i-3];
+	 yi_3 = y[i-3];
       }
-      else {
-	xi_3 = x[(i-3)];
-	yi_3 = y[(i-3)];
-      }
-      if (i == n) {
-	xi = x[(n-1)] + (x[(n-1)] - x[(n-2)]);
-	yi = ((y[(n-1)] * (xi - x[(n-2)])) -
-	      (y[(n-2)] * (xi - x[(n-1)]))) /
-	     (x[(n-1)] - x[(n-2)]);
-      }
-      else {
-	xi = x[i];
-	yi = y[i];
+      if (i == n+1) {
+	 xi = 2 * x[n] - x[n-1];
+	 yi = 2 * y[n] - y[n-1];
+      } else {
+	 xi = x[i];
+	 yi = y[i];
       }
 
-      t = fmod((j * interval), 1.0);
+      t = fmod(j * interval, 1.);
 
-      while (t < 1.0 && j < (m-1)) {
-	bl1 = ((1.0 - t) * (1.0 - t) * (1.0 - t)) / 6.0;
-	bl2 = (( 3.0 * t * t * t) - (6.0 * t * t) + 4.0) / 6.0;
-	bl3 = ((-3.0 * t * t * t) + (3.0 * t * t) + (3.0 * t) + 1.0) / 6.0;
-	bl4 = t * t * t / 6.0;
+      while (t < 1. && j < m) {
+	 bl1 = (1. - t);
+	 bl2 = t * t;	/* t^2 */
+	 bl4 = t * bl2;	/* t^3 */
+	 bl3 = bl4 - bl2;
 
-	sxy[ (j+j)]    = (bl1 * xi_3) +
-			 (bl2 * x[(i-2)]) +
-			 (bl3 * x[(i-1)]) +
-			 (bl4 * xi);
-	sxy[((j+j)+1)] = (bl1 * yi_3) +
-			 (bl2 * y[(i-2)]) +
-			 (bl3 * y[(i-1)]) +
-			 (bl4 * yi);
+	 bl1 = bl1 * bl1 * bl1;
+	 bl2 = 3. * (bl3 - bl2) + 4.;
+	 bl3 = 3. * (  t - bl3) + 1.;
 
-	t += interval;
-	j++;
+	 sxy[j++] = (bl1 * xi_3 + bl2 * x[i-2] + bl3 * x[i-1] + bl4 * xi) / 6.; /* x-coordinate */
+	 sxy[j++] = (bl1 * yi_3 + bl2 * y[i-2] + bl3 * y[i-1] + bl4 * yi) / 6.; /* y-coordinate */
+
+	 t += interval;
       }
    }
-   sxy[(m+m-2)] = x[(n-1)];
-   sxy[(m+m-1)] = y[(n-1)];
-   free(x);
-   free(y);
+   sxy[m]   = x[n];
+   sxy[m+1] = y[n];
+   g2_free(x);
 }
 
 void g2_b_spline(int id, int n, double *points, int o)
@@ -294,9 +276,9 @@ void g2_b_spline(int id, int n, double *points, int o)
    int m;
    double *sxy;
 
-   m=(((n-1)*o)+1);
-   sxy=(double*)g2_malloc((m+m)*sizeof(double));
-   
+   m = (n-1)*o+1;
+   sxy = (double*)g2_malloc(m*2*sizeof(double));
+
    g2_c_b_spline(n, points, m, sxy);
    g2_poly_line(id, m, sxy);
 
@@ -318,13 +300,13 @@ void g2_filled_b_spline(int id, int n, double *points, int o)
    int m;
    double *sxy;
 
-   m = (((n-1)*o)+1);
-   sxy=(double*)g2_malloc((m+m+2)*sizeof(double));
-   
+   m = (n-1)*o+1;
+   sxy = (double*)g2_malloc((m+1)*2*sizeof(double));
+
    g2_c_b_spline(n, points, m, sxy);
-   sxy[(m+m)] = points[(n+n-2)];
-   sxy[(m+m+1)] = points[1];
-   g2_filled_polygon(id, (m+1), sxy);
+   sxy[m+m] = points[n+n-2];
+   sxy[m+m+1] = points[1];
+   g2_filled_polygon(id, m+1, sxy);
 
    g2_free(sxy);
 }
@@ -345,13 +327,13 @@ void g2_filled_b_spline(int id, int n, double *points, int o)
  *	For further information and references on this technique see:
  *
  *	D. Kochanek and R. Bartels, Interpolating Splines With Local
- *	Tension, Continuitiy and Bias Control, Computer Graphics,
+ *	Tension, Continuity and Bias Control, Computer Graphics,
  *	18(1984)3.
  *
  *	AUTHORS:
  *
  *	Dennis Mikkelson	distributed in GPLOT	Jan 7, 1988	F77
- *	Tijs Michels		M.H.M.Michels@kub.nl	Jun 7, 1999	C
+ *	Tijs Michels		t.michels@vimec.nl	Jun 7, 1999	C
  *
  *	FORMAL ARGUMENTS:
  *
@@ -375,115 +357,82 @@ void g2_filled_b_spline(int id, int n, double *points, int o)
  * So between one data point and the next, (nb-1) points are placed.
  */
 
-void g2_c_raspln(int n, double *points, double tn, double *sxy)
+void g2_c_raspln(int n, const double *points, double tn, double *sxy)
 {
    int i, j;
-   double *x;
-   double *y;
-   double t, bias, tnFactor, tangentL1, tangentL2;
-   double D1x, D1y, D2x, D2y;
-   double h1[(nb+1)];	/*	Values of the Hermite basis functions */
-   double h2[(nb+1)];	/*	at nb+1 evenly spaced points in [0,1] */
-   double h3[(nb+1)];
-   double h4[(nb+1)];
+   double *x, *y;
+   double bias, tnFactor, tangentL1, tangentL2;
+   double D1x, D1y, D2x, D2y, t1x, t1y, t2x, t2y;
+   double h1[nb+1];	/* Values of the Hermite basis functions */
+   double h2[nb+1];	/* at nb+1 evenly spaced points in [0,1] */
+   double h3[nb+1];
+   double h4[nb+1];
 
-   x = (double *) calloc (sizeof(double), n);
-   y = (double *) calloc (sizeof(double), n);
-   g2_split(n, 0, points, x, y);
+   x = (double *) g2_malloc(n*2*sizeof(double));
+   y = x + n;
+   g2_split(n, points, x, y);
 
 /*
  * First, store the values of the Hermite basis functions in a table h[ ]
  * so no time is wasted recalculating them
  */
-   for (i = 0; i < (nb+1); i++) {
+   for (i = 0; i < nb+1; i++) {
+      double t, tt, ttt;
       t = (double) i / nb;
-      h1[i] = ( 2.0 * t * t * t) - (3.0 * t * t) + 1.0;
-      h2[i] = (-2.0 * t * t * t) + (3.0 * t * t);
-      h3[i] = (       t * t * t) - (2.0 * t * t) + t;
-      h4[i] = (       t * t * t) - (      t * t);
+      tt  = t * t;
+      ttt = t * tt;
+      h1[i] =  2. * ttt - 3. * tt + 1.;
+      h2[i] = -2. * ttt + 3. * tt;
+      h3[i] =       ttt - 2. * tt + t;
+      h4[i] =       ttt -      tt;
    }
 
 /*
  * Set local tnFactor based on input parameter tn
  */
-   if (tn <= 0.0) {
-      tnFactor = 2.0;
-      fprintf(stderr, "g2_c_raspln: Using Tension Factor 0.0: very rounded");
+   if (tn <= 0.) {
+      tnFactor = 2.;
+      fputs("g2_c_raspln: Using Tension Factor 0.0: very rounded", stderr);
    }
-   else if (tn >= 2.0) {
-      tnFactor = 0.0;
-      fprintf(stderr,
-	      "g2_c_raspln: Using Tension Factor 2.0: not rounded at all");
+   else if (tn >= 2.) {
+      tnFactor = 0.;
+      fputs("g2_c_raspln: Using Tension Factor 2.0: not rounded at all", stderr);
    }
-   else			tnFactor = 2.0 - tn;
+   else			tnFactor = 2. - tn;
 
-/*
- * Do the first subinterval as a special case since no point precedes the
- * first point
- */
-   tangentL1 =	((x[1] - x[0]) * (x[1] - x[0])) +
-		((y[1] - y[0]) * (y[1] - y[0]));
-   tangentL2 =	((x[2] - x[1]) * (x[2] - x[1])) +
-		((y[2] - y[1]) * (y[2] - y[1]));
-   if ((tangentL1 + tangentL2) == 0) bias = 0.5;
-   else bias = tangentL2 / (tangentL1 + tangentL2);
-   D1x = 0.0;
-   D1y = 0.0;
-   D2x = tnFactor * ((     bias  * (x[1] - x[0])) +
-		     ((1 - bias) * (x[2] - x[1])));
-   D2y = tnFactor * ((     bias  * (y[1] - y[0])) +
-		     ((1 - bias) * (y[2] - y[1])));
-   for (i = 0; i < nb; i++) {
-      sxy[(i+i)]   = (h1[i] * x[0]) + (h2[i] * x[1]) +
-		     (h3[i] * D1x) + (h4[i] * D2x);
-      sxy[(i+i+1)] = (h1[i] * y[0]) + (h2[i] * y[1]) +
-		     (h3[i] * D1y) + (h4[i] * D2y);
-   }
-
-/*
- * Do all general subintervals with preceding and following subintervals
- */
-   for (j = 1; j < (n-2); j++) {
-      tangentL1 = ((x[(j+1)] - x[j]) * (x[(j+1)] - x[j])) +
-		  ((y[(j+1)] - y[j]) * (y[(j+1)] - y[j]));
-      tangentL2 = ((x[(j+2)] - x[(j+1)]) * (x[(j+2)] - x[(j+1)])) +
-		  ((y[(j+2)] - y[(j+1)]) * (y[(j+2)] - y[(j+1)]));
-      if ((tangentL1 + tangentL2) == 0) bias = 0.5;
+   D1x = D1y = 0.; /* first point has no preceding point */
+   for (j = 0; j < n - 2; j++) {
+      t1x = x[j+1] - x[j];
+      t1y = y[j+1] - y[j];
+      t2x = x[j+2] - x[j+1];
+      t2y = y[j+2] - y[j+1];
+      tangentL1 = t1x * t1x + t1y * t1y;
+      tangentL2 = t2x * t2x + t2y * t2y;
+      if (tangentL1 + tangentL2 == 0) bias = .5;
       else bias = tangentL2 / (tangentL1 + tangentL2);
-      D1x = D2x;
-      D1y = D2y;
-      D2x = tnFactor * ((     bias  * (x[(j+1)] - x[j])) +
-			((1 - bias) * (x[(j+2)] - x[(j+1)])));
-      D2y = tnFactor * ((     bias  * (y[(j+1)] - y[j])) +
-			((1 - bias) * (y[(j+2)] - y[(j+1)])));
+      D2x = tnFactor * (bias  * t1x + (1 - bias) * t2x);
+      D2y = tnFactor * (bias  * t1y + (1 - bias) * t2y);
       for (i = 0; i < nb; i++) {
-	sxy[((j * 2 * nb) + i + i)] =
-	   (h1[i] * x[j]) + (h2[i] * x[j+1]) +
-	   (h3[i] * D1x) + (h4[i] * D2x);
-	sxy[((j * 2 * nb) + i + i + 1)] =
-	   (h1[i] * y[j]) + (h2[i] * y[j+1]) +
-	   (h3[i] * D1y) + (h4[i] * D2y);
+	sxy[2 * nb * j + i + i] =
+	   h1[i] * x[j] + h2[i] * x[j+1] + h3[i] * D1x + h4[i] * D2x;
+	sxy[2 * nb * j + i + i + 1] =
+	   h1[i] * y[j] + h2[i] * y[j+1] + h3[i] * D1y + h4[i] * D2y;
       }
+      D1x = D2x; /* store as preceding point in */
+      D1y = D2y; /* the next pass */
    }
 
 /*
  * Do the last subinterval as a special case since no point follows the
  * last point
  */
-   D1x = D2x;
-   D1y = D2y;
-   D2x = 0.0;
-   D2y = 0.0;
-   for (i = 0; i < (nb+1); i++) {
-      sxy[(((n-2) * 2 * nb) + i + i)] =
-	(h1[i] * x[(n-2)]) + (h2[i] * x[(n-1)]) +
-	(h3[i] * D1x) + (h4[i] * D2x);
-      sxy[(((n-2) * 2 * nb) + i + i + 1)] =
-	(h1[i] * y[(n-2)]) + (h2[i] * y[(n-1)]) +
-	(h3[i] * D1y) + (h4[i] * D2y);
+   for (i = 0; i < nb+1; i++) {
+      sxy[2 * nb * (n-2) + i + i] =
+	h1[i] * x[n-2] + h2[i] * x[n-1] + h3[i] * D1x;
+      sxy[2 * nb * (n-2) + i + i + 1] =
+	h1[i] * y[n-2] + h2[i] * y[n-1] + h3[i] * D1y;
    }
-   free(x);
-   free(y);
+   g2_free(x);
 }
 
 void g2_raspln(int id, int n, double *points, double tn)
@@ -500,13 +449,15 @@ void g2_raspln(int id, int n, double *points, double tn)
  */
 
 {
+   int m;
    double *sxy;		/*	coords of the entire spline curve */
-   sxy = (double *) calloc (sizeof(double), (((n+n-2) * nb) + 2));
+   m = (n-1)*nb+1;
+   sxy = (double *) g2_malloc(m*2*sizeof(double));
 
    g2_c_raspln(n, points, tn, sxy);
-   g2_poly_line(id, (((n-1) * nb) + 1), sxy);
+   g2_poly_line(id, m, sxy);
 
-   free(sxy);
+   g2_free(sxy);
 }
 
 void g2_filled_raspln(int id, int n, double *points, double tn)
@@ -523,15 +474,17 @@ void g2_filled_raspln(int id, int n, double *points, double tn)
  */
 
 {
+   int m;
    double *sxy;		/*	coords of the entire spline curve */
-   sxy = (double *) calloc (sizeof(double), (((n+n-2) * nb) + 4));
+   m = (n-1)*nb+2;
+   sxy = (double *) g2_malloc(m*2*sizeof(double));
 
    g2_c_raspln(n, points, tn, sxy);
-   sxy[(((n+n-2) * nb) + 2)] = points[(n+n-2)];
-   sxy[(((n+n-2) * nb) + 3)] = points[1];
-   g2_filled_polygon(id, (((n-1) * nb) + 2), sxy);
+   sxy[(n+n-2) * nb + 2] = points[n+n-2];
+   sxy[(n+n-2) * nb + 3] = points[1];
+   g2_filled_polygon(id, m, sxy);
 
-   free(sxy);
+   g2_free(sxy);
 }
 
 /* ---- And now for a rather different approach ---- */
@@ -548,7 +501,7 @@ void g2_filled_raspln(int id, int n, double *points, double tn)
  *		g2_c_para_5.
  *
  *	Dennis Mikkelson	distributed in GPLOT	Jan  5, 1988	F77
- *	Tijs Michels		M.H.M.Michels@kub.nl	Jun 16, 1999	C
+ *	Tijs Michels		t.michels@vimec.nl	Jun 16, 1999	C
  *
  *	FORMAL ARGUMENTS:
  *
@@ -580,24 +533,23 @@ void g2_filled_raspln(int id, int n, double *points, double tn)
  * 21 would correspond to a polynomial of degree 20
  */
 
-void g2_c_newton(int n, double *c1, double *c2, int o, double *xv, double *yv)
+void g2_c_newton(int n, const double *c1, const double *c2,
+		 int o, const double *xv, double *yv)
 {
    int i, j;
    double p, s;
    double ddt[MaxPts][MaxPts];		/* Divided Difference Table */
 
    if (n < 4) {
-      fprintf(stderr,
-	      "g2_c_newton: Error! Less then 4 points passed"
-	      "to function g2_c_newton\n");
+      fputs("g2_c_newton: Error! Less than 4 points passed "
+	    "to function g2_c_newton\n", stderr);
       return;
    }
 
    if (n > MaxPts) {
       fprintf(stderr,
-	      "g2_c_newton: Error! More then %d points passed"
-	      "to function g2_c_newton\n",
-	     MaxPts);
+	      "g2_c_newton: Error! More than %d points passed "
+	      "to function g2_c_newton\n", MaxPts);
       return;
    }
 
@@ -605,19 +557,16 @@ void g2_c_newton(int n, double *c1, double *c2, int o, double *xv, double *yv)
 
    for (i = 0; i < n; i++)	ddt[i][0] = c2[i];
    for (j = 1; j < n; j++) {
-      for (i = 0; i < (n-j); i++)
-	ddt[i][j] = (ddt[(i+1)][(j-1)] - ddt[i][(j-1)]) /
-		    (c1[(i+j)] - c1[i]);
+      for (i = 0; i < n - j; i++)
+	ddt[i][j] = (ddt[i+1][j-1] - ddt[i][j-1]) / (c1[i+j] - c1[i]);
    }
 
 /* Next, evaluate the polynomial at the specified points */
 
    for (i = 0; i < o; i++) {
-      p = 1.0;
-      s = ddt[0][0];
-      for (j = 1; j < n; j++) {
-	p = p * (xv[i] - c1[(j-1)]);
-	s = s + (p * ddt[0][j]);
+      for (p = 1., s = ddt[0][0], j = 1; j < n; j++) {
+	 p *= xv[i] - c1[j-1];
+	 s += p * ddt[0][j];
       }
       yv[i] = s;
    }
@@ -637,7 +586,7 @@ void g2_c_newton(int n, double *c1, double *c2, int o, double *xv, double *yv)
  *	using function g2_c_newton.
  *
  *	Dennis Mikkelson	distributed in GPLOT	Jan  7, 1988	F77
- *	Tijs Michels		M.H.M.Michels@kub.nl	Jun 17, 1999	C
+ *	Tijs Michels		t.michels@vimec.nl	Jun 17, 1999	C
  *
  *	FORMAL ARGUMENTS:
  *
@@ -656,77 +605,80 @@ void g2_c_newton(int n, double *c1, double *c2, int o, double *xv, double *yv)
  * So between one data point and the next, (nb-1) points are placed.
  */
 
-void g2_c_para_3(int n, double *points, double *sxy)
+void g2_c_para_3(int n, const double *points, double *sxy)
 {
 #define dgr	(3+1)
-
+#define nb2	(nb*2)
    int i, j;
-   double d2, step;
-   double X[(nb + nb)];		/* x-coords of the current curve piece */
-   double Y[(nb + nb)];		/* y-coords of the current curve piece */
+   double x1t, y1t;
+   double o, step;
+   double X[nb2];		/* x-coords of the current curve piece */
+   double Y[nb2];		/* y-coords of the current curve piece */
    double t[dgr];		/* data point parameter values */
    double Xpts[dgr];		/* x-coords data point subsection */
    double Ypts[dgr];		/* y-coords data point subsection */
-   double s[(nb + nb)];		/* parameter values at which to interpolate */
+   double s[nb2];		/* parameter values at which to interpolate */
 
    /* Do first TWO subintervals first */
 
-   g2_split(dgr, 0, points, Xpts, Ypts);
+   g2_split(dgr, points, Xpts, Ypts);
 
-   t[0] = 0.0;
+   t[0] = 0.;
    for (i = 1; i < dgr; i++) {
-      d2 = ((Xpts[i] - Xpts[(i-1)]) * (Xpts[i] - Xpts[(i-1)])) +
-	   ((Ypts[i] - Ypts[(i-1)]) * (Ypts[i] - Ypts[(i-1)]));
-      t[i] = t[(i-1)] + sqrt(d2);
+      x1t = Xpts[i] - Xpts[i-1];
+      y1t = Ypts[i] - Ypts[i-1];
+      t[i] = t[i-1] + sqrt(x1t * x1t + y1t * y1t);
    }
 
-   step = t[2] / (nb + nb);
-   for (i = 0; i < (nb + nb); i++)	s[i] = i * step;
+   step = t[2] / nb2;
+   for (i = 0; i < nb2; i++)	s[i] = i * step;
 
-   g2_c_newton(dgr, t, Xpts, (nb + nb), s, X);
-   g2_c_newton(dgr, t, Ypts, (nb + nb), s, Y);
-   for (i = 0; i < (nb + nb); i++) {
-      sxy[(i+i)]   = X[i];
-      sxy[(i+i+1)] = Y[i];
+   g2_c_newton(dgr, t, Xpts, nb2, s, X);
+   g2_c_newton(dgr, t, Ypts, nb2, s, Y);
+   for (i = 0; i < nb2; i++) {
+      sxy[i+i]   = X[i];
+      sxy[i+i+1] = Y[i];
    }
 
    /* Next, do later central subintervals */
 
-   for (j = 1; j < (n - dgr + 1); j++) {
-      g2_split(dgr, j, points, Xpts, Ypts);
+   for (j = 1; j < n - dgr + 1; j++) {
+      g2_split(dgr, points + j + j, Xpts, Ypts);
 
       for (i = 1; i < dgr; i++) {
-	d2 = ((Xpts[i] - Xpts[(i-1)]) * (Xpts[i] - Xpts[(i-1)])) +
-	     ((Ypts[i] - Ypts[(i-1)]) * (Ypts[i] - Ypts[(i-1)]));
-	t[i] = t[(i-1)] + sqrt(d2);
+	 x1t = Xpts[i] - Xpts[i-1];
+	 y1t = Ypts[i] - Ypts[i-1];
+	 t[i] = t[i-1] + sqrt(x1t * x1t + y1t * y1t);
       }
 
-      step = (t[2] - t[1]) / nb;
-      for (i = 0; i < nb; i++)	s[i] = (i * step) + t[1];
+      o = t[1]; /* look up once */
+      step = (t[2] - o) / nb;
+      for (i = 0; i < nb; i++)	s[i] = i * step + o;
 
       g2_c_newton(dgr, t, Xpts, nb, s, X);
       g2_c_newton(dgr, t, Ypts, nb, s, Y);
 
       for (i = 0; i < nb; i++) {
-	sxy[(((j + 1) * (nb + nb)) + i + i)]     = X[i];
-	sxy[(((j + 1) * (nb + nb)) + i + i + 1)] = Y[i];
+	 sxy[(j + 1) * nb2 + i + i]     = X[i];
+	 sxy[(j + 1) * nb2 + i + i + 1] = Y[i];
       }
    }
 
    /* Now do last subinterval */
 
-   step = (t[3] - t[2]) / nb;
-   for (i = 0; i < nb; i++)	s[i] = (i * step) + t[2];
+   o = t[2];
+   step = (t[3] - o) / nb;
+   for (i = 0; i < nb; i++)	s[i] = i * step + o;
 
    g2_c_newton(dgr, t, Xpts, nb, s, X);
    g2_c_newton(dgr, t, Ypts, nb, s, Y);
 
    for (i = 0; i < nb; i++) {
-      sxy[(((n - dgr + 2) * (nb + nb)) + i + i)]     = X[i];
-      sxy[(((n - dgr + 2) * (nb + nb)) + i + i + 1)] = Y[i];
+      sxy[(n - dgr + 2) * nb2 + i + i]     = X[i];
+      sxy[(n - dgr + 2) * nb2 + i + i + 1] = Y[i];
    }
-   sxy[(((n - 1) * (nb + nb)))]     = points[(n+n-2)];
-   sxy[(((n - 1) * (nb + nb)) + 1)] = points[(n+n-1)];
+   sxy[(n - 1) * nb2]     = points[n+n-2];
+   sxy[(n - 1) * nb2 + 1] = points[n+n-1];
 }
 
 /*
@@ -739,13 +691,15 @@ void g2_c_para_3(int n, double *points, double *sxy)
 
 void g2_para_3(int id, int n, double *points)
 {
+   int m;
    double *sxy;		/*	coords of the entire spline curve */
-   sxy = (double *) calloc (sizeof(double), (((n - 1) * (nb + nb)) + 2));
+   m = (n-1)*nb+1;
+   sxy = (double *) g2_malloc(m*2*sizeof(double));
 
    g2_c_para_3(n, points, sxy);
-   g2_poly_line(id, (((n - 1) * nb) + 1), sxy);
+   g2_poly_line(id, m, sxy);
 
-   free(sxy);
+   g2_free(sxy);
 }
 
 /*
@@ -758,15 +712,17 @@ void g2_para_3(int id, int n, double *points)
 
 void g2_filled_para_3(int id, int n, double *points)
 {
+   int m;
    double *sxy;		/*	coords of the entire spline curve */
-   sxy = (double *) calloc (sizeof(double), (((n - 1) * (nb + nb)) + 4));
+   m = (n-1)*nb+2;
+   sxy = (double *) g2_malloc(m*2*sizeof(double));
 
    g2_c_para_3(n, points, sxy);
-   sxy[(((n - 1) * (nb + nb)) + 2)] = points[(n+n-2)];
-   sxy[(((n - 1) * (nb + nb)) + 3)] = points[1];
-   g2_filled_polygon(id, (((n - 1) * nb) + 2), sxy);
+   sxy[m+m-2] = points[n+n-2];
+   sxy[m+m-1] = points[1];
+   g2_filled_polygon(id, m, sxy);
 
-   free(sxy);
+   g2_free(sxy);
 }
 
 /*
@@ -782,78 +738,81 @@ void g2_filled_para_3(int id, int n, double *points)
  * So between one data point and the next, (nb-1) points are placed.
  */
 
-void g2_c_para_5(int n, double *points, double *sxy)
+void g2_c_para_5(int n, const double *points, double *sxy)
 {
 #undef	dgr
 #define dgr	(5+1)
-
+#define nb3	(nb*3)
    int i, j;
-   double d2, step;
-   double X[(nb + nb + nb)];	/* x-coords of the current curve piece */
-   double Y[(nb + nb + nb)];	/* y-coords of the current curve piece */
+   double x1t, y1t;
+   double o, step;
+   double X[nb3];		/* x-coords of the current curve piece */
+   double Y[nb3];		/* y-coords of the current curve piece */
    double t[dgr];		/* data point parameter values */
    double Xpts[dgr];		/* x-coords data point subsection */
    double Ypts[dgr];		/* y-coords data point subsection */
-   double s[(nb + nb + nb)];	/* parameter values at which to interpolate */
+   double s[nb3];		/* parameter values at which to interpolate */
 
    /* Do first THREE subintervals first */
 
-   g2_split(dgr, 0, points, Xpts, Ypts);
+   g2_split(dgr, points, Xpts, Ypts);
 
-   t[0] = 0.0;
+   t[0] = 0.;
    for (i = 1; i < dgr; i++) {
-      d2 = ((Xpts[i] - Xpts[(i-1)]) * (Xpts[i] - Xpts[(i-1)])) +
-	   ((Ypts[i] - Ypts[(i-1)]) * (Ypts[i] - Ypts[(i-1)]));
-      t[i] = t[(i-1)] + sqrt(d2);
+      x1t = Xpts[i] - Xpts[i-1];
+      y1t = Ypts[i] - Ypts[i-1];
+      t[i] = t[i-1] + sqrt(x1t * x1t + y1t * y1t);
    }
 
-   step = t[3] / (nb + nb + nb);
-   for (i = 0; i < (nb + nb + nb); i++)	s[i] = i * step;
+   step = t[3] / nb3;
+   for (i = 0; i < nb3; i++)	s[i] = i * step;
 
-   g2_c_newton(dgr, t, Xpts, (nb + nb + nb), s, X);
-   g2_c_newton(dgr, t, Ypts, (nb + nb + nb), s, Y);
-   for (i = 0; i < (nb + nb + nb); i++) {
-      sxy[(i+i)]   = X[i];
-      sxy[(i+i+1)] = Y[i];
+   g2_c_newton(dgr, t, Xpts, nb3, s, X);
+   g2_c_newton(dgr, t, Ypts, nb3, s, Y);
+   for (i = 0; i < nb3; i++) {
+      sxy[i+i]   = X[i];
+      sxy[i+i+1] = Y[i];
    }
 
    /* Next, do later central subintervals */
 
-   for (j = 1; j < (n - dgr + 1); j++) {
-      g2_split(dgr, j, points, Xpts, Ypts);
+   for (j = 1; j < n - dgr + 1; j++) {
+      g2_split(dgr, points + j + j, Xpts, Ypts);
 
       for (i = 1; i < dgr; i++) {
-	d2 = ((Xpts[i] - Xpts[(i-1)]) * (Xpts[i] - Xpts[(i-1)])) +
-	     ((Ypts[i] - Ypts[(i-1)]) * (Ypts[i] - Ypts[(i-1)]));
-	t[i] = t[(i-1)] + sqrt(d2);
+	 x1t = Xpts[i] - Xpts[i-1];
+	 y1t = Ypts[i] - Ypts[i-1];
+	 t[i] = t[i-1] + sqrt(x1t * x1t + y1t * y1t);
       }
 
-      step = (t[3] - t[2]) / nb;
-      for (i = 0; i < nb; i++)	s[i] = (i * step) + t[2];
+      o = t[2]; /* look up once */
+      step = (t[3] - o) / nb;
+      for (i = 0; i < nb; i++)	s[i] = i * step + o;
 
       g2_c_newton(dgr, t, Xpts, nb, s, X);
       g2_c_newton(dgr, t, Ypts, nb, s, Y);
 
       for (i = 0; i < nb; i++) {
-	sxy[(((j + 2) * (nb + nb)) + i + i)]     = X[i];
-	sxy[(((j + 2) * (nb + nb)) + i + i + 1)] = Y[i];
+	 sxy[(j + 2) * nb2 + i + i]     = X[i];
+	 sxy[(j + 2) * nb2 + i + i + 1] = Y[i];
       }
    }
 
    /* Now do last TWO subinterval */
 
-   step = (t[5] - t[3]) / (nb + nb);
-   for (i = 0; i < (nb + nb); i++)	s[i] = (i * step) + t[3];
+   o = t[3];
+   step = (t[5] - o) / nb2;
+   for (i = 0; i < nb2; i++)	s[i] = i * step + o;
 
-   g2_c_newton(dgr, t, Xpts, (nb + nb), s, X);
-   g2_c_newton(dgr, t, Ypts, (nb + nb), s, Y);
+   g2_c_newton(dgr, t, Xpts, nb2, s, X);
+   g2_c_newton(dgr, t, Ypts, nb2, s, Y);
 
-   for (i = 0; i < (nb + nb); i++) {
-      sxy[(((n - dgr + 3) * (nb + nb)) + i + i)]     = X[i];
-      sxy[(((n - dgr + 3) * (nb + nb)) + i + i + 1)] = Y[i];
+   for (i = 0; i < nb2; i++) {
+      sxy[(n - dgr + 3) * nb2 + i + i]     = X[i];
+      sxy[(n - dgr + 3) * nb2 + i + i + 1] = Y[i];
    }
-   sxy[(((n - 1) * (nb + nb)))]     = points[(n+n-2)];
-   sxy[(((n - 1) * (nb + nb)) + 1)] = points[(n+n-1)];
+   sxy[(n - 1) * nb2]     = points[n+n-2];
+   sxy[(n - 1) * nb2 + 1] = points[n+n-1];
 }
 
 /*
@@ -866,13 +825,15 @@ void g2_c_para_5(int n, double *points, double *sxy)
 
 void g2_para_5(int id, int n, double *points)
 {
+   int m;
    double *sxy;		/*	coords of the entire spline curve */
-   sxy = (double *) calloc (sizeof(double), (((n - 1) * (nb + nb)) + 2));
+   m = (n-1)*nb+1;
+   sxy = (double *) g2_malloc(m*2*sizeof(double));
 
    g2_c_para_5(n, points, sxy);
-   g2_poly_line(id, (((n - 1) * nb) + 1), sxy);
+   g2_poly_line(id, m, sxy);
 
-   free(sxy);
+   g2_free(sxy);
 }
 
 /*
@@ -885,13 +846,15 @@ void g2_para_5(int id, int n, double *points)
 
 void g2_filled_para_5(int id, int n, double *points)
 {
+   int m;
    double *sxy;		/*	coords of the entire spline curve */
-   sxy = (double *) calloc (sizeof(double), (((n - 1) * (nb + nb)) + 4));
+   m = (n-1)*nb+2;
+   sxy = (double *) g2_malloc(m*2*sizeof(double));
 
    g2_c_para_5(n, points, sxy);
-   sxy[(((n - 1) * (nb + nb)) + 2)] = points[(n+n-2)];
-   sxy[(((n - 1) * (nb + nb)) + 3)] = points[1];
-   g2_filled_polygon(id, (((n - 1) * nb) + 2), sxy);
+   sxy[m+m-2] = points[n+n-2];
+   sxy[m+m-1] = points[1];
+   g2_filled_polygon(id, m, sxy);
 
-   free(sxy);
+   g2_free(sxy);
 }
