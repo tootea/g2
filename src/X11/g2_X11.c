@@ -82,7 +82,7 @@ int g2_open_X11X(int width, int height,
 	if(i==N_X11) {
 	    N_X11++;
 	    g2_X11_dev=g2_realloc(g2_X11_dev,
-			       sizeof(g2_X11_device)*N_X11);
+				  sizeof(g2_X11_device)*N_X11);
 	    xout=&g2_X11_dev[N_X11-1];
 	    pid=N_X11-1;
 	}
@@ -264,8 +264,7 @@ int g2_X11_init_X11X(int pid, int width, int height,
 
     xout->backing_pixmap = None;
 
-    if(XDoesBackingStore(XDefaultScreenOfDisplay(xout->display))!=Always)
-      {
+    if(XDoesBackingStore(XDefaultScreenOfDisplay(xout->display))!=Always) {
 	fputs("g2: Warning! Backing store is not available.\n",stderr);
 	fputs("    Trying to allocate backing pixmap instead\n",stderr);
 
