@@ -124,7 +124,7 @@ int g2_win32_Cleanup(int pid, void *pdp)
 	if (PDP->hBrush != NULL) DeleteObject(PDP->hBrush);
 	if (PDP->hPen != NULL) DeleteObject(PDP->hPen);
 	if (PDP->hNullPen != NULL) DeleteObject(PDP->hPen);
-	if (PDP->hFont != NULL) DeleteDC(PDP->hFont);
+	if (PDP->hFont != NULL) DeleteObject(PDP->hFont);
 	if (PDP->hBitmap != NULL) DeleteObject(PDP->hBitmap);
 	if (PDP->hMemDC != NULL) DeleteDC(PDP->hMemDC);
 	if (PDP->PenDash != NULL) free(PDP->PenDash);
@@ -498,7 +498,6 @@ int InitApplication()
 
 int  g2_open_win32(int width, int height, const char *title, int type)
 	{
-/*	const char *title = "title";*/
 	int pid=0,vid;
 	long ThreadID;
 
