@@ -1,8 +1,7 @@
 
-- nativ g2_image support
-- GIF: setlinedash and setlinewidth
+- native g2_image support
+- GIF: setlinedash 
 - finish xfig support
-- add new function for inserting bitmaps
 - test (and add) Fortran interface on more platforms
 - new devices (e.g. PNG, JPG, etc.)
 - documentation for developement of new devices
