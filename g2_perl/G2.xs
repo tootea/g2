@@ -209,7 +209,7 @@ g2_newGD(packname="G2::Device", filename="g2.png", width=100, height=100, type=1
 #ifdef DO_PS
 
 G2::Device
-g2_newPS(packname="G2::Device", filename="g2.gif", paper=1,orientation=1)
+g2_newPS(packname="G2::Device", filename="g2.ps", paper=1,orientation=1)
 	char * packname
 	char * filename
 	int paper
@@ -220,6 +220,38 @@ g2_newPS(packname="G2::Device", filename="g2.gif", paper=1,orientation=1)
 		DevType theDevice;
 		theDevice = (int *)malloc(sizeof(int));
 		*theDevice = g2_open_PS(filename, paper, orientation);
+		RETVAL = theDevice;
+	}
+	OUTPUT:
+	RETVAL
+	
+G2::Device
+g2_newEPSF(packname="G2::Device", filename="g2.eps")
+	char * packname
+	char * filename
+        PROTOTYPE: $;$$$
+	CODE:
+	{
+		DevType theDevice;
+		theDevice = (int *)malloc(sizeof(int));
+		*theDevice = g2_open_EPSF(filename);
+		RETVAL = theDevice;
+	}
+	OUTPUT:
+	RETVAL
+	
+G2::Device
+g2_newEPSF_CLIP(packname="G2::Device", filename="g2.eps",width=100,height=100)
+	char * packname
+	char * filename
+	long width
+	long height
+        PROTOTYPE: $;$$$
+	CODE:
+	{
+		DevType theDevice;
+		theDevice = (int *)malloc(sizeof(int));
+		*theDevice = g2_open_EPSF_CLIP(filename,width,height);
 		RETVAL = theDevice;
 	}
 	OUTPUT:
