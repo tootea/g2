@@ -23,10 +23,20 @@
  *
  *  Some g2 defines
  *
+ *  Default behaviour is usually ok for most cases
+ *
  */
-#define G2_X11_FONT "-*-times-medium-r-normal--%d-*-*-*-*-*-*-*"
-#define G2_PSFONT   "/Times-Roman"
-#define WARNINGS
 
+/* g2 warnings are printed to stderr, larger 0=quiet, 1=errors, 2=warnings, 3=verbose, 4=debug */
+#define g2_LogLevel 1
+
+/* set to 0 to disable backing store emulation */
+#define g2_EmulateBackingStore  1
+
+/* X11 font, note %d for font size */
+#define g2_X11Font "-*-times-medium-r-normal--%d-*-*-*-*-*-*-*"
+
+/* PostScript font */
+#define g2_PSFont "/Times-Roman"
 
 #endif /* _G2_CONFIG_H */
