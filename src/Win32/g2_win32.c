@@ -42,6 +42,8 @@ HINSTANCE g2res_DLL;	/* Instance of the resource DLL */
 #define PI 3.14159265358979323846
 #endif /* PI */
 
+#define sgn(x) (x>0?1:x?-1:0)
+
 /* someday their might be a DLL version of g2 */
 #ifdef G2DLL
 BOOL WINAPI DllMain( HANDLE hModule, DWORD fdwreason,  LPVOID lpReserved )
@@ -299,6 +301,9 @@ int g2_win32_Line(int pid, void *pdp, int x1, int y1, int x2, int y2)
 	{
 	MoveToEx(PDP->hMemDC,x1,y1,NULL);
 	LineTo(PDP->hMemDC,x2,y2);
+	SetPixel(PDP->hMemDC,x1,y1,PDP->PenColor);
+	SetPixel(PDP->hMemDC,x2,y2,PDP->PenColor);
+	// specifically draw end points since windows does not include one endpoint
 	return 0;
     }
 
@@ -328,7 +333,7 @@ int g2_win32_PolyLine(int pid, void *pdp, int N, int *points)
 int g2_win32_Rectangle(int pid, void *pdp, int x, int y, int x2, int y2)
 	{
 	SelectObject(PDP->hMemDC,GetStockObject(NULL_BRUSH));
-	Rectangle(PDP->hMemDC,x,y,x2,y2);
+	Rectangle(PDP->hMemDC,x,y,x2+1,y2+1); // add one since windows excludes lower right point
 	return 0;
     }
 
@@ -336,7 +341,7 @@ int g2_win32_FilledRectangle(int pid, void *pdp, int x1, int y1, int x2, int y2)
 	{
 	SelectObject(PDP->hMemDC,PDP->hBrush);
 	SelectObject(PDP->hMemDC,PDP->hNullPen);
-	return Rectangle(PDP->hMemDC,x1,y1,x2,y2);
+	return Rectangle(PDP->hMemDC,x1,y1,x2+1,y2+1); // add one since windows excludes lower right point
 	SelectObject(PDP->hMemDC,PDP->hPen);
 	return 0;
 	}
@@ -388,14 +393,14 @@ int g2_win32_FilledPolygon(int pid, void *pdp, int N, int *points)
 int g2_win32_Ellipse(int pid, void *pdp, int x, int y, int r1, int r2)
 	{
 	SelectObject(PDP->hMemDC,GetStockObject(NULL_BRUSH));
-	return Ellipse(PDP->hMemDC,x-r1,y-r2,x+r1,y+r2);
+	return Ellipse(PDP->hMemDC,x-r1,y-r2,x+r1+1,y+r2+1); // add one since windows is end exclusive
     }
 
 int g2_win32_FilledEllipse(int pid, void *pdp, int x, int y, int r1, int r2)
 	{
 	SelectObject(PDP->hMemDC,PDP->hBrush);
 	SelectObject(PDP->hMemDC,PDP->hNullPen);
-	return Ellipse(PDP->hMemDC,x-r1,y-r2,x+r1,y+r2);
+	return Ellipse(PDP->hMemDC,x-r1,y-r2,x+r1+1,y+r2+1); // add one since windows is end exclusive
 	SelectObject(PDP->hMemDC,PDP->hPen);
 	return 0;
     }
