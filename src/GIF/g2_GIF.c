@@ -306,7 +306,7 @@ int g2_GIF_FilledArc(int pid, void *pdp, int x, int y,
 	return 0;
     }
 
-int g2_GIF_DrawString(int pid, void *pdp, int x, int y, char *text)
+int g2_GIF_DrawString(int pid, void *pdp, int x, int y, const char *text)
 	{
 	
 	gdImageString(PDP->im,PDP->FontSize,x,y+2-PDP->FontSize->h,(unsigned char *)text,PDP->CurCol);

@@ -564,7 +564,7 @@ int g2_PS_filled_ellipse(int pid, void *pdp,
   
 
 int g2_PS_draw_string(int pid, void *pdp,
-		      double x, double y, char *text)
+		      double x, double y, const char *text)
 {
     g2_PS_device *ps=&g2_PS_dev[pid];
     fputc('(', ps->fp);

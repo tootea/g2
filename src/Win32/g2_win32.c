@@ -424,7 +424,7 @@ int g2_win32_FilledArc(int pid, void *pdp, int x, int y, int r1, int r2, double 
 	return 0;
     }
 
-int g2_win32_DrawString(int pid, void *pdp, int x, int y, char *text)
+int g2_win32_DrawString(int pid, void *pdp, int x, int y, const char *text)
 	{
 	SetTextColor(PDP->hMemDC,PDP->PenColor);
 	return TextOut(PDP->hMemDC,x,y,text,strlen(text));

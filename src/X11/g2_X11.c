@@ -698,7 +698,7 @@ int g2_X11_filled_ellipse(int pid, void *pdp, int x, int y, int r1, int r2)
 }
  
 
-int g2_X11_draw_string(int pid, void *pdp, int x, int y, char *text)
+int g2_X11_draw_string(int pid, void *pdp, int x, int y, const char *text)
 {
     g2_X11_device *xout=&g2_X11_dev[pid];
     XDrawString(xout->display,xout->dest,xout->gc,

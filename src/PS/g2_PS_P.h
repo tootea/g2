@@ -93,7 +93,7 @@ int g2_PS_filled_ellipse(int pid, void *pdp,
 			 double x, double y,
 			 double r1, double r2);
 int g2_PS_draw_string(int pid, void *pdp,
-		      double x, double y, char *text);
+		      double x, double y, const char *text);
 
 #endif /* _G2_PS_P_H */
 

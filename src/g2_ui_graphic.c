@@ -773,7 +773,7 @@ void g2_filled_arc(int dev,
  * Draw string
  *
  */
-void g2_string(int dev, double x, double y, char *text)
+void g2_string(int dev, double x, double y, const char *text)
 {
     g2_device *devp;
     int i;

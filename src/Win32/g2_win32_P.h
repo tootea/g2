@@ -102,7 +102,7 @@ int g2_win32_FilledArc(int pid, void *pdp, int x, int y,
 		      int r1, int r2, double a1, double a2);
 int g2_win32_Ellipse(int pid, void *pdp, int x, int y, int r1, int r2);
 int g2_win32_FilledEllipse(int pid, void *pdp, int x, int y, int r1, int r2);
-int g2_win32_DrawString(int pid, void *pdp, int x, int y, char *text);
+int g2_win32_DrawString(int pid, void *pdp, int x, int y, const char *text);
 
 int g2_win32_AllocateBasicColors(int pid, void *pdp);
 

@@ -104,7 +104,7 @@ int g2_gd_FilledArc(int pid, void *pdp, int x, int y,
 		      int r1, int r2, double a1, double a2);
 int g2_gd_Ellipse(int pid, void *pdp, int x, int y, int r1, int r2);
 int g2_gd_FilledEllipse(int pid, void *pdp, int x, int y, int r1, int r2);
-int g2_gd_DrawString(int pid, void *pdp, int x, int y, char *text);
+int g2_gd_DrawString(int pid, void *pdp, int x, int y, const char *text);
 
 int g2_gd_AllocateBasicColors(int pid, void *pdp);
 

@@ -58,7 +58,7 @@ void g2_filled_arc_pd(g2_physical_device *pd,
 		      double r1, double r2,
 		      double a1, double a2);
 void g2_string_pd(g2_physical_device *pd,
-		  double x, double y, char *text);
+		  double x, double y, const char *text);
 void g2_image_pd(g2_physical_device *pd,
 	         double x, double y, int x_size, int y_size, int *pens);
 

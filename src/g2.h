@@ -155,7 +155,7 @@ G2L void g2_arc(int dev,
 G2L void g2_filled_arc(int dev, double x, double y,
 		   double r1, double r2,
 		   double a1, double a2);
-G2L void g2_string(int dev, double x, double y, char *text);
+G2L void g2_string(int dev, double x, double y, const char *text);
 G2L void g2_image(int dev,
 		  double x, double y, int x_size, int y_size, int *pens);
 

@@ -627,7 +627,7 @@ void g2_filled_arc_pd(g2_physical_device *pd,
  *
  */
 void g2_string_pd(g2_physical_device *pd,
-		  double x, double y, char *text)
+		  double x, double y, const char *text)
 {
     int    ix, iy;
     double dx, dy;
