@@ -344,9 +344,8 @@ int g2_PS_set_font_size(int pid, void *pdp, double size)
     g2_PS_device *ps=&g2_PS_dev[pid];
     if(size<=0.0)
 	return -1;
-    fprintf(ps->fp,"%s findfont %.4g scalefont setfont\n",
-	    G2_PSFONT, size);
-	ps->size = size;
+    fprintf(ps->fp,"%s findfont %.4g scalefont setfont\n", g2_PSFont, size);
+    ps->size = size;
     return 0;
 }
 
