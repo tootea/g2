@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "../gd" /I "./src" /I "../src" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "DO_PS" /D "DO_GIF" /D "DO_WIN32" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I "../gdwin32" /I "./src" /I "../src" /D "NDEBUG" /D "_WINDOWS" /D "WIN32" /D "DO_PS" /D "DO_GIF" /D "DO_WIN32" /D "DO_FIG" /YX /FD /c
 # ADD BASE RSC /l 0x409
 # ADD RSC /l 0x409
 BSC32=bscmake.exe
@@ -64,7 +64,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /Z7 /Od /I "../gd" /I "./src" /I "../src" /D "_WINDOWS" /D "WIN32" /D "_DEBUG" /D "DO_PS" /D "DO_GIF" /D "DO_WIN32" /FR /YX /FD /c
+# ADD CPP /nologo /W3 /GX /Z7 /Od /I "../gdwin32" /I "./src" /I "../src" /D "_DEBUG" /D "_WINDOWS" /D "WIN32" /D "DO_PS" /D "DO_GIF" /D "DO_WIN32" /D "DO_FIG" /FR /YX /FD /c
 # ADD BASE RSC /l 0x409
 # ADD RSC /l 0x409
 BSC32=bscmake.exe
@@ -91,6 +91,10 @@ SOURCE=.\src\g2_device.c
 # Begin Source File
 
 SOURCE=.\src\g2_fif.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\FIG\g2_FIG.c
 # End Source File
 # Begin Source File
 
