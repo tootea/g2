@@ -77,6 +77,9 @@ Contents</h1>
 
 <li>
 <font size=+1><a href="#text">Text</a></font></li>
+
+<li>
+<font size=+1><a href="#images">Images</a></font></li>
 </ul>
 </ul>
 
@@ -153,6 +156,9 @@ Written in ANSI-C</li>
 Tested under Digital Unix, AIX, Linux, VMS and Windows NT</li>
 
 <li>
+Perl support</li>
+
+<li>
 Fortran interface</li>
 </ul>
 Long version:
@@ -202,8 +208,10 @@ be modified in the g2 project workspace.
 <br>Unix and VMS users will have to build and install gd according to the
 instructions found in the gd distribution.</blockquote>
 
-<p><br><a NAME="Installation"></a>Installation
-<p>LINUX
+<h3>
+<a NAME="Installation"></a>Installation</h3>
+
+<p><br>LINUX
 <ul>
 <li>
 Either install RPM packet with binaries, or compile as described in the
@@ -249,8 +257,32 @@ It is also possible to compile g2 on winNT/95 using the free cygwin32 library
 and a X-windows library for windows. Theoretically it should be possible
 to support both X-windows and native NT/95 windows at the same time.</li>
 </ul>
+<font size=+0>PERL</font>
+<ul>
+<li>
+Change to directory g2_perl</li>
+
+<li>
+Perform following steps</li>
+
+<ul>
+<li>
+perl Makefile.PL</li>
+
+<li>
+make</li>
+
+<li>
+make test</li>
+
+<li>
+make install</li>
+</ul>
+
+<li>
+See the file test.pl for a g2 perl example</li>
+</ul>
 <font size=+0>VMS</font>
-<br>&nbsp;
 <blockquote>
 <li>
 Try to extract either the tar.gz or the zip distribution (whatever is easier
@@ -276,9 +308,9 @@ in a postscript file.
 main()&nbsp;
 {&nbsp;
 int id;&nbsp;
-id = g2_open_PS("rect.ps", g2_A4, g2_PS_land);&nbsp;
-g2_rectangle(id,20,20,150,150);&nbsp;
-g2_close(id);&nbsp;
+id = <a href="#g2_attach_PS">g2_open_PS</a>("rect.ps", g2_A4, g2_PS_land);&nbsp;
+<a href="#g2_rectangle">g2_rectangle</a>(id,20,20,150,150);&nbsp;
+<a href="#g2_close">g2_close</a>(id);&nbsp;
 }</pre>
 </blockquote>
 1.) Always include &lt;g2.h>. Additionally include header files for all
@@ -294,7 +326,7 @@ drawing styles</a>, or doing <a href="#Device Functions">other stuff</a>
 <p>replace the PS header file with
 <pre>#include &lt;g2_GIF.h></pre>
 and replace the g2_open_PS function call with
-<pre>id = g2_open_GIF("rect.gif",300,200);</pre>
+<pre>id = <a href="#g2_attach_GIF">g2_open_GIF</a>("rect.gif",300,200);</pre>
 <b>You want to draw to a GIF file and a PostScript file with one plot command
 ?</b>
 <p>Here we use the concept of virtual devices. Open a GIF and PostScript
@@ -628,6 +660,19 @@ y, char *text)</b>
 <br><b>text:</b> pointer to text string</ul>
 </ul>
 
+<h3>
+<a NAME="images"></a>Images</h3>
+
+<ul><b>void&nbsp;<a NAME="g2_image"></a>g2_image(int dev, double x, double
+y,&nbsp; int x_size, int y_size, int *pens)</b>
+<ul>Draw a pen image on device <b>dev</b>
+<br><b>x,y: </b>Position of image (lower left corner)
+<br><b>x_size,y_size:</b> size of image
+<br><b>pens:</b> integer array of size x_size <i>x</i> y_size specifying
+pen colors</ul>
+</ul>
+
+<p><br>
 <hr WIDTH="100%">
 <h2>
 <a NAME="stylefunctions"></a>Style Functions</h2>
@@ -1556,7 +1601,7 @@ Documentation for implementing new physical devices.</li>
 
 <br>&nbsp;
 <li>
-New</li>
+Implement native image support and image import functions.</li>
 </ul>
 
 <h3>
