@@ -57,7 +57,7 @@ typedef struct g2_win32_STRUCT {
 
 BOOL SaveBitmapAs(HWND hWnd,struct XPGTHREADINFO *pThreadInfo);
 LRESULT CALLBACK g2_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-long g2_StartThread(struct g2_win32_STRUCT *pdp);
+long WINAPI g2_StartThread(struct g2_win32_STRUCT *pdp);
 void errhandler(LPSTR errtxt,HWND hwnd);
 
 

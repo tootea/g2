@@ -116,7 +116,7 @@ LRESULT CALLBACK g2_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 return -1;
 }
 
-long g2_StartThread(struct g2_win32_STRUCT *pdp)
+long WINAPI g2_StartThread(struct g2_win32_STRUCT *pdp)
 {
 RECT	Rect;
 HWND hWnd;
