@@ -23,8 +23,8 @@ CPP = /lib/cpp
 #F77 = f77 -n32
 #CPP = /lib/cpp -P -DFORTRAN
 
-CFLAGS = -Wall -I../src -I../src/X11 -I../src/PS -I../src/GD @CFLAGS@ @DEFS@
-CXXFLAGS = -Wall -I../src -I../src/X11 -I../src/PS -I../src/GD @CXXFLAGS@ @DEFS@
+CFLAGS = -I../src -I../src/X11 -I../src/PS -I../src/GD @CFLAGS@ @DEFS@
+CXXFLAGS = -I../src -I../src/X11 -I../src/PS -I../src/GD @CXXFLAGS@ @DEFS@
 LDFLAGS = -L.. -lg2 @LDFLAGS@
 
 @DO_PS@DEMO_PS = simple_PS
