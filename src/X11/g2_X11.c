@@ -148,6 +148,7 @@ int g2_X11_init_X11X(int pid, int width, int height,
 	exit(-1);
     }
 
+
     xout->root=RootWindow(xout->display, DefaultScreen(xout->display));
     root=xout->root;
     
@@ -159,12 +160,12 @@ int g2_X11_init_X11X(int pid, int width, int height,
 			       CopyFromParent, InputOutput, CopyFromParent,
 			       CWEventMask,
 			       &wattr);
-    
-    xout->colormap=DefaultColormap(xout->display,
-				   DefaultScreen(xout->display));
 
     xout->gc=XCreateGC(xout->display, xout->window,
 		       0lu, NULL);
+
+    xout->colormap=DefaultColormap(xout->display,
+				   DefaultScreen(xout->display));
         
     XAllocNamedColor(xout->display, xout->colormap,
 		     "red", &r_scr, &r_exa);
@@ -172,6 +173,7 @@ int g2_X11_init_X11X(int pid, int width, int height,
 		     "white", &w_scr, &w_exa);
 
 
+    
     if(icon_data!=NULL) {
 	if(icon_width<=0 || icon_height<=0) {	  /* read icon from file */
 	    rv=XReadBitmapFile(xout->display, xout->window,
@@ -240,7 +242,7 @@ int g2_X11_init_X11X(int pid, int width, int height,
  
     XMapRaised(xout->display, xout->window);
     
-    XSetWindowBackground(xout->display, xout->window, w_scr.pixel);
+    //    XSetWindowBackground(xout->display, xout->window, w_scr.pixel);
     XClearWindow(xout->display,xout->window);
     
     g2_X11_paper(pid, NULL, 0);
@@ -258,8 +260,39 @@ int g2_X11_init_X11X(int pid, int width, int height,
 			    CWEventMask|CWBackingStore,
 			    &wattr);
 
+    xout->dest = xout->window;
+
     if(XDoesBackingStore(XDefaultScreenOfDisplay(xout->display))!=Always)
+      {
+	int           x_alloc_error;
+
 	fputs("g2: Warning! Backing store is not available.\n",stderr);
+	fputs("    Trying to allocate backing pixmap instead\n",stderr);
+
+        /* try to allocate backing pixmap */
+	x_alloc_error = FALSE;
+	xout->backing_pixmap = XCreatePixmap(xout->display, xout->window,
+                          xout->width, xout->height,
+                          DefaultDepth(xout->display, DefaultScreen(xout->display)));
+       	XSync(xout->display, False);    /* Force any error */
+	if (x_alloc_error) {
+	  xout->dest           = xout->window;
+	  xout->backing_pixmap = None;
+	  fputs("g2: Warning! Allocating backing pixmap failed.\n",stderr);
+  
+	} else {
+	  XSetWindowBackgroundPixmap(xout->display, xout->window,
+                                xout->backing_pixmap);
+	  /* Clear the pixmap, to avoid initializing with garbage */
+	  XSetForeground (xout->display, xout->gc,w_scr.pixel);
+          
+	  XFillRectangle(xout->display, xout->backing_pixmap, xout->gc,
+                    0, 0, xout->width, xout->height);
+	  xout->dest = xout->backing_pixmap;
+
+	}
+	
+      }
 
     XFlush(xout->display);
     return 0;
@@ -272,6 +305,8 @@ int g2_X11_delete(int pid, void *pdp)
 {
     g2_X11_device *xout=&g2_X11_dev[pid];
     XUnmapWindow(xout->display, xout->window);
+    if (xout->backing_pixmap != None)
+	XFreePixmap(xout->display,xout->backing_pixmap);
     XDestroyWindow(xout->display, xout->window);
     XDestroyWindow(xout->display, xout->root);
     XFreeGC(xout->display, xout->gc);
@@ -289,9 +324,19 @@ int g2_X11_delete(int pid, void *pdp)
 int g2_X11_clear(int pid, void *pdp)
 {
     g2_X11_device *xout=&g2_X11_dev[pid];
-
-    XClearWindow(xout->display,xout->window);
-    XFlush(xout->display);
+    
+    if (xout->backing_pixmap == None)
+      {
+      XClearWindow(xout->display,xout->window);
+      }
+    else
+      {
+      XSetForeground (xout->display, xout->gc,
+                  xout->background);
+      XFillRectangle(xout->display, xout->dest, xout->gc,
+                 0, 0, xout->width, xout->height);
+      }
+    g2_X11_flush(pid,pdp);
     return 0;
 }
 
@@ -300,6 +345,10 @@ int g2_X11_clear(int pid, void *pdp)
 int g2_X11_flush(int pid, void *pdp)
 {
     g2_X11_device *xout=&g2_X11_dev[pid];
+    if( xout->backing_pixmap != None ) {
+      XCopyArea(xout->display, xout->dest, xout->window, xout->gc,
+              0, 0, xout->width, xout->height, 0, 0);
+      }
     XFlush(xout->display);
     return 0;
 }
@@ -356,9 +405,16 @@ int g2_X11_set_background(int pid, void *pdp, int color)
     g2_X11_device *xout=&g2_X11_dev[pid];
     if(color>=xout->NofInks || color<0)
 	return -1;
-    XSetWindowBackground(xout->display,xout->window,
+    if (xout->backing_pixmap == None)
+      {
+        XSetWindowBackground(xout->display,xout->dest,
 			 xout->inks[color]);
-    XClearWindow(xout->display,xout->window);
+      }
+    else
+      {
+	xout->background = xout->inks[color];
+      }
+    g2_X11_clear(pid,pdp);
     return 0;
 }
 
@@ -455,7 +511,7 @@ int g2_X11_set_font_size(int pid, void *pdp, int size)
 int g2_X11_plot(int pid, void *pdp, int x, int y)
 {
     g2_X11_device *xout=&g2_X11_dev[pid];
-    XDrawPoint(xout->display, xout->window, xout->gc,
+    XDrawPoint(xout->display, xout->dest, xout->gc,
 	       x, y);
     return 0;
 }
@@ -464,7 +520,7 @@ int g2_X11_plot(int pid, void *pdp, int x, int y)
 int g2_X11_line(int pid, void *pdp, int x1, int y1, int x2, int y2)
 {
     g2_X11_device *xout=&g2_X11_dev[pid];
-    XDrawLine(xout->display,xout->window,xout->gc,
+    XDrawLine(xout->display,xout->dest,xout->gc,
 	      x1, y1, x2, y2);
     return 0;
 }
@@ -480,7 +536,7 @@ int g2_X11_poly_line(int pid, void *pdp, int N, int *p)
 	points[i].x=(short)p[i*2];
 	points[i].y=(short)p[i*2+1];
     }
-    XDrawLines(xout->display,xout->window,xout->gc,
+    XDrawLines(xout->display,xout->dest,xout->gc,
 	       points, N,
 	       CoordModeOrigin);
     g2_free(points);
@@ -500,7 +556,7 @@ int g2_X11_polygon(int pid, void *pdp, int N, int *p)
     }
     points[N].x=(short)p[0];
     points[N].y=(short)p[1];
-    XDrawLines(xout->display,xout->window,xout->gc,
+    XDrawLines(xout->display,xout->dest,xout->gc,
 	       points, N+1,
 	       CoordModeOrigin);
     g2_free(points);
@@ -520,7 +576,7 @@ int g2_X11_filled_polygon(int pid, void *pdp, int N, int *p)
     }
     points[N].x=(short)p[0];
     points[N].y=(short)p[1];
-    XFillPolygon(xout->display,xout->window,xout->gc,
+    XFillPolygon(xout->display,xout->dest,xout->gc,
 		 points, N+1,
 		 Complex, CoordModeOrigin);
     g2_free(points);
@@ -539,7 +595,7 @@ int g2_X11_triangle(int pid, void *pdp,
     points[1].x=x2; points[1].y=y2; 
     points[2].x=x3; points[2].y=y3; 
     points[3].x=x1; points[3].y=y1; 
-    XDrawLines(xout->display,xout->window,xout->gc,
+    XDrawLines(xout->display,xout->dest,xout->gc,
 	       points, 4, CoordModeOrigin);
     return 0;
 }
@@ -556,7 +612,7 @@ int g2_X11_filled_triangle(int pid, void *pdp,
     points[1].x=x2; points[1].y=y2; 
     points[2].x=x3; points[2].y=y3; 
     points[3].x=x1; points[3].y=y1; 
-    XFillPolygon(xout->display,xout->window,xout->gc,
+    XFillPolygon(xout->display,xout->dest,xout->gc,
 		 points, 4, Convex, CoordModeOrigin);
     return 0;
 }
@@ -565,7 +621,7 @@ int g2_X11_filled_triangle(int pid, void *pdp,
 int g2_X11_rectangle(int pid, void *pdp, int x1, int y1, int x2, int y2)
 {
     g2_X11_device *xout=&g2_X11_dev[pid];
-    XDrawRectangle(xout->display,xout->window,xout->gc,
+    XDrawRectangle(xout->display,xout->dest,xout->gc,
 		   x1, y1, x2-x1, y2-y1);
     return 0;
 }
@@ -575,9 +631,9 @@ int g2_X11_rectangle(int pid, void *pdp, int x1, int y1, int x2, int y2)
 int g2_X11_filled_rectangle(int pid, void *pdp, int x1, int y1, int x2, int y2)
 {
     g2_X11_device *xout=&g2_X11_dev[pid];
-    XDrawRectangle(xout->display,xout->window,xout->gc,
+    XDrawRectangle(xout->display,xout->dest,xout->gc,
 		   x1, y1, x2-x1, y2-y1);
-    XFillRectangle(xout->display,xout->window,xout->gc,
+    XFillRectangle(xout->display,xout->dest,xout->gc,
 		   x1, y1, x2-x1, y2-y1);
     return 0;
 }
@@ -591,7 +647,7 @@ int g2_X11_arc(int pid, void *pdp, int x, int y,
     a2=fmod(a2, 360.);
     if(a2-a1<0)
 	a2+=360.;
-    XDrawArc(xout->display,xout->window,xout->gc,
+    XDrawArc(xout->display,xout->dest,xout->gc,
 	     x-r1, y-r2,
 	     r1*2, r2*2,
 	     (int)(a1*64.), (int)((a2-a1)*64.));
@@ -607,11 +663,11 @@ int g2_X11_filled_arc(int pid, void *pdp, int x, int y,
     a2=fmod(a2, 360.);
     if(a2-a1<0)
 	a2+=360.;
-    XDrawArc(xout->display,xout->window,xout->gc,
+    XDrawArc(xout->display,xout->dest,xout->gc,
 	     x-r1, y-r2,
 	     r1*2, r2*2,
 	     a1*64, (a2-a1)*64.0);
-    XFillArc(xout->display,xout->window,xout->gc,
+    XFillArc(xout->display,xout->dest,xout->gc,
 	     x-r1, y-r2,
 	     r1*2, r2*2,
 	     (int)(a1*64.), (int)((a2-a1)*64.));
@@ -622,7 +678,7 @@ int g2_X11_filled_arc(int pid, void *pdp, int x, int y,
 int g2_X11_ellipse(int pid, void *pdp, int x, int y, int r1, int r2)
 {
     g2_X11_device *xout=&g2_X11_dev[pid];
-    XDrawArc(xout->display,xout->window,xout->gc,
+    XDrawArc(xout->display,xout->dest,xout->gc,
 	     x-r1, y-r2,
 	     r1*2, r2*2,
 	     0,360*64);
@@ -633,11 +689,11 @@ int g2_X11_ellipse(int pid, void *pdp, int x, int y, int r1, int r2)
 int g2_X11_filled_ellipse(int pid, void *pdp, int x, int y, int r1, int r2)
 {
     g2_X11_device *xout=&g2_X11_dev[pid];
-    XDrawArc(xout->display,xout->window,xout->gc,
+    XDrawArc(xout->display,xout->dest,xout->gc,
 	     x-r1, y-r2,
 	     r1*2, r2*2,
 	     0,360*64);
-    XFillArc(xout->display,xout->window,xout->gc,
+    XFillArc(xout->display,xout->dest,xout->gc,
 	     x-r1, y-r2,
 	     r1*2, r2*2,
 	     0,360*64);
@@ -649,7 +705,7 @@ int g2_X11_filled_ellipse(int pid, void *pdp, int x, int y, int r1, int r2)
 int g2_X11_draw_string(int pid, void *pdp, int x, int y, char *text)
 {
     g2_X11_device *xout=&g2_X11_dev[pid];
-    XDrawString(xout->display,xout->window,xout->gc,
+    XDrawString(xout->display,xout->dest,xout->gc,
 		x, y, text, strlen(text));
     return 0;
 }
@@ -682,7 +738,7 @@ int g2_X11_image(int pid, void *pdp,
     printf("BP2\n");
     /* XInitImage(image); problems with AIX ?!! */
     printf("BP3 image=%p\n", (void*)image);
-    XPutImage(xout->display, xout->window, xout->gc,
+    XPutImage(xout->display, xout->dest, xout->gc,
 	      image,
 	      0, 0,
 	      x, y, width, height);

@@ -27,11 +27,15 @@ typedef struct {
     Window      root;
     Colormap    colormap;
     GC          gc;
+    Drawable    dest;
+    Pixmap      backing_pixmap;
+    
     
     unsigned long  *inks;			  /* allocated colors*/
     int            NofInks;			  /* N of allocated colors */
     int            width;			  /* window dimensions */
     int            height;
+    int            background;
 } g2_X11_device;
 
 
