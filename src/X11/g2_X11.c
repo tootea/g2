@@ -262,36 +262,33 @@ int g2_X11_init_X11X(int pid, int width, int height,
 
     xout->dest = xout->window;
 
+    xout->backing_pixmap = None;
+
     if(XDoesBackingStore(XDefaultScreenOfDisplay(xout->display))!=Always)
       {
-	int           x_alloc_error;
-
 	fputs("g2: Warning! Backing store is not available.\n",stderr);
 	fputs("    Trying to allocate backing pixmap instead\n",stderr);
 
-        /* try to allocate backing pixmap */
-	x_alloc_error = FALSE;
+	/* One should first implement error handling for X11, then this code could be enabled
 	xout->backing_pixmap = XCreatePixmap(xout->display, xout->window,
-                          xout->width, xout->height,
-                          DefaultDepth(xout->display, DefaultScreen(xout->display)));
-       	XSync(xout->display, False);    /* Force any error */
+					     xout->width, xout->height,
+					     DefaultDepth(xout->display, DefaultScreen(xout->display)));
+       	XSync(xout->display, False);
 	if (x_alloc_error) {
 	  xout->dest           = xout->window;
 	  xout->backing_pixmap = None;
 	  fputs("g2: Warning! Allocating backing pixmap failed.\n",stderr);
-  
 	} else {
 	  XSetWindowBackgroundPixmap(xout->display, xout->window,
-                                xout->backing_pixmap);
-	  /* Clear the pixmap, to avoid initializing with garbage */
+				     xout->backing_pixmap);
+	  
 	  XSetForeground (xout->display, xout->gc,w_scr.pixel);
           
 	  XFillRectangle(xout->display, xout->backing_pixmap, xout->gc,
-                    0, 0, xout->width, xout->height);
+			 0, 0, xout->width, xout->height);
 	  xout->dest = xout->backing_pixmap;
-
 	}
-	
+	*/
       }
 
     XFlush(xout->display);
