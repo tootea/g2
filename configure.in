@@ -88,7 +88,7 @@ fi
 AC_CYGWIN
 if test "$CYGWIN" = yes
 then
-	LDFLAGS="$LDFLAGS -L/lib/win32api"
+	LDFLAGS="$LDFLAGS -L/lib/w32api"
 	AC_CHECK_LIB(gdi32, main, DO_WIN32='';LDFLAGS="$LDFLAGS -lgdi32";AC_DEFINE(DO_WIN32))
 	AC_CHECK_LIB(bgd, main, have_bgd=yes, have_bgd=no)
 	if test "$have_bgd" = yes
