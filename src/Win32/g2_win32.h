@@ -46,6 +46,12 @@ extern "C"
 #define LINKDLL
 #endif
 
+enum g2_win32_type {
+    g2_win32,			/* regular window */
+    g2_wmf32			/* windows meta file */
+};
+
+
 LINKDLL int  g2_open_win32(int width, int height, const char *filename,int type);
 
 

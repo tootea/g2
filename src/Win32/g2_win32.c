@@ -457,13 +457,14 @@ int InitApplication()
   // Fill in window class structure with parameters that describe the
   // main window.
 
-  g2res_DLL = LoadLibrary("g2res.dll");
+    g2res_DLL = LoadLibrary("g2res.dll");
+
   if (g2res_DLL == NULL) 
-		fprintf(stderr,"Warning: Could not load g2 resource DLL\n Menu and Icon are disabled\n");
+		printf("Warning: Could not load g2 resource DLL\n Menu and Icon are disabled\n");
 //	  	errhandler("Could not load g2res.dll",NULL);
   
 
-  wc.style = CS_HREDRAW | CS_VREDRAW; // Class style(s).
+    wc.style = CS_HREDRAW | CS_VREDRAW; // Class style(s).
   wc.lpfnWndProc = g2_WndProc; // Function to retrieve messages for
 							   // windows of this class.
   wc.cbClsExtra = 0;	// No per-class extra data.
@@ -483,7 +484,8 @@ int InitApplication()
 
   /* Register the window class and return success/failure code. */
 
-  if(!RegisterClass(&wc)) 
+
+	if(!RegisterClass(&wc)) 
 	  {
 	  errhandler("RegisterClass",NULL);
 	  return FALSE;
@@ -517,9 +519,8 @@ int  g2_open_win32(int width, int height, const char *title, int type)
 	PDP->hFont = NULL;
 	
 	switch(type) {
-		case 0:
+		case g2_win32:
 			{
-//			printf("Creating Win32 device %d x %d\n",width,height);
 			if(g2_win32_registered == FALSE)
 				InitApplication();
 		
