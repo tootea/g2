@@ -265,30 +265,20 @@ int g2_X11_init_X11X(int pid, int width, int height,
     xout->backing_pixmap = None;
 
     if(XDoesBackingStore(XDefaultScreenOfDisplay(xout->display))!=Always) {
-	fputs("g2: Warning! Backing store is not available.\n",stderr);
-	fputs("    Trying to allocate backing pixmap instead\n",stderr);
-
-	/* One should first implement error handling for X11, then this code could be enabled
+	/* fputs("g2: Warning! Backing store is not available.Allocating pixmap instead.\n", stderr); */
+	
 	xout->backing_pixmap = XCreatePixmap(xout->display, xout->window,
 					     xout->width, xout->height,
 					     DefaultDepth(xout->display, DefaultScreen(xout->display)));
-       	XSync(xout->display, False);
-	if (x_alloc_error) {
-	  xout->dest           = xout->window;
-	  xout->backing_pixmap = None;
-	  fputs("g2: Warning! Allocating backing pixmap failed.\n",stderr);
-	} else {
-	  XSetWindowBackgroundPixmap(xout->display, xout->window,
-				     xout->backing_pixmap);
+	XSetWindowBackgroundPixmap(xout->display, xout->window,
+				   xout->backing_pixmap);
 	  
-	  XSetForeground (xout->display, xout->gc,w_scr.pixel);
+	XSetForeground (xout->display, xout->gc, w_scr.pixel);
           
-	  XFillRectangle(xout->display, xout->backing_pixmap, xout->gc,
-			 0, 0, xout->width, xout->height);
-	  xout->dest = xout->backing_pixmap;
-	}
-	*/
-      }
+	XFillRectangle(xout->display, xout->backing_pixmap, xout->gc,
+		       0, 0, xout->width, xout->height);
+	xout->dest = xout->backing_pixmap;
+    }
 
     XFlush(xout->display);
     return 0;
@@ -721,7 +711,6 @@ int g2_X11_image(int pid, void *pdp,
 	ink_array[i]=xout->inks[pen_array[i]];
 
     screen=DefaultScreenOfDisplay(xout->display);
-    printf("BP1\n");
     image=XCreateImage(xout->display,
 		       DefaultVisualOfScreen(screen),
 		       DefaultDepthOfScreen(screen),
@@ -729,16 +718,13 @@ int g2_X11_image(int pid, void *pdp,
 		       0,			  /* offset */
 		       (char *)ink_array,
 		       width, height,
-		       sizeof(unsigned long)*8,		  /* bitmap pad */
+		       sizeof(unsigned long)*8,	  /* bitmap pad */
 		       0);			  /* bytes per line */
-    printf("BP2\n");
     /* XInitImage(image); problems with AIX ?!! */
-    printf("BP3 image=%p\n", (void*)image);
     XPutImage(xout->display, xout->dest, xout->gc,
 	      image,
 	      0, 0,
 	      x, y, width, height);
-    printf("BP4\n");
 	
     XDestroyImage(image);
     free(ink_array);
