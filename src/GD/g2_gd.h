@@ -50,8 +50,8 @@ extern "C"
  *  g2 gd bitmap types
  */
 enum g2_gd_type {
-    g2_gd_jpeg,			/* jpeg */
-    g2_gd_png			/* png */
+    g2_gd_jpeg = 0,	/* jpeg */
+    g2_gd_png  = 1	/* png */
 };
 
 

@@ -24,18 +24,17 @@ CPP = /lib/cpp
 #F77 = f77 -n32
 #CPP = /lib/cpp -P -DFORTRAN
 
-CFLAGS = -Wall -I../src -I../src/X11 -I../src/PS -I../src/GIF -I../src/GD -g -O2  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
-CXXFLAGS = -Wall -I../src -I../src/X11 -I../src/PS -I../src/GIF -I../src/GD -g -O2  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
-LDFLAGS = -L.. -lg2   -L/usr/X11R6/lib -L/usr/local/lib -lm -lX11
+CFLAGS = -Wall -I../src -I../src/X11 -I../src/PS -I../src/GD -Wall  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
+CXXFLAGS = -Wall -I../src -I../src/X11 -I../src/PS -I../src/GD -g -O2  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
+LDFLAGS = -L.. -lg2   -L/usr/X11R6/lib -L/usr/local/lib -lm -lX11 -lgd
 
 DEMO_PS = simple_PS
 DEMO_X11 = simple_X11 pointer
-#DEMO_GIF = simple_GIF
-#DEMO_GD = simple_gd
+DEMO_GD = simple_gd
 #DEMO_WIN32 = simple_win32
 
 
-DEMO = g2_test g2_splines_demo demo_cpp $(DEMO_PS) $(DEMO_X11) $(DEMO_GIF) $(DEMO_GD) $(DEMO_WIN32)
+DEMO = g2_test g2_splines_demo demo_cpp $(DEMO_PS) $(DEMO_X11) $(DEMO_GD) $(DEMO_WIN32)
 
 all:	$(DEMO)
 
@@ -60,9 +59,6 @@ simple_win32:  simple_win32.c
 pointer:  pointer.c
 	$(CC) $(CFLAGS) pointer.c $(LDFLAGS) -o $@
 
-simple_GIF:  simple_GIF.c
-	$(CC) $(CFLAGS) simple_GIF.c $(LDFLAGS) -o $@
-
 simple_gd:  simple_gd.c
 	$(CC) $(CFLAGS) simple_gd.c $(LDFLAGS) -o $@
 
@@ -72,11 +68,11 @@ demo_cpp: demo_cpp.cpp
 demo_f: demo_f.f
 	$(F77) $(F77_FLAGS) demo_f.f $(LDFLAGS) -o $@
 
-g2testf:
-	$(CPP)  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1  -E g2_test.F >g2_test.f
-	$(F77) g2_test.f $(LDFLAGS) -o g2testf
+g2testf: g2_test.f
+	$(CPP)  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1  -E g2_test.f > g2testf.f
+	$(F77) g2testf.f $(LDFLAGS) -o g2testf
 
 clean:
-	-rm $(DEMO) g2_testf demo_f *~ core *.ps *.eps *.png *.jpg *.gif
+	-rm $(DEMO) g2testf g2testf.f demo_f *~ core *.ps *.eps *.png *.jpg
 
 

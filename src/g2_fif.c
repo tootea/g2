@@ -77,11 +77,11 @@ F_REAL FIF(g2_open_x11)(F_REAL *width, F_REAL *height)
 
 /**********************************************************/
 
-#ifdef DO_GIF
+#ifdef DO_GD
 
-#include "GIF/g2_GIF.h"
+#include "GD/g2_gd.h"
 
-F_REAL FIF(g2_open_gif)(F_CHAR *text, F_REAL *width, F_REAL *height,
+F_REAL FIF(g2_open_gd)(F_CHAR *text, F_REAL *width, F_REAL *height, F_REAL *gd_type,
 			F_CHAR_LENGTH length)
 {
     char *str;
@@ -91,14 +91,14 @@ F_REAL FIF(g2_open_gif)(F_CHAR *text, F_REAL *width, F_REAL *height,
     strncpy(str, text, length);
     str[length]='\0';
 
-    rv=0;
+    rv=g2_open_gd(str, *width, *height, *gd_type);
     
     g2_free(str);
     
     return (F_REAL)rv;
 }
 
-#endif /* DO_GIF */
+#endif /* DO_GD */
 
 /**********************************************************/
 

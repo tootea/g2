@@ -30,19 +30,19 @@ typedef struct _g2_PS_inks {
 
 
 typedef struct _g2_PS_device {
-    FILE                    *fp;		/* output file pointer */
-    enum g2_PS_paper        paper;		/* paper type */
-    enum g2_PS_orientation  orient;		/* page orientation */
-	enum g2_PS_format		format;		/* PS or EPSF format */
-	long width,height;					/* width and height for EPSF */
-	double x1,y1,x2,y2;					/* min. Bounding Box */
-	int bbox;							/* Bounding Box empty flag */
-	double w,size;						/* line width/font size (required for Bbox) */
-
-    g2_PS_inks     *inks;			/* allocated colors */
-    int            N_ink;			/* number of allocated colors*/
-    int            pen;				/* current pen */
-    int            page_counter;		/* page counter ( Clear() ) */ 
+  FILE                    *fp;		/* output file pointer */
+  enum g2_PS_paper        paper;	/* paper type */
+  enum g2_PS_orientation  orient;	/* page orientation */
+  enum g2_PS_format	  format;	/* PS or EPSF format */
+  long                    width,height;	/* width and height for EPSF */
+  double                  x1,y1,x2,y2;	/* min. Bounding Box */
+  int                     bbox;		/* Bounding Box empty flag */
+  double                  w,size;	/* line width/font size (required for Bbox) */
+  
+  g2_PS_inks     *inks;			/* allocated colors */
+  int            N_ink;			/* number of allocated colors*/
+  int            pen;			/* current pen */
+  int            page_counter;		/* page counter ( Clear() ) */ 
 } g2_PS_device;
 
 

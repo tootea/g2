@@ -5,7 +5,7 @@
 #
 #
 
-G2_VERSION = 0.49a
+G2_VERSION = 0.50
 
 #
 # g2 installation directories
@@ -22,7 +22,7 @@ INCDIR = /usr/local/include
 SHELL = /bin/sh
 
 CC           = gcc
-CFLAGS       = -I./src -g -O2  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
+CFLAGS       = -I./src -Wall  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
 INSTALL      = /usr//bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 FIND         = find
@@ -31,7 +31,7 @@ AR           = ar
 ARFLAGS      = -cr
 RANLIB       = ranlib
 LD           = ld
-LDFLAGS      =   -L/usr/X11R6/lib -L/usr/local/lib -lm -lX11
+LDFLAGS      =   -L/usr/X11R6/lib -L/usr/local/lib -lm -lX11 -lgd
 
 
 BASE_DIR = ./src
@@ -48,7 +48,6 @@ PS_DIR = ./src/PS
 PS_SRC = $(PS_DIR)/g2_PS.c
 PS_INS = $(PS_DIR)/g2_PS.h
 
-
 X11_DIR = ./src/X11
 X11_SRC = $(X11_DIR)/g2_X11.c
 X11_INS = $(X11_DIR)/g2_X11.h
@@ -57,20 +56,15 @@ X11_INS = $(X11_DIR)/g2_X11.h
 #WIN32_SRC = $(WIN32_DIR)/g2_win32.c $(WIN32_DIR)/g2_win32_thread.c 
 #WIN32_INS = $(WIN32_DIR)/g2_win32.h
 
-#GIF_DIR = ./src/GIF
-#GIF_SRC = $(GIF_DIR)/g2_GIF.c
-#GIF_INS = $(GIF_DIR)/g2_GIF.h
+GD_DIR = ./src/GD
+GD_SRC = $(GD_DIR)/g2_gd.c
+GD_INS = $(GD_DIR)/g2_gd.h
 
 
-#GD_DIR = ./src/GD
-#GD_SRC = $(GD_DIR)/g2_gd.c
-#GD_INS = $(GD_DIR)/g2_gd.h
-
-
-SRC = $(BASE_SRC) $(PS_SRC) $(X11_SRC) $(WIN32_SRC) $(GIF_SRC) $(GD_SRC)
+SRC = $(BASE_SRC) $(PS_SRC) $(X11_SRC) $(WIN32_SRC) $(GD_SRC)
 OBJ = $(SRC:.c=.o)
 
-INS =  $(BASE_INS) $(PS_INS) $(X11_INS) $(WIN32_INS) $(GIF_INS) $(GD_INS)
+INS =  $(BASE_INS) $(PS_INS) $(X11_INS) $(WIN32_INS) $(GD_INS)
 
 .c.o:  
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -108,9 +102,10 @@ clean:
 	-rm -f ./include/*.h
 	-$(FIND) . -name "*~" -exec rm -f {} \;
 	-(cd ./g2_perl ; make clean)
-	-rm -f ./g2_perl/test.ps ./g2_perl/test.gif
+	-rm -f ./g2_perl/test.ps
 	-rm -f ./libg2.so.0.$(G2_VERSION)
 	-rm -f libg2.$(G2_VERSION).a
+	-rm -f a.out
 
 demo:	libg2.a
 	(cd ./demo ; make)
@@ -179,6 +174,7 @@ depend:
 ./src/g2_fif.o: /usr/include/string.h ./src/g2.h ./src/g2_util.h
 ./src/g2_fif.o: /usr/include/stdlib.h ./src/g2_physical_device.h
 ./src/g2_fif.o: ./src/g2_funix.h ./src/PS/g2_PS.h ./src/X11/g2_X11.h
+./src/g2_fif.o: ./src/GD/g2_gd.h
 ./src/g2_virtual_device.o: /usr/include/stdio.h /usr/include/features.h
 ./src/g2_virtual_device.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
 ./src/g2_virtual_device.o: /usr/lib/gcc-lib/i586-mandrake-linux-gnu/3.2.2/include/stddef.h
@@ -338,3 +334,23 @@ depend:
 ./src/X11/g2_X11.o: ./src/g2_virtual_device.h ./src/g2_util.h
 ./src/X11/g2_X11.o: ./src/X11/g2_X11_P.h ./src/X11/g2_X11.h
 ./src/X11/g2_X11.o: ./src/X11/g2_X11_funix.h ./src/g2_config.h
+./src/GD/g2_gd.o: /usr/include/stdio.h /usr/include/features.h
+./src/GD/g2_gd.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
+./src/GD/g2_gd.o: /usr/lib/gcc-lib/i586-mandrake-linux-gnu/3.2.2/include/stddef.h
+./src/GD/g2_gd.o: /usr/include/bits/types.h /usr/include/bits/wordsize.h
+./src/GD/g2_gd.o: /usr/include/bits/typesizes.h /usr/include/libio.h
+./src/GD/g2_gd.o: /usr/include/_G_config.h /usr/include/wchar.h
+./src/GD/g2_gd.o: /usr/include/bits/wchar.h /usr/include/gconv.h
+./src/GD/g2_gd.o: /usr/lib/gcc-lib/i586-mandrake-linux-gnu/3.2.2/include/stdarg.h
+./src/GD/g2_gd.o: /usr/include/bits/stdio_lim.h
+./src/GD/g2_gd.o: /usr/include/bits/sys_errlist.h /usr/include/stdlib.h
+./src/GD/g2_gd.o: /usr/include/math.h /usr/include/bits/huge_val.h
+./src/GD/g2_gd.o: /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h
+./src/GD/g2_gd.o: ./src/g2.h ./src/g2_device.h ./src/g2_physical_device.h
+./src/GD/g2_gd.o: ./src/g2_funix.h ./src/g2_virtual_device.h ./src/g2_util.h
+./src/GD/g2_gd.o: ./src/g2_config.h ./src/GD/g2_gd_P.h
+./src/GD/g2_gd.o: /usr/local/include/gd.h /usr/local/include/gd_io.h
+./src/GD/g2_gd.o: /usr/local/include/gdfx.h /usr/local/include/gdfontt.h
+./src/GD/g2_gd.o: /usr/local/include/gdfonts.h /usr/local/include/gdfontmb.h
+./src/GD/g2_gd.o: /usr/local/include/gdfontl.h /usr/local/include/gdfontg.h
+./src/GD/g2_gd.o: ./src/GD/g2_gd.h ./src/GD/g2_gd_funix.h

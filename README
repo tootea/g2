@@ -23,15 +23,16 @@ What is g2 ?
 
 Short version (if you are in hurry): 
 
-     2D graphic library 
-     Simple to use 
-     Supports several types of output devices (currently X11, GIF, PostScript) 
-     Concept allows easy implementation of new device types 
-     Virtual devices allow to send output simultaneously to several devices 
-     User definable coordinate system 
-     Written in ANSI-C 
-     Tested under Digital Unix, AIX, Linux, VMS and Windows NT 
-     Fortran interface 
+     - 2D graphic library 
+     - Simple to use 
+     - Supports several types of output devices (currently X11, 
+       gd (PNG, JPEG), PostScript) 
+     - Concept allows easy implementation of new device types 
+     - Virtual devices allow to send output simultaneously to several devices 
+     - User definable coordinate system 
+     - Written in ANSI-C 
+     - Tested under Digital Unix, AIX, Linux, VMS and Windows NT 
+     - Fortran interface 
 
 Long version: 
 
@@ -39,12 +40,12 @@ g2 is a simple to use graphics library for 2D graphical applications
 written in Ansi-C. This library provides a comprehensive set of
 functions for simultaneous generation of graphical output on different
 types of devices. Presently, following devices are currently supported
-by g2: X11, GIF, PostScript (xfig and Win32 are in developement).  One
-major feature of the g2_library is the concept of virtual devices. An
-arbitrary number of physical devices (such as GIF, or X11) can be
+by g2: X11, gd (PNG, JPEG), PostScript (xfig and Win32 are in developement).
+One major feature of the g2_library is the concept of virtual devices. An
+arbitrary number of physical devices (such as PNG, or X11) can be
 grouped to create a so-called virtual device. Commands sent to such a
 virtual devices will automatically issued to all attached physical
-devices. This allows for example simultaneous output to a GIF file and
+devices. This allows for example simultaneous output to a PNG file and
 a Postscript file. A virtual device in turn can be attached to another
 virtual device, allowing to construct trees of devices.  Virtual
 devices can also be useful when using different user-coordinate
@@ -54,7 +55,7 @@ the graphic. Drawing in both windows is performed by one single
 command to the virtual device.
 
                                                                           
-                                   /-------> GIF:   g2_attach(id_GIF,... 
+                                   /-------> PNG:   g2_attach(id_PNG,... 
             ----------------------- 
 g2_plot---> | Virtual device: id |--------> X11:   g2_attach(id_X11,...
             -----------------------

@@ -43,7 +43,7 @@ static g2_PS_device *g2_PS_dev=NULL;
  * Attach generic PS device
  *
  */
-G2L g2_open_PS_generic(const char *file_name,
+G2L int g2_open_PS_generic(const char *file_name,
 	       enum g2_PS_paper paper,
 	       enum g2_PS_orientation orientation,
 		   enum g2_PS_format format,
@@ -116,7 +116,7 @@ G2L g2_open_PS_generic(const char *file_name,
  * Attach PS device
  *
  */
-G2L g2_open_PS(const char *file_name,
+G2L int g2_open_PS(const char *file_name,
 	       enum g2_PS_paper paper,
 	       enum g2_PS_orientation orientation)
 {
@@ -152,50 +152,50 @@ G2L int g2_open_EPSF_CLIP(const char *file_name,
 int g2_PS_write_file_header(g2_PS_device *ps)
 {
     int i;
-	if (ps->format == g2_PS_PostScript)
-		{
-		fprintf(ps->fp,"%%!PS-Adobe-2.0\n");
+    if (ps->format == g2_PS_PostScript)
+	{
+	    fprintf(ps->fp,"%%!PS-Adobe-2.0\n");
 	    switch(ps->orient) 
-			{
-			case g2_PS_land:
-				fprintf(ps->fp,"%%%%Orientation: Landscape\n");
-				break;
-			case g2_PS_port:
-				fprintf(ps->fp,"%%%%Orientation: Portrait\n");
-				break;
-			}
-		}
-	else if (ps->format == g2_PS_EPSF_CLIP)
 		{
-		fprintf(ps->fp,"%%!PS-Adobe-3.0 EPSF-2.0\n");
-		fprintf(ps->fp,"%%%%BoundingBox: 0 0 %d %d\n",ps->width,ps->height);
+		  case g2_PS_land:
+		    fprintf(ps->fp,"%%%%Orientation: Landscape\n");
+		    break;
+		  case g2_PS_port:
+		    fprintf(ps->fp,"%%%%Orientation: Portrait\n");
+		    break;
 		}
-	else if (ps->format == g2_PS_EPSF)
-		{
-		fprintf(ps->fp,"%%!PS-Adobe-3.0 EPSF-2.0\n");
-		fprintf(ps->fp,"%%%%BoundingBox: (atend)\n");
-		}
+	}
+    else if (ps->format == g2_PS_EPSF_CLIP)
+    {
+	fprintf(ps->fp,"%%!PS-Adobe-3.0 EPSF-2.0\n");
+	fprintf(ps->fp,"%%%%BoundingBox: 0 0 %ld %ld\n",ps->width,ps->height);
+    }
+    else if (ps->format == g2_PS_EPSF)
+    {
+	fprintf(ps->fp,"%%!PS-Adobe-3.0 EPSF-2.0\n");
+	fprintf(ps->fp,"%%%%BoundingBox: (atend)\n");
+    }
 	
     fprintf(ps->fp,"%%%%Creator: g2 %s\n", G2_VERSION);
     fprintf(ps->fp, "%%%%EndComments\n");
     
-	if (ps->format == g2_PS_EPSF_CLIP)
-		{
-		fprintf(ps->fp,"0 0 moveto\n");
-		fprintf(ps->fp,"0 %d rlineto\n",ps->height);
-		fprintf(ps->fp,"%d 0 rlineto\n",ps->width);
-		fprintf(ps->fp,"0 %d rlineto\n",-ps->height);
-		fprintf(ps->fp,"closepath\n");
-		fprintf(ps->fp,"clip\n");
-		}
+    if (ps->format == g2_PS_EPSF_CLIP)
+    {
+	fprintf(ps->fp,"0 0 moveto\n");
+	fprintf(ps->fp,"0 %ld rlineto\n",ps->height);
+	fprintf(ps->fp,"%ld 0 rlineto\n",ps->width);
+	fprintf(ps->fp,"0 %ld rlineto\n",-ps->height);
+	fprintf(ps->fp,"closepath\n");
+	fprintf(ps->fp,"clip\n");
+    }
     
-	for(i=0;g2_PS_operators[i]!=NULL;i++)
+    for(i=0;g2_PS_operators[i]!=NULL;i++)
 	fputs(g2_PS_operators[i], ps->fp);
     
     fprintf(ps->fp,"newpath\n");
     if((ps->orient==g2_PS_land) && (ps->format == g2_PS_PostScript))
-		fprintf(ps->fp,"%d 0 translate 90 rotate\n",
-			g2_PS_paper_size[ps->paper][0]);
+	fprintf(ps->fp,"%d 0 translate 90 rotate\n",
+		g2_PS_paper_size[ps->paper][0]);
 
     fputs("%%PageTrailer\n%%Page: 1 1\n", ps->fp);
     

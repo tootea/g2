@@ -30,8 +30,8 @@
 #ifdef DO_X11
 #include <g2_X11.h>
 #endif
-#ifdef DO_GIF
-#include <g2_GIF.h>
+#ifdef DO_GD
+#include <g2_gd.h>
 #endif
 #ifdef DO_WIN32
 #include <g2_win32.h>
@@ -48,7 +48,7 @@
 
 #define X11	0
 #define PS	1
-#define GIF     2
+#define GD     2
 
 int otp=X11;
 
@@ -111,9 +111,9 @@ int main(int argc, char *argv[])
     dev[1]=g2_open_X11(850, 600);
     g2_attach(id, dev[1]);
 #endif
-#ifdef DO_GIF
-    printf("..GIF");
-    dev[2]=g2_open_GIF("g2_splines_demo.gif", 850, 600);
+#ifdef DO_GD
+    printf("..GD");
+    dev[2]=g2_open_gd("g2_splines_demo.png", 850, 600, g2_gd_png);
     g2_attach(id, dev[2]);
 #endif
 #ifdef DO_WIN32
