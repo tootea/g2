@@ -27,11 +27,6 @@ extern HMENU hmenu;
 extern HANDLE ghModule;
 extern HINSTANCE g2res_DLL;
 
-BOOL SaveBitmapAs(HWND hWnd,struct XPGTHREADINFO *pThreadInfo);
-LRESULT CALLBACK g2_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-long g2_StartThread(struct g2_win32_STRUCT *pdp);
-void errhandler(LPSTR errtxt,HWND hwnd);
-
 typedef struct g2_win32_STRUCT {
 	HANDLE hThread;
 	HWND   hwndThreadWindow;
@@ -58,6 +53,12 @@ typedef struct g2_win32_STRUCT {
 	int type;
 	int messageloop;
 	} g2_win32_STRUCT;
+
+
+BOOL SaveBitmapAs(HWND hWnd,struct XPGTHREADINFO *pThreadInfo);
+LRESULT CALLBACK g2_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+long g2_StartThread(struct g2_win32_STRUCT *pdp);
+void errhandler(LPSTR errtxt,HWND hwnd);
 
 
 int g2_win32_init_win32(int pid, void *pdp, int vid, int width,int height);
