@@ -21,6 +21,7 @@
 #include "g2.h"
 #include "g2_funix.h"
 #include "g2_device.h"
+#include "g2_util.h"
 
 
 /*
@@ -63,14 +64,28 @@ void g2_close(int dev)
 void g2_set_auto_flush(int dev, int on_off)
 {
     g2_device *devp;
+    int i;
     
     if((devp=g2_get_device_pointer(dev))==NULL) {
-	fprintf(stderr,
-		"g2_set_auto_flush: Warning! No such device: %d\n", dev);
+	g2_log(Error, "g2: Error! g2_set_auto_flush: No such device: %d\n", dev);
 	return;
     }
     
-    devp->auto_flush=on_off;
+    switch(devp->t) {
+      case g2_PD:
+	break;
+      case g2_VD:
+	for(i=0;i<devp->d.vd->N;i++) {
+	    g2_set_auto_flush(devp->d.vd->dix[i], on_off);
+	}
+	break;
+      case g2_ILLEGAL:
+	break;
+      case g2_NDEV:
+	break;
+    }
+    
+    devp->auto_flush=on_off;  /* set auto flush for all (vd and pd) devices */
     __g2_last_device=dev;
 }
 
