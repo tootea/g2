@@ -26,8 +26,8 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <g2.h>
-#include <g2_util.h>
+#include "g2.h"
+#include "g2_util.h"
 
 #define eps 1.0e-12
 
