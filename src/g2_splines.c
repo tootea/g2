@@ -438,8 +438,6 @@ void g2_c_raspln(int n, double *points, double tn, double *sxy)
 		     (h3[i] * D1x) + (h4[i] * D2x);
       sxy[(i+i+1)] = (h1[i] * y[0]) + (h2[i] * y[1]) +
 		     (h3[i] * D1y) + (h4[i] * D2y);
-   free(x);
-   free(y);
    }
 
 /*
@@ -484,6 +482,8 @@ void g2_c_raspln(int n, double *points, double tn, double *sxy)
 	(h1[i] * y[(n-2)]) + (h2[i] * y[(n-1)]) +
 	(h3[i] * D1y) + (h4[i] * D2y);
    }
+   free(x);
+   free(y);
 }
 
 void g2_raspln(int id, int n, double *points, double tn)
