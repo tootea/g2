@@ -667,7 +667,7 @@ void g2_image_pd(g2_physical_device *pd,
 	  case g2_DoubleCoor:
 	    g2_uc2pdc_double(pd, x, y, &dx, &dy);
 	    pd->ff[g2_Image].fun(pd->pid, pd->pdp,
-				 ix, iy, x_size, y_size, pens);
+				 dx, dy, x_size, y_size, pens);
 	    break;
 	}
     } else {
