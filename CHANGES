@@ -2,8 +2,8 @@
 ====
 - added FIG device
 - added win32 mouse support
-- added better device initialization
-
+- added check for dashed lines to g2_test
+- bugfixes
 
 0.51
 ====

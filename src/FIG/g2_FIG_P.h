@@ -33,6 +33,8 @@ typedef struct _g2_FIG_device {
     int            pen;		  /* current pen */
     int            line_width;    /* line width */
     int            font_size;     /* font size */
+    int            line_style;    /* line style according to fig format */
+    int            style_val;     /* line style value acc. to fig format */
 
     g2_FIG_inks    inks[512];      /* 512 user defined colors */
     int            N_inks;         /* number of allocated colors */
@@ -62,11 +64,11 @@ int g2_FIG_filled_polygon(int pid, void *pdp, int N, int *points);
 int g2_FIG_arc(int pid, void *pdp,
 	      int x, int y,
 	      int r1, int r2,
-	      int a1, int a2);
+	      double a1, double a2);
 int g2_FIG_filled_arc(int pid, void *pdp,
 		     int x, int y,
 		     int r1, int r2,
-		     int a1, int a2);
+		     double a1, double a2);
 int g2_FIG_ellipse(int pid, void *pdp,
 		  int x, int y,
 		  int r1, int r2);

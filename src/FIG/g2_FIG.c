@@ -32,12 +32,22 @@
 #include "g2_FIG_P.h"
 #include "g2_FIG_funix.h"
 
+#ifndef PI
+#define PI 3.14159265358979323846
+#endif /* PI */
+
 static int N_FIG=0;
 static g2_FIG_device *g2_FIG_dev=NULL;
 
 /**
  * \ingroup interface
  * \defgroup FIG Fig
+ *
+ * FIG devices produces output in the FIG 3.2 format. For more details
+ * about FIG and xfig please visit www.xfig.org.
+ *
+ * \note FIG is a vector-oriented (as oposed to pixel-oriented) format.
+ *       Therefore ::g2_image function and splines  are not optimally supported. 
  */
 
 
@@ -105,6 +115,7 @@ G2L int g2_open_FIG(const char *file_name)
     g2_allocate_basic_colors(vid);
     g2_pen(vid, 1);
     g2_set_line_width(vid, 1);
+    g2_set_dash(vid, 0, NULL);
     g2_set_font_size(vid, 12);
 
     return vid;
@@ -231,7 +242,26 @@ int g2_FIG_set_line_width(int pid, void *pdp, int w)
 
 int g2_FIG_set_dash(int pid, void *pdp, int N, int *data)
 {
-    return -1;
+    g2_FIG_device *fig=&g2_FIG_dev[pid];
+    int black, white;
+    
+    if(N==0 || data==NULL) {
+	fig->line_style=0;
+	fig->style_val=-1;
+	return 0;
+    }
+    if(N<2) {
+	return -1;
+    }
+    black = data[0]*80./1200.;  /* FIG format has no sofistificated dash concept */
+    white = data[1]*80./1200.;  /* we will do out best */
+    if(black<4) {
+	fig->line_style = 2;
+    } else {
+	fig->line_style = 1;
+    }
+    fig->style_val = white;
+    return 0;
 }
 
 
@@ -266,7 +296,7 @@ int g2_FIG_plot(int pid, void *pdp, int x, int y)
     g2_FIG_device *fig=&g2_FIG_dev[pid];
     fprintf(fig->fp, "2 1 0 %d %d -1 1 1 -1 -1 1 0 -1 0 0 2\n",
 	    1, fig->pen);
-    fprintf(fig->fp, "%d %d\n%d %d\n", x, y, x+1, y);
+    fprintf(fig->fp, " %d %d\n %d %d\n", x, y, x+1, y);
     return 0;
 }
 
@@ -275,9 +305,9 @@ int g2_FIG_plot(int pid, void *pdp, int x, int y)
 int g2_FIG_line(int pid, void *pdp, int x1, int y1, int x2, int y2)
 {
     g2_FIG_device *fig=&g2_FIG_dev[pid];
-    fprintf(fig->fp, "2 1 0 %d %d -1 1 1 -1 -1 1 0 -1 0 0 2\n",
-	    fig->line_width, fig->pen);
-    fprintf(fig->fp, "%d %d\n%d %d\n", x1, y1, x2, y2);
+    fprintf(fig->fp, "2 1 %d %d %d -1 1 1 -1 %d 1 0 -1 0 0 2\n",
+	    fig->line_style, fig->line_width, fig->pen, fig->style_val);
+    fprintf(fig->fp, " %d %d\n %d %d\n", x1, y1, x2, y2);
     return 0;
 }
 
@@ -288,10 +318,12 @@ int g2_FIG_poly_line(int pid, void *pdp, int N, int *points)
     g2_FIG_device *fig=&g2_FIG_dev[pid];
     int i;
 
-    fprintf(fig->fp,"2 1 0 %d %d -1 1 1 -1 -1 1 0 -1 0 0 %d\n",
-	    fig->line_width, fig->pen, N);
+    printf("* %f %f = %f %f %d\n", a1, a2, a0, d, N);
+    
+    fprintf(fig->fp,"2 1 %d %d %d -1 1 1 -1 %d 1 0 -1 0 0 %d\n",
+	    fig->line_style, fig->line_width, fig->pen, fig->style_val, N);
     for(i=0;i<2*N;i+=2) {
-	fprintf(fig->fp, "%d %d\n", points[i], points[i+1]);
+	fprintf(fig->fp, " %d %d\n", points[i], points[i+1]);
     }
     return 0;
 }
@@ -307,12 +339,12 @@ int g2_FIG_polygon(int pid, void *pdp, int N, int *points)
 	return -1;
     }
     
-    fprintf(fig->fp,"2 3 0 %d %d -1 1 1 -1 -1 1 0 -1 0 0 %d\n",
-	    fig->line_width, fig->pen, N+1);
+    fprintf(fig->fp,"2 3 %d %d %d -1 1 1 -1 %d 1 0 -1 0 0 %d\n",
+	    fig->line_style, fig->line_width, fig->pen, fig->style_val, N+1);
     for(i=0;i<2*N;i+=2) {
-	fprintf(fig->fp, "%d %d\n", points[i], points[i+1]);
+	fprintf(fig->fp, " %d %d\n", points[i], points[i+1]);
     }
-    fprintf(fig->fp, "%d %d\n", points[0], points[1]);
+    fprintf(fig->fp, " %d %d\n", points[0], points[1]);
     return 0;
 }
 
@@ -327,22 +359,94 @@ int g2_FIG_filled_polygon(int pid, void *pdp, int N, int *points)
 	return -1;
     }
     
-    fprintf(fig->fp,"2 3 0 %d %d %d 1 1 20 -1 1 0 -1 0 0 %d\n",
-	    fig->line_width, fig->pen, fig->pen, N+1);
+    fprintf(fig->fp,"2 3 %d %d %d %d 1 1 20 %d 1 0 -1 0 0 %d\n",
+	    fig->line_style, fig->line_width, fig->pen, fig->pen, fig->style_val, N+1);
     for(i=0;i<2*N;i+=2) {
-	fprintf(fig->fp, "%d %d\n", points[i], points[i+1]);
+	fprintf(fig->fp, " %d %d\n", points[i], points[i+1]);
     }
-    fprintf(fig->fp, "%d %d\n", points[0], points[1]);
+    fprintf(fig->fp, " %d %d\n", points[0], points[1]);
     return 0;
 }
+
+
+int g2_FIG_arc(int pid, void *pdp,
+	       int x, int y,
+	       int r1, int r2,
+	       double a1, double a2)
+{
+    g2_FIG_device *fig=&g2_FIG_dev[pid];
+    double a0, d;
+    double a0_rad, da_rad;
+    int N, i;
+
+    a0=fmod(a1, 360.) + (a1<0? 360:0);   /* map a1 to [0, 360) */
+    d=a2>a1? a2-a1:a2-a1+360;
+
+    N=3+d/18;
+
+    a0_rad = a0*2.*PI/360.;
+    da_rad =  d*2.*PI/360./(N-1);
+
+    fprintf(fig->fp, "3 2 %d %d %d -1 1 -1-1 %d 0 0 0 %d\n",
+	    fig->line_style, fig->line_width, fig->pen, fig->style_val, N);
+    for(i=0;i<N;i++) {
+	fprintf(fig->fp, " %d %d\n",
+		(int)(x+r1*cos(a0_rad+i*da_rad)),
+		(int)(y-r2*sin(a0_rad+i*da_rad)));
+    }
+    fprintf(fig->fp, " -1");
+    for(i=1;i<N-1;i++) {
+	fprintf(fig->fp, " -1");
+    }
+    fprintf(fig->fp, " -1\n");
+    
+    return 0;
+}
+
+
+int g2_FIG_filled_arc(int pid, void *pdp,
+		      int x, int y,
+		      int r1, int r2,
+		      double a1, double a2)
+{
+    g2_FIG_device *fig=&g2_FIG_dev[pid];
+    double a0, d;
+    double a0_rad, da_rad;
+    int N, i;
+
+    a0=fmod(a1, 360.) + (a1<0? 360:0);   /* map a1 to [0, 360) */
+    d=a2>a1? a2-a1:a2-a1+360;
+
+    N=3+d/18;
+
+    a0_rad = a0*2.*PI/360.;
+    da_rad =  d*2.*PI/360./(N-1);
+
+    fprintf(fig->fp, "3 2 %d %d %d %d 1 -1 20 %d 0 0 0 %d\n",
+	    fig->line_style, fig->line_width, fig->pen, fig->pen, fig->style_val, N+2);
+    for(i=0;i<N;i++) {
+	fprintf(fig->fp, " %d %d\n",
+		(int)(x+r1*cos(a0_rad+i*da_rad)), (int)(y-r2*sin(a0_rad+i*da_rad)));
+    }
+    fprintf(fig->fp, " %d %d\n", x, y); 
+    fprintf(fig->fp, " %d %d\n", (int)(x+r1*cos(a0_rad+0*da_rad)), (int)(y-r2*sin(a0_rad+0*da_rad))); 
+    fprintf(fig->fp, " 0");
+    for(i=1;i<N-1;i++) {
+	fprintf(fig->fp, " -1");
+    }
+    fprintf(fig->fp, " 0 0 0\n");
+    
+    return 0;
+}
+
 
 int g2_FIG_ellipse(int pid, void *pdp,
 		  int x, int y,
 		  int r1, int r2)
 {
     g2_FIG_device *fig=&g2_FIG_dev[pid];
-    fprintf(fig->fp,"1 1 0 %d %d -1  1 -1 -1 0.0 1 0.0 %d %d %d %d %d %d %d %d\n",
-	    fig->line_width, fig->pen,
+    fprintf(fig->fp,"1 1 %d %d %d -1  1 -1 -1 %d 1 0.0 %d %d %d %d %d %d %d %d\n",
+	    fig->line_style, fig->line_width, fig->pen, fig->style_val,
 	    x, y, r1, r2, x, y, x+r1, y+r2);
 
     return 0;
@@ -354,8 +458,8 @@ int g2_FIG_filled_ellipse(int pid, void *pdp,
 			 int r1, int r2)
 {
     g2_FIG_device *fig=&g2_FIG_dev[pid];
-    fprintf(fig->fp,"1 1 0 %d %d %d 1 -1 20 0.0 1 0.0 %d %d %d %d %d %d %d %d\n",
-	    fig->line_width, fig->pen, fig->pen,
+    fprintf(fig->fp,"1 1 %d %d %d %d 1 -1 20 %d 1 0.0 %d %d %d %d %d %d %d %d\n",
+	    fig->line_style, fig->line_width, fig->pen, fig->pen, fig->style_val,
 	    x, y, r1, r2, x, y, x+r1, y+r2);
 
     return 0;
