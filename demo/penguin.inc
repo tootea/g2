@@ -1,4 +1,4 @@
-	integer penguin(1:53,1:62)
+	real penguin(1:53,1:62)
 	data ((penguin(i,j),i=1,53),j=1,62)/
      & 23*0,5*1,25*0,
      & 20*0,12*1,21*0,
