@@ -209,7 +209,7 @@ int g2_PS_write_file_header(g2_PS_device *ps)
  */
 void g2_PS_bbox_add(g2_PS_device *ps,double x,double y,double size)
 	{
-	if (ps->bbox = 0) /* bbox is empty */
+	if (ps->bbox == 0) /* bbox is empty */
 		{
 		ps->x1=x-size;
 		ps->x2=x+size;
