@@ -110,6 +110,10 @@ SOURCE=.\src\PS\g2_PS.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\g2_splines.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\g2_ui_control.c
 # End Source File
 # Begin Source File

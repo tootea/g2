@@ -66,8 +66,8 @@ LINK32=link.exe
 # PROP Output_Dir "g2dll___Win32_Debug"
 # PROP Intermediate_Dir "g2dll___Win32_Debug"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "G2DLL_EXPORTS" /YX /FD /GZ  /c
-# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "../gd" /I "./src" /I "../src" /D "_DEBUG" /D "MAKEDLL" /D "G2DLL" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "G2DLL_EXPORTS" /YX /FD /GZ  /c
+# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "G2DLL_EXPORTS" /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "../gd" /I "./src" /I "../src" /D "_DEBUG" /D "MAKEDLL" /D "G2DLL" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "G2DLL_EXPORTS" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -115,6 +115,10 @@ SOURCE=.\src\g2_physical_device.c
 # Begin Source File
 
 SOURCE=.\src\PS\g2_PS.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\g2_splines.c
 # End Source File
 # Begin Source File
 
