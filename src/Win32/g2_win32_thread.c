@@ -67,15 +67,15 @@ LRESULT CALLBACK g2_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			BitBlt( hDC, Rect.left, Rect.top, Rect.right - Rect.left, 
 			Rect.bottom - Rect.top, pdp->hMemDC, 0, 0, SRCCOPY );
 			EndPaint (hWnd, &ps);
+			return 0L;
 
-
-			return 0;
 		case WM_DESTROY:
 
 //			printf("Received WM_DESTROY\n");
 			g2_win32_Cleanup(0,pdp);
 			ExitThread(0);
-		
+			return 0L;
+			
 		case WM_COMMAND:
 			switch(LOWORD(wParam)){
 			
@@ -112,6 +112,8 @@ LRESULT CALLBACK g2_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		default:
 			return (DefWindowProc(hWnd, message, wParam, lParam));
 	}
+/* we should never get here */
+return -1;
 }
 
 long g2_StartThread(struct g2_win32_STRUCT *pdp)
