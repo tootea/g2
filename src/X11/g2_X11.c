@@ -680,7 +680,7 @@ int g2_X11_image(int pid, int x, int y, int width, int height, int *pen_array)
 		       sizeof(unsigned long)*8,		  /* bitmap pad */
 		       0);			  /* bytes per line */
     printf("BP2\n");
-    XInitImage(image);
+    /* XInitImage(image); problems with AIX ?!! */
     printf("BP3 image=%p\n", (void*)image);
     XPutImage(xout->display, xout->window, xout->gc,
 	      image,

@@ -6,6 +6,8 @@
 - added g2_control_pd.* files
 - g2_device_exist moved to user space (perl)
 - added g2_set_line_width support in GIF device 
+- added prefix to Makefile.in
+- updated descrip.mms
 
 0.30 (23.10.1998)
 ================

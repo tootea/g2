@@ -1,7 +1,7 @@
 Begin3
 Title:          g2
 Version:        0.40
-Entered-date:   29OCT98
+Entered-date:   03FEB99
 Description:	g2 is an easy to use graphics library for 2D
 		graphical applications written in Ansi-C. g2
 		library	provides a comprehensive set of functions
@@ -16,7 +16,7 @@ Author:         ljubo@ap.univie.ac.at      (Ljubomir Milanovic)
 Maintained-by:  milanovic@iap.tuwien.ac.at (Ljubomir Milanovic)
 		wagner@iap.tuwien.ac.at    (Horst Wagner)
 Primary-site:   sunsite.unc.edu /pub/Linux/libs/graphics/
-		92kB g2-0.30.tar.gz
+		93kB g2-0.30.tar.gz
 		1kB  g2-0.30.lsm
 Alternate-site: 
 Original-site:  http://www.ap.univie.ac.at/users/ljubo/g2/

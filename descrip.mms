@@ -17,14 +17,14 @@ OBJ     = [.src]g2_device.obj, [.src]g2_fif.obj, [.src]g2_graphic_pd.obj, \
           [.src]g2_physical_device.obj, [.src]g2_ui_control.obj, \
           [.src]g2_ui_device.obj, [.src]g2_ui_graphic.obj, \
           [.src]g2_ui_virtual_device.obj, [.src]g2_util.obj, \
-          [.src]g2_virtual_device.obj
+          [.src]g2_virtual_device.obj, [.src]g2_control_pd.obj
 OBJ_X11 = [.src.X11]g2_X11.obj
 OBJ_PS  = [.src.PS]g2_PS.obj
 
 HEADERS     = [.src]g2.h, [.src]g2_config.h, [.src]g2_device.h, \
               [.src]g2_funix.h, [.src]g2_graphic_pd.h, \
               [.src]g2_physical_device.h, [.src]g2_util.h, \
-              [.src]g2_virtual_device.h
+              [.src]g2_virtual_device.h, [.src]g2_control_pd.h
 HEADERS_X11 = [.src.X11]g2_X11.h, [.src.X11]g2_X11_P.h, \
               [.src.X11]g2_X11_funix.h
 HEADERS_PS  = [.src.PS]g2_PS.h, [.src.PS]g2_PS_P.h, \

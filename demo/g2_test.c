@@ -173,12 +173,9 @@ int main()
     g2_filled_polygon(d, 5, pts);
 
     
-    g2_line(d, 58, 49, 72, 49);
-    g2_image(d, 60., 50., 53, 62, penguin);
-    g2_image(d, 120., 50., 53, 62, penguin);
-    g2_image(d, 90., 120., 53, 62, penguin);
+    g2_image(d, 55., 50., 53, 62, penguin);
+    g2_image(d, 75., 130., 53, 62, penguin);
     g2_pen(d, 1);
-    g2_line(d, 58, 58, 72, 58);
     
     g2_line(d, 225, 448, 200+19*25, 448);
     for(i=1;i<20;i++) {

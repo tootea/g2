@@ -7,8 +7,8 @@
 #
 # g2 installation directories
 #
-LIBDIR = /usr/lib
-INCDIR = /usr/include
+LIBDIR = @prefix@/lib
+INCDIR = @prefix@/include
 
 #LIBDIR = $(HOME)/local/lib
 #INCDIR = $(HOME)/local/include
@@ -90,6 +90,7 @@ clean:
 	-$(FIND) . -name "*~" -exec rm -f {} \;
 	-(cd ./g2_perl ; make clean)
 	-rm -f ./g2_perl/test.ps ./g2_perl/test.gif
+	-rm -f ./libg2.0.40.a
 
 demo:	libg2.a
 	(cd ./demo ; make)
