@@ -48,6 +48,7 @@ const g2_funix_fun g2_win32_funix[] = {
     { g2_Circle,          NULL },
     { g2_FilledCircle,    NULL },
     { g2_String,          g2_win32_DrawString },
+	{ g2_QueryPointer,    g2_win32_QueryPointer },
     { g2_FUNIX_NULL,      NULL } };
 
 

@@ -430,6 +430,32 @@ int g2_win32_DrawString(int pid, void *pdp, int x, int y, const char *text)
 	return TextOut(PDP->hMemDC,x,y,text,strlen(text));
     }
 
+int g2_win32_QueryPointer(int pid, void *pdp, int *x, int *y, unsigned int *button)
+//
+// Thanks to input by Martin stéphane
+//
+	{ 
+	POINT point;
+
+	GetCursorPos(&point);
+
+	ScreenToClient(PDP->hwndThreadWindow,&point);
+
+	*y=point.y;
+	*x=point.x;
+	*button=0;
+
+	if (GetKeyState(VK_LBUTTON)<0) 
+		*button=*button+256;
+
+	if (GetKeyState(VK_MBUTTON)<0) 
+		*button=*button+512;
+
+	if (GetKeyState(VK_RBUTTON)<0) 
+		*button=*button+1024;
+
+	return 0;
+	}
 
 void errhandler(LPSTR errtxt,HWND hwnd)
 {

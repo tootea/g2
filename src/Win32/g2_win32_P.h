@@ -104,6 +104,7 @@ int g2_win32_FilledArc(int pid, void *pdp, int x, int y,
 int g2_win32_Ellipse(int pid, void *pdp, int x, int y, int r1, int r2);
 int g2_win32_FilledEllipse(int pid, void *pdp, int x, int y, int r1, int r2);
 int g2_win32_DrawString(int pid, void *pdp, int x, int y, const char *text);
+int g2_win32_QueryPointer(int pid, void *pdp, int *x, int *y, unsigned int *button);
 
 int g2_win32_AllocateBasicColors(int pid, void *pdp);
 
