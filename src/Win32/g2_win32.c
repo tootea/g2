@@ -495,7 +495,24 @@ int InitApplication()
 }
 
 
+/**
+ * \ingroup interface
+ * \defgroup win32 MS Windows
+ */
 
+/**
+ *
+ * Create a Windows device.
+ *
+ * \param width window width
+ * \param height window height
+ * \param title window title
+ * \param type window type, see ::g2_win32_type
+ *
+ * \return physical device id
+ *
+ * \ingroup win32
+ */
 int  g2_open_win32(int width, int height, const char *title, int type)
 	{
 	int pid=0,vid;

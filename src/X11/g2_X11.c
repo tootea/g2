@@ -36,12 +36,22 @@
 static int N_X11=0;
 static g2_X11_device *g2_X11_dev=NULL;
 
+/**
+ * \ingroup interface
+ * \defgroup X11 X11
+ */
+
 
 /**
- **
- ** Attach (simple) X11 device
- **
- **/
+ *
+ * Open a simple X11 window (physical device device).
+ *
+ * \param width window width
+ * \param height window height
+ * \return physical device id
+ *
+ * \ingroup X11
+ */
 int g2_open_X11(int width, int height)
 {
     return g2_open_X11X(width, height,
@@ -53,10 +63,25 @@ int g2_open_X11(int width, int height)
 
 
 /**
- **
- ** Attach (extended) X11 device
- **
- **/
+ *
+ * Open a X11 window (physical device device). If \a icon_width or \a
+ * icon_height is smaller than 0, the \a icon_data is interpreted as a
+ * file name.
+ *
+ * \param width window width
+ * \param height window height
+ * \param x x position on screen
+ * \param y y position on screen
+ * \param window_name hint for window manager
+ * \param icon_name hint for window manager
+ * \param icon_data icon bitmap (\a icon_width * \a icon_height bits) or file name containing bitmap
+ *                  (if \a icon_width <= 0 or \a icon_height <= 0) 
+ * \param icon_width icon width
+ * \param icon_height icon height
+ * \return physical device id
+ *
+ * \ingroup X11
+ */
 int g2_open_X11X(int width, int height,
 		 int x, int y,
 		 char *window_name, char *icon_name,

@@ -3,6 +3,14 @@
 documentation in the doxygen format */
 
 
+/* define some main groups */
+
+/**
+ * \defgroup interface g2 User Interface
+ */
+
+
+
 /**
 
 \mainpage
@@ -31,7 +39,7 @@ Boston, MA 02111-1307 USA *
     - 2D graphic library
     - Simple to use
     - Supports several types of output devices (currently X11,
-      PostScript, devices supported by gd <http://www.boutell.com/gd/>
+      PostScript, devices supported by gd http://www.boutell.com/gd/
       (PNG, JPEG) and MS Windows windows)
     - Concept allows easy implementation of new device types
     - Virtual devices allow to send output simultaneously to several devices
@@ -131,7 +139,7 @@ PERL (old instructions)
           -# make
           -# make test
           -# make install
-    -# See the \ref "perl interface" section for more information
+    -# See the \ref perl "Perl interface" section for more information
     -# swig is also supported, more details are comming ...
 
 VMS

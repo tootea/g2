@@ -38,6 +38,56 @@
 #endif /* PI */
 
 
+/**
+ * \ingroup interface
+ * \defgroup GD GD
+ */
+
+
+/**
+ *
+ * Create a GD device.
+ *
+ * \param filename output file name
+ * \param width width
+ * \param height height
+ * \param gd_type file type, see ::g2_gd_type
+ *
+ * \return physical device id
+ *
+ * \ingroup GD
+ */
+int  g2_open_gd(const char *filename, int width, int height, enum g2_gd_type gd_type)
+{
+    int pid=-1;
+    g2_gd_STRUCT *pdp;
+    
+    pdp = (g2_gd_STRUCT *)malloc(sizeof(g2_gd_STRUCT));
+
+    pdp->width = width;
+    pdp->height = height;
+    pdp->gd_type = gd_type;
+    pdp->im = gdImageCreate(width,height);
+    pdp->f = fopen(filename,"wb");
+    pdp->NoOfInks = 0;
+    pdp->BackCol = 0;
+	
+    pid = g2_register_physical_device(pid, pdp,
+				      g2_IntCoor, g2_gd_funix,
+				      1.0, -1.0,
+				      0.0, height-1);
+
+    g2_gd_Clear(pid,pdp);
+    g2_set_line_width(pid, 0.0);
+    g2_set_font_size(pid, 12.0);
+    g2_allocate_basic_colors(pid);
+    g2_pen(pid, 1);
+    	
+    return pid;
+}
+
+
+
 int g2_gd_Alloc_Basic(int pid, void *pdp)
 	{
 	int icol;
@@ -317,31 +367,3 @@ int g2_gd_DrawString(int pid, void *pdp, int x, int y, const char *text)
 	return 0;
 	}
 
-int  g2_open_gd(const char *filename, int width, int height,enum g2_gd_type gd_type)
-	{
-	int pid=-1;
-	g2_gd_STRUCT *pdp;
-
-	pdp = (g2_gd_STRUCT *)malloc(sizeof(g2_gd_STRUCT));
-
-	pdp->width = width;
-	pdp->height = height;
-	pdp->gd_type = gd_type;
-	pdp->im = gdImageCreate(width,height);
-	pdp->f = fopen(filename,"wb");
-	pdp->NoOfInks = 0;
-	pdp->BackCol = 0;
-	
-    pid = g2_register_physical_device(pid, pdp,
-				      g2_IntCoor, g2_gd_funix,
-				      1.0, -1.0,
-				      0.0, height-1);
-
-	g2_gd_Clear(pid,pdp);
-	g2_set_line_width(pid, 0.0);
-	g2_set_font_size(pid, 12.0);
-	g2_allocate_basic_colors(pid);
-    g2_pen(pid, 1);
-    	
-	return pid;
-	}

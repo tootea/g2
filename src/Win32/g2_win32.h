@@ -46,9 +46,14 @@ extern "C"
 #define LINKDLL
 #endif
 
+/**
+ * Window type
+ *
+ * \ingroup win32
+ */
 enum g2_win32_type {
-    g2_win32,			/* regular window */
-    g2_wmf32			/* windows meta file */
+    g2_win32,			/**< regular window */
+    g2_wmf32			/**< windows meta file */
 };
 
 

@@ -23,10 +23,6 @@
 #include "g2_util.h"
 
 /**
- * \defgroup interface g2 User Interface
- */
-
-/**
  * \ingroup interface
  * \defgroup graphic graphical output
  */

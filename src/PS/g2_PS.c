@@ -36,6 +36,10 @@
 static int N_PS=0;
 static g2_PS_device *g2_PS_dev=NULL;
 
+/**
+ * \ingroup interface
+ * \defgroup PS PostScript
+ */
 
 
 /*
@@ -111,10 +115,18 @@ G2L int g2_open_PS_generic(const char *file_name,
     return vid;
 }
 
-/*
+
+/**
  *
- * Attach PS device
+ * Create a PS device.
  *
+ * \param file_name postscript file name
+ * \param paper paper type, see ::g2_PS_paper and \ref appendix Appendix
+ * \param orientation paper orientation, see ::g2_PS_orientation
+ *
+ * \return physical device id
+ *
+ * \ingroup PS
  */
 G2L int g2_open_PS(const char *file_name,
 	       enum g2_PS_paper paper,
@@ -123,20 +135,34 @@ G2L int g2_open_PS(const char *file_name,
     return g2_open_PS_generic(file_name,paper,orientation,g2_PS_PostScript,0,0);
 }
 
-/*
+
+/**
  *
- * Attach EPSF device
+ * Create an encapsulated PS device.
  *
+ * \param file_name postscript file name
+ *
+ * \return physical device id
+ *
+ * \ingroup PS
  */
 G2L int g2_open_EPSF(const char *file_name)
 {
     return g2_open_PS_generic(file_name,0,0,g2_PS_EPSF,0,0);
 }
 
-/*
+
+/**
  *
- * Attach EPSF device with clipping
+ * Create an encapsulated PS device with clipping.
  *
+ * \param file_name postscript file name
+ * \param width clipping region width
+ * \param height clipping region height
+ *
+ * \return physical device id
+ *
+ * \ingroup PS
  */
 G2L int g2_open_EPSF_CLIP(const char *file_name,
 			long width, long height)
