@@ -42,7 +42,7 @@ int main()
 {
     int i, j;
     int d, dev[maxdev]={-1, -1, -1, -1, -1,-1, -1, -1, -1, -1};
-	int ndev=0;
+    int ndev=0;
     char str[256];
     double pts[10];
     double y;
@@ -63,11 +63,11 @@ int main()
     printf("..EPSF");
     dev[ndev]=g2_open_EPSF("g2_test.eps");
     g2_attach(d, dev[ndev]);
-	ndev++;
+    ndev++;
     printf("..EPSF_CLIP");
     dev[ndev]=g2_open_EPSF_CLIP("g2_test_clip.eps",200,200);
     g2_attach(d, dev[ndev]);
-	ndev++;
+    ndev++;
 #endif
 #ifdef DO_X11
     printf("..X11");
@@ -79,25 +79,23 @@ int main()
     printf("..GD(png)");
     dev[ndev]=g2_open_gd("g2_test.png", 775, 575,g2_gd_png);
     g2_attach(d, dev[ndev]);
-	ndev++;
+    ndev++;
     printf("..GD(jpeg)");
     dev[ndev]=g2_open_gd("g2_test.jpg", 775, 575,g2_gd_jpeg);
     g2_attach(d, dev[ndev]);
-	ndev++;
+    ndev++;
 #endif
 #ifdef DO_WIN32
     printf("..WIN32");
     dev[ndev]=g2_open_win32(775, 575,"g2_test",0);
-	g2_set_auto_flush(dev[ndev],0);
     g2_attach(d, dev[ndev]);
-	ndev++;
+    ndev++;
 #endif
 #ifdef DO_WMF32
     printf("..WMF32");
     dev[ndev]=g2_open_win32(775, 575,"g2_test.emf",1);
-	g2_set_auto_flush(dev[ndev],0);
     g2_attach(d, dev[ndev]);
-	ndev++;
+    ndev++;
 #endif
     g2_set_auto_flush(d,0);
 
