@@ -19,9 +19,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdarg.h>
 
 #include "g2_util.h"
 #include "g2_physical_device.h"
+#include "g2_config.h"
 
 
 /*
@@ -202,4 +204,21 @@ double *g2_floatp2doublep(float *f, int N)
     for(i=0;i<N;++i)
 	d[i]=f[i];
     return d;
+}
+
+
+/*
+ *
+ * log messages to stderr
+ *
+ */
+void g2_log(enum g2_log_level log_level, const char *format, ...)
+{
+    if(log_level > g2_LogLevel) {
+	return;
+    }
+    va_list arg;
+    va_start(arg, format);
+    vfprintf(stderr, format, arg);
+    va_end(arg);    
 }

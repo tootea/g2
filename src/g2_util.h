@@ -42,4 +42,7 @@ void g2_free(void *p);
 
 double *g2_floatp2doublep(float *f, int N);
 
+enum g2_log_level {Error=1, Warning, Verbose, Debug};
+void g2_log(enum g2_log_level log_level, const char *format, ...);
+
 #endif /* _G2_UTIL_H */
