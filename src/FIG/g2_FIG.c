@@ -43,11 +43,11 @@ static g2_FIG_device *g2_FIG_dev=NULL;
  * \ingroup interface
  * \defgroup FIG Fig
  *
- * FIG devices produces output in the FIG 3.2 format. For more details
- * about FIG and xfig please visit www.xfig.org.
+ * FIG devices generate output in the FIG 3.2 format. For more details
+ * about FIG format and xfig application please visit http://www.xfig.org .
  *
  * \note FIG is a vector-oriented (as oposed to pixel-oriented) format.
- *       Therefore ::g2_image function and splines  are not optimally supported. 
+ *       Therefore ::g2_image function and splines are not optimally supported. 
  */
 
 

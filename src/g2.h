@@ -1,5 +1,5 @@
 /*****************************************************************************
-**  Copyright (C) 1998-2001  Ljubomir Milanovic & Horst Wagner
+**  Copyright (C) 1998-2004  Ljubomir Milanovic & Horst Wagner
 **  This file is part of the g2 library
 **
 **  This library is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@
 #define _G2_H
 
 
-#define G2_VERSION "0.52a"
+#define G2_VERSION "0.60"
 
 
 #if defined(__cplusplus)
