@@ -1,7 +1,10 @@
 0.51
 ====
 - g2_perl improvements (added GD device, added splines, removed GIF,
-retested, added simple README)
+  retested, added simple README)
+- added configurable logging
+- added some new configuration parameters and slightly changed
+  configuration naming schema in the g2_config.h
 
 0.50
 ====
