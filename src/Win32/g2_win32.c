@@ -452,6 +452,9 @@ int g2_win32_QueryPointer(int pid, void *pdp, int *x, int *y, unsigned int *butt
 	*x=point.x;
 	*button=0;
 
+	if (PDP->hwndThreadWindow != GetForegroundWindow())
+		return; // return if our window does not have the focus
+
 	if (GetKeyState(VK_LBUTTON)<0) 
 		*button=*button+256;
 
