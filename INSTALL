@@ -29,7 +29,12 @@ WINDOWS NT
 
 1. Extract package: unzip 'g2-xxxx.zip' 
 
-2. MS Visual C++ users can build both library and demos with the supplied
+2. For gd support, please download the binary gd version and place it in a
+   folder next to g2 using default folder name gdwin32, i.e. it is expected 
+   in ../gdwin32 from the folder this file is residing.
+   You also will need to create the bgd.lib file using makemsvcimport.bat
+   
+3. MS Visual C++ users can build both library and demos with the supplied
    project file: g2.xxx 
    users of gcc or other commandline based compilers with make support
    continue as in Unix example 
