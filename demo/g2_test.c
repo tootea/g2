@@ -156,13 +156,24 @@ int main()
     g2_line(d, 147, 68, 153, 68);
 		
     y=100;
-    g2_line(d, 100, y, 150, y+50);
+    g2_line(d, 120, y, 170, y+50);
     g2_triangle(d, 150, y, 250, y, 200, y+50);
     g2_rectangle(d, 300, y, 400, y+50);
     g2_circle(d, 450, y+25, 25);
     g2_ellipse(d, 550, y+25, 45, 25);
     g2_arc(d, 650, y+25, 25, 45, 90, 360);
     
+    pts[0]=4;
+    pts[1]=4;
+    g2_set_dash(d, 2, pts);
+    g2_line(d, 120+5, y, 170+5, y+50);
+    g2_triangle(d, 150+10, y+4, 250-10, y+4, 200, y+50-5);
+    g2_rectangle(d, 305, y+5, 395, y+50-5);
+    g2_circle(d, 450, y+25, 20);
+    g2_ellipse(d, 550, y+25, 40, 20);
+    g2_arc(d, 650, y+25, 20, 40, 90, 360);
+    g2_set_dash(d, 0, NULL);
+
     y=200;
     g2_filled_triangle(d, 150, y, 250, y, 200, y+50);
     g2_filled_rectangle(d, 300, y, 400, y+50);
@@ -220,10 +231,16 @@ int main()
     }
 
     g2_set_dash(d, 0, NULL);
-    g2_set_line_width(d, 5);
+    g2_set_line_width(d, 4);
     g2_arc(d, 740, 180, 25, 100, -45+15, -45-15);
+    g2_arc(d, 740, 180, 20,  95, -45-15, -45+15);
     g2_filled_arc(d, 740, 180, 12, 50, -45+15, -45-15);
 
+    g2_set_line_width(d, 1);
+    g2_circle(d, 400, 400, 20);
+    g2_ellipse(d, 400, 400, 25, 25);
+    g2_arc(d, 400, 400, 30, 30, 0, 360);
+    
     g2_flush(d);
     printf("\nDone.\n[Enter]\n");
     getchar();
