@@ -238,6 +238,7 @@ int g2_win32_ClearPalette(int pid, void *pdp)
 int g2_win32_SetBackground(int pid, void *pdp, int color)
 	{
 	PDP->BkColor = color;
+	SetBkColor(PDP->hMemDC,PDP->BkColor);
 	return 0;
     }
 
