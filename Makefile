@@ -5,7 +5,7 @@
 #
 #
 
-G2_VERSION = 0.40
+G2_VERSION = 0.41
 
 #
 # g2 installation directories
@@ -22,7 +22,7 @@ INCDIR = /usr/local/include
 SHELL = /bin/sh
 
 CC           = gcc
-CFLAGS       = -I./src -g -O2  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
+CFLAGS       = -I./src -g -O2  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DDO_GIF=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
 INSTALL      = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 FIND         = find
@@ -54,14 +54,14 @@ X11_SRC = $(X11_DIR)/g2_X11.c
 X11_INS = $(X11_DIR)/g2_X11.h
 
 
-#GIF_DIR = ./src/GIF
-#GIF_SRC = $(GIF_DIR)/g2_GIF.c
-#GIF_INS = $(GIF_DIR)/g2_GIF.h
+GIF_DIR = ./src/GIF
+GIF_SRC = $(GIF_DIR)/g2_GIF.c
+GIF_INS = $(GIF_DIR)/g2_GIF.h
 
 
-GD_DIR = ./src/GD
-GD_SRC = $(GD_DIR)/g2_gd.c
-GD_INS = $(GD_DIR)/g2_gd.h
+#GD_DIR = ./src/GD
+#GD_SRC = $(GD_DIR)/g2_gd.c
+#GD_INS = $(GD_DIR)/g2_gd.h
 
 
 SRC = $(BASE_SRC) $(PS_SRC) $(X11_SRC) $(GIF_SRC) $(GD_SRC)
@@ -181,7 +181,7 @@ depend:
 ./src/g2_fif.o: /usr/include/bits/select.h /usr/include/bits/sigset.h
 ./src/g2_fif.o: /usr/include/sys/sysmacros.h /usr/include/alloca.h
 ./src/g2_fif.o: ./src/g2_physical_device.h ./src/g2_funix.h ./src/PS/g2_PS.h
-./src/g2_fif.o: ./src/X11/g2_X11.h
+./src/g2_fif.o: ./src/X11/g2_X11.h ./src/GIF/g2_GIF.h
 ./src/g2_virtual_device.o: /usr/include/stdio.h /usr/include/features.h
 ./src/g2_virtual_device.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
 ./src/g2_virtual_device.o: /usr/lib/gcc-lib/i386-redhat-linux/egcs-2.91.66/include/stddef.h
@@ -357,24 +357,24 @@ depend:
 ./src/X11/g2_X11.o: ./src/g2_virtual_device.h ./src/g2_util.h
 ./src/X11/g2_X11.o: ./src/X11/g2_X11_P.h ./src/X11/g2_X11.h
 ./src/X11/g2_X11.o: ./src/X11/g2_X11_funix.h ./src/g2_config.h
-./src/GD/g2_gd.o: /usr/include/stdio.h /usr/include/features.h
-./src/GD/g2_gd.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
-./src/GD/g2_gd.o: /usr/lib/gcc-lib/i386-redhat-linux/egcs-2.91.66/include/stddef.h
-./src/GD/g2_gd.o: /usr/lib/gcc-lib/i386-redhat-linux/egcs-2.91.66/include/stdarg.h
-./src/GD/g2_gd.o: /usr/include/bits/types.h /usr/include/libio.h
-./src/GD/g2_gd.o: /usr/include/_G_config.h /usr/include/bits/stdio_lim.h
-./src/GD/g2_gd.o: /usr/include/stdlib.h /usr/include/sys/types.h
-./src/GD/g2_gd.o: /usr/include/time.h /usr/include/endian.h
-./src/GD/g2_gd.o: /usr/include/bits/endian.h /usr/include/sys/select.h
-./src/GD/g2_gd.o: /usr/include/bits/select.h /usr/include/bits/sigset.h
-./src/GD/g2_gd.o: /usr/include/sys/sysmacros.h /usr/include/alloca.h
-./src/GD/g2_gd.o: /usr/include/math.h /usr/include/bits/huge_val.h
-./src/GD/g2_gd.o: /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h
-./src/GD/g2_gd.o: /usr/lib/gcc-lib/i386-redhat-linux/egcs-2.91.66/include/float.h
-./src/GD/g2_gd.o: ./src/g2.h ./src/g2_device.h ./src/g2_physical_device.h
-./src/GD/g2_gd.o: ./src/g2_funix.h ./src/g2_virtual_device.h ./src/g2_util.h
-./src/GD/g2_gd.o: ./src/g2_config.h ./src/GD/g2_gd_P.h /usr/include/gd.h
-./src/GD/g2_gd.o: /usr/include/gd_io.h /usr/include/gdfontt.h
-./src/GD/g2_gd.o: /usr/include/gdfonts.h /usr/include/gdfontmb.h
-./src/GD/g2_gd.o: /usr/include/gdfontl.h /usr/include/gdfontg.h
-./src/GD/g2_gd.o: ./src/GD/g2_gd.h ./src/GD/g2_gd_funix.h
+./src/GIF/g2_GIF.o: /usr/include/stdio.h /usr/include/features.h
+./src/GIF/g2_GIF.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
+./src/GIF/g2_GIF.o: /usr/lib/gcc-lib/i386-redhat-linux/egcs-2.91.66/include/stddef.h
+./src/GIF/g2_GIF.o: /usr/lib/gcc-lib/i386-redhat-linux/egcs-2.91.66/include/stdarg.h
+./src/GIF/g2_GIF.o: /usr/include/bits/types.h /usr/include/libio.h
+./src/GIF/g2_GIF.o: /usr/include/_G_config.h /usr/include/bits/stdio_lim.h
+./src/GIF/g2_GIF.o: /usr/include/stdlib.h /usr/include/sys/types.h
+./src/GIF/g2_GIF.o: /usr/include/time.h /usr/include/endian.h
+./src/GIF/g2_GIF.o: /usr/include/bits/endian.h /usr/include/sys/select.h
+./src/GIF/g2_GIF.o: /usr/include/bits/select.h /usr/include/bits/sigset.h
+./src/GIF/g2_GIF.o: /usr/include/sys/sysmacros.h /usr/include/alloca.h
+./src/GIF/g2_GIF.o: /usr/include/math.h /usr/include/bits/huge_val.h
+./src/GIF/g2_GIF.o: /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h
+./src/GIF/g2_GIF.o: /usr/lib/gcc-lib/i386-redhat-linux/egcs-2.91.66/include/float.h
+./src/GIF/g2_GIF.o: ./src/g2.h ./src/g2_device.h ./src/g2_physical_device.h
+./src/GIF/g2_GIF.o: ./src/g2_funix.h ./src/g2_virtual_device.h
+./src/GIF/g2_GIF.o: ./src/g2_util.h ./src/g2_config.h ./src/GIF/g2_GIF_P.h
+./src/GIF/g2_GIF.o: /usr/include/gd.h /usr/include/gdfontt.h
+./src/GIF/g2_GIF.o: /usr/include/gdfonts.h /usr/include/gdfontmb.h
+./src/GIF/g2_GIF.o: /usr/include/gdfontl.h /usr/include/gdfontg.h
+./src/GIF/g2_GIF.o: ./src/GIF/g2_GIF.h ./src/GIF/g2_GIF_funix.h

@@ -4,7 +4,7 @@
 #
 #
 
-G2_VERSION = 0.40
+G2_VERSION = 0.41
 
 #
 # g2 installation directories

@@ -1,11 +1,11 @@
                             g2 - graphic library
 
-                                Version 0.40
+                                Version 0.41
 
                       (C) 1999 Lj. Milanovic, H. Wagner
 
           To check for news and latest version see the g2-home page
-            (http://www.ap.univie.ac.at/users/ljubo/g2/g2.shtml)
+                         (http://g2.sourceforge.net)
   ------------------------------------------------------------------------
 
 Contents
@@ -54,13 +54,17 @@ Appendix
   ------------------------------------------------------------------------
 License Notice
 
-This program is covered with GNU General Public License (GPL) and  not with
-GNU Library General Public License (LGPL)! It is allowed only for GPL
-programs to use (static/dynamic linkage or any other using of code) the g2
-library. If you want to develop a non GPL application and want to use g2
-please contact the authors.
-
-See the  GNU General Public License (GPL) for details.
+This library is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as published by the
+Free Software Foundation; either version 2.1 of the License, or (at your
+option) any later version.
+This library is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
+for more details.
+You should have received a copy of the GNU Lesser General Public License
+along with this library; if not, write to the Free Software Foundation,
+Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 Introduction
 
@@ -350,6 +354,7 @@ Device Functions
 
           open a new Win32 device
           width,height: width and height of win32 window in pixels
+
           name: depending on the value of "type" (see below)
           either window title or name of the metafile.
           type: Defines the output type of win32 device:

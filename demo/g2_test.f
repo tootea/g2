@@ -1,21 +1,21 @@
-
-c/*****************************************************************************
-c**  This is part of the g2 library
-c**  Copyright (C) 1998  Ljubomir Milanovic & Horst Wagner
-c**
-c**  This program is free software; you can redistribute it and/or modify
-c**  it under the terms of the GNU General Public License (version 2) as
-c**  published by the Free Software Foundation.
-c**
-c**  This program is distributed in the hope that it will be useful,
-cc**  but WITHOUT ANY WARRANTY; without even the implied warranty of
-c**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-cc**  GNU General Public License for more details.
-c**
-c**  You should have received a copy of the GNU General Public License
-c**  along with this program; if not, write to the Free Software
-c**  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-c******************************************************************************/
+c
+c  Copyright (C) 1998-2001  Ljubomir Milanovic & Horst Wagner
+c  This file is part of the g2 library
+c
+c  This library is free software; you can redistribute it and/or
+c  modify it under the terms of the GNU Lesser General Public
+c  License as published by the Free Software Foundation; either
+c  version 2.1 of the License, or (at your option) any later version.
+c
+c  This library is distributed in the hope that it will be useful,
+c  but WITHOUT ANY WARRANTY; without even the implied warranty of
+c  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+c  Lesser General Public License for more details.
+c
+c  You should have received a copy of the GNU Lesser General Public
+c  License along with this library; if not, write to the Free Software
+c  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+c
 
 
 	program main
