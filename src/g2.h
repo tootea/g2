@@ -18,7 +18,7 @@
 #ifndef _G2_H
 #define _G2_H
 
-#define G2_VERSION "0.40b"
+#define G2_VERSION "0.40"
 
 #define G2LD g2_ld()
 
