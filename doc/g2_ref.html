@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (X11; I; OSF1 V4.0 alpha) [Netscape]">
    <title>g2_ref</title>
 </head>
 <body>
@@ -17,7 +17,7 @@ Version 0.40</h3></center>
 
 <center>
 <h3>
-(C) 1998 Lj. Milanovic, H. Wagner</h3></center>
+(C) 1999 Lj. Milanovic, H. Wagner</h3></center>
 
 <center>To check for news and latest version see the <a href="http://www.ap.univie.ac.at/users/ljubo/g2/g2.shtml">g2-home
 page</a> (http://www.ap.univie.ac.at/users/ljubo/g2/g2.shtml)</center>
@@ -47,6 +47,9 @@ Contents</h1>
 
 <li>
 <font size=+1><a href="#Fortraninterface">Fortran interface</a></font></li>
+
+<li>
+<font size=+1><a href="#Perlinterface">Perl interface</a></font></li>
 </ul>
 
 <h2>
@@ -106,7 +109,7 @@ Contents</h1>
 <a href="#Developing">Developing new devices</a></h2>
 
 <h2>
-<a href="#Known Bugs">Known Bugs and ToDo</a></h2>
+<a href="#Bugs">Known Bugs and ToDo</a></h2>
 
 <h2>
 <a href="#Appendix">Appendix</a></h2>
@@ -280,7 +283,7 @@ make install</li>
 </ul>
 
 <li>
-See the file test.pl for a g2 perl example</li>
+See the <a href="#Perlinterface">perl interface</a> section for more information</li>
 </ul>
 <font size=+0>VMS</font>
 <blockquote>
@@ -390,6 +393,33 @@ A short Fortran example:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; stop
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; end</pre>
 
+<p><br><a NAME="Perlinterface"></a><b><font size=+1>Perl interface</font></b>
+<p>The perl interface for g2 is currently tested for Linux and Digital
+Unix/OSF.&nbsp; Function names in perl are the same as in C, however the
+device itself is implemented object orientated, i.e. the device argument
+is ommited in all functions.
+<br>E.g., following simple perl script:
+<br>&nbsp;
+<blockquote>
+<blockquote>
+<pre>use G2;</pre>
+
+<pre>$d = newX11 G2::Device(100,100);
+$d->circle(10, 10, 20);
+$d->string(20, 40, "Hello World");</pre>
+
+<pre>print "\nDone.\n[Enter]\n";
+getc(STDIN);</pre>
+
+<pre>$d->close()</pre>
+</blockquote>
+</blockquote>
+
+<p><br>The creator functions are newX11, newGIF, newPS, etc. and accept
+the same arguments as the open functions in the C version.
+<br>See the perl documentation (perldoc G2) for more details and the test.pl
+script for a more extensive example.
+<p>
 <hr SIZE=5 WIDTH="100%">
 <h2>
 <a NAME="Function Reference"></a>g2 Function Reference</h2>
@@ -1566,8 +1596,8 @@ new physical devices easy and straightforward.
 <p>(This section is obviously still in work)
 <br>&nbsp;
 <h2>
-Known Bugs</h2>
-&nbsp;
+<a NAME="Bugs"></a>Known bugs and problems</h2>
+
 <h3>
 Win32:</h3>
 
@@ -1582,6 +1612,27 @@ ftp sites) and also export placable WMF files with this tool.</li>
 <li>
 Dashed lines should not work with Win95 according to MS-VC++ documentation
 (not tested).</li>
+</ul>
+
+<h3>
+Perl:</h3>
+
+<ul>
+<li>
+You cannot use a perl G2 device variable twice, i.e.</li>
+
+<p><br>$d = newX11(100,100);
+<br>.....
+<br>$d->close();
+<br>$d = newX11(200,200);
+<p>will not work properly. This should be fixed in the next release.</ul>
+
+<h3>
+GIF:</h3>
+
+<ul>
+<li>
+dashed lines are not yet implemented</li>
 </ul>
 
 <h2>
@@ -1615,7 +1666,7 @@ use of g2 from applications such as Word, Excel, Access, etc.</li>
 
 <h2>
 <a NAME="Appendix"></a>Appendix</h2>
-&nbsp;
+
 <h3>
 <a NAME="PostScript paper"></a>PostScript paper sizes</h3>
 
