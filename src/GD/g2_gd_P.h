@@ -25,6 +25,7 @@
 #include <gdfontl.h>
 #include <gdfontg.h>
 #include "g2_config.h"
+#include "g2_gd.h"
 
  static unsigned short g2_Basic_Colors[32][3] = {
  {65535,65535,65535},{0,0,0},
