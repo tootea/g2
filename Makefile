@@ -31,7 +31,7 @@ AR           = ar
 ARFLAGS      = -cr
 RANLIB       = ranlib
 LD           = ld
-LDFLAGS      = 
+LDFLAGS      =   -L/usr/X11R6/lib -L/usr/local/lib -lm -lX11 -lgd
 
 
 BASE_DIR = ./src
@@ -75,13 +75,14 @@ all: libg2.a
 shared: libg2.so.0.$(G2_VERSION)
 	@echo
 
+
 libg2.a: $(OBJ)
 	$(AR) $(ARFLAGS) libg2.a $(OBJ)
 	test -n "$(RANLIB)" && $(RANLIB) $@
 	ln -s libg2.a libg2.$(G2_VERSION).a
 
 libg2.so.0.$(G2_VERSION): $(OBJ)
-	ld -shared -soname libg2.so.0 -o $@ $(OBJ)
+	ld -shared -soname libg2.so.0 -o $@ $(OBJ) 
 
 install: libg2.a
 	test -d $(LIBDIR) || mkdir -p $(LIBDIR)
@@ -99,7 +100,7 @@ clean:
 	-$(FIND) . -name "*~" -exec rm -f {} \;
 	-(cd ./g2_perl ; make clean)
 	-rm -f ./g2_perl/test.ps ./g2_perl/test.gif
-	-rm -f ./libg2.$(G2_VERSION).a
+	-rm -f ./libg2.so.0.$(G2_VERSION)
 
 demo:	libg2.a
 	(cd ./demo ; make)

@@ -14,25 +14,32 @@ PRODUCT=g2
 AC_CANONICAL_HOST
 case "$host" in
   *-linux*)
-		LD_SHARED="ld"
-		LD_SHARED_FLAGS="-shared"
-		LD_SHARED_OPT="-soname libg2.so.0"
+		LD_SHARED='ld'
+		LD_SHARED_FLAGS='-shared -soname libg2.so.0'
+		LD_SHARED_OPT=''
+		LD_SHARED_EXT='so.0.$(G2_VERSION)'
 		AC_DEFINE(LINUX);;
     *-aix*)
+		LD_SHARED='ld'
+		LD_SHARED_FLAGS='-bM:SRE -bnoentry -bexpall'
+		LD_SHARED_OPT='$(LDFLAGS) -lc'
+		LD_SHARED_EXT='so'
 		AC_DEFINE(AIX);;
     *-osf*)
-		LD_SHARED="ld"
-		LD_SHARED_FLAGS="-shared"
-		LD_SHARED_OPT=""
+		LD_SHARED='ld'
+		LD_SHARED_FLAGS='-shared'
+		LD_SHARED_OPT='$(LDFLAGS)'
+		LD_SHARED_EXT='so'
 		AC_DEFINE(OSF);;
          *)
+		LD_SHARED_EXT='so'
 		AC_DEFINE(UNIX);;
 esac
 
 AC_SUBST(LD_SHARED)
 AC_SUBST(LD_SHARED_FLAGS)
 AC_SUBST(LD_SHARED_OPT)
-
+AC_SUBST(LD_SHARED_EXT)
 
 #
 # check C compiler, preprocesor, etc.
@@ -55,13 +62,13 @@ CFLAGS="$CFLAGS $X_CFLAGS -I/usr/local/include"
 LDFLAGS="$LDFLAGS $X_LIBS -L/usr/local/lib"
 
 
-DO_PS="#"
-DO_X11="#"
-DO_GIF="#"
+DO_PS='#'
+DO_X11='#'
+DO_GIF='#'
 
-AC_CHECK_LIB(m, main, DO_PS=""; LDFLAGS="$LDFLAGS -lm";AC_DEFINE(DO_PS), break)
-AC_CHECK_LIB(X11, main, DO_X11="";LDFLAGS="$LDFLAGS -lX11";AC_DEFINE(DO_X11))
-AC_CHECK_LIB(gd, main, DO_GIF="";LDFLAGS="$LDFLAGS -lgd";AC_DEFINE(DO_GIF))
+AC_CHECK_LIB(m, main, DO_PS=''; LDFLAGS="$LDFLAGS -lm";AC_DEFINE(DO_PS), break)
+AC_CHECK_LIB(X11, main, DO_X11='';LDFLAGS="$LDFLAGS -lX11";AC_DEFINE(DO_X11))
+AC_CHECK_LIB(gd, main, DO_GIF='';LDFLAGS="$LDFLAGS -lgd";AC_DEFINE(DO_GIF))
 
 #
 # Declare variables which we want substituted in the Makefile.in's

@@ -30,7 +30,7 @@ AR           = ar
 ARFLAGS      = -cr
 RANLIB       = @RANLIB@
 LD           = ld
-LDFLAGS      = 
+LDFLAGS      = @LDFLAGS@
 
 
 BASE_DIR = ./src
@@ -71,16 +71,17 @@ all: libg2.a
 	test -d ./include || mkdir ./include
 	cp $(INS) ./include/
 
-shared: libg2.so.0.$(G2_VERSION)
+shared: libg2.@LD_SHARED_EXT@
 	@echo
+
 
 libg2.a: $(OBJ)
 	$(AR) $(ARFLAGS) libg2.a $(OBJ)
 	test -n "$(RANLIB)" && $(RANLIB) $@
 	ln -s libg2.a libg2.$(G2_VERSION).a
 
-libg2.so.0.$(G2_VERSION): $(OBJ)
-	@LD_SHARED@ @LD_SHARED_FLAGS@ @LD_SHARED_OPT@ -o $@ $(OBJ)
+libg2.@LD_SHARED_EXT@: $(OBJ)
+	@LD_SHARED@ @LD_SHARED_FLAGS@ -o $@ $(OBJ) @LD_SHARED_OPT@
 
 install: libg2.a
 	test -d $(LIBDIR) || mkdir -p $(LIBDIR)
@@ -98,7 +99,7 @@ clean:
 	-$(FIND) . -name "*~" -exec rm -f {} \;
 	-(cd ./g2_perl ; make clean)
 	-rm -f ./g2_perl/test.ps ./g2_perl/test.gif
-	-rm -f ./libg2.$(G2_VERSION).a
+	-rm -f ./libg2.@LD_SHARED_EXT@
 
 demo:	libg2.a
 	(cd ./demo ; make)
