@@ -23,9 +23,6 @@
 #include "windows.h"
 #include <stdio.h>
 
-#define g2_win32 0
-#define g2_wmf32 1
-
 extern HMENU hmenu;
 extern HANDLE ghModule;
 extern HINSTANCE g2res_DLL;
