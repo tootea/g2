@@ -72,11 +72,13 @@ void g2_c_spline(int n, double *points, int m, double *sxy)
 
 {
    int i, j;
-   double x[n];
-   double y[n];
+   double *x;
+   double *y;
    double *g;
    double p, w, k, u, delta_g;
 
+   x = (double *) calloc (sizeof(double), n);
+   y = (double *) calloc (sizeof(double), n);
    g2_split(n, 0, points, x, y);
 
    u = (x[(n-1)] - x[0]) / (m-1);
@@ -132,6 +134,8 @@ void g2_c_spline(int n, double *points, int m, double *sxy)
 		   (x[(i+1)] - x[i])))
 		 / 6.));
    }
+   free (x);
+   free (y);
    free (g);
 }
 
@@ -197,13 +201,15 @@ void g2_c_b_spline(int n, double *points, int m, double *sxy)
 
 {
    int i, j;
-   double x[n];
-   double y[n];
+   double *x;
+   double *y;
    double t, bl1, bl2, bl3, bl4;
    double interval, xi_3, yi_3, xi, yi;
 
    interval = (double)(n-1) / (double)(m-1);
 
+   x = (double *) calloc (sizeof(double), n);
+   y = (double *) calloc (sizeof(double), n);
    g2_split(n, 0, points, x, y);
 
    for (i = 2, j = 0; i <= n; i++) {
@@ -251,6 +257,8 @@ void g2_c_b_spline(int n, double *points, int m, double *sxy)
    }
    sxy[(m+m-2)] = x[(n-1)];
    sxy[(m+m-1)] = y[(n-1)];
+   free(x);
+   free(y);
 }
 
 void g2_b_spline(int id, int n, double *points, int o)
@@ -352,8 +360,8 @@ void g2_filled_b_spline(int id, int n, double *points, int o)
 void g2_c_raspln(int n, double *points, double tn, double *sxy)
 {
    int i, j;
-   double x[n];
-   double y[n];
+   double *x;
+   double *y;
    double t, bias, tnFactor, tangentL1, tangentL2;
    double D1x, D1y, D2x, D2y;
    double h1[(nb+1)];	/*	Values of the Hermite basis functions */
@@ -361,6 +369,8 @@ void g2_c_raspln(int n, double *points, double tn, double *sxy)
    double h3[(nb+1)];
    double h4[(nb+1)];
 
+   x = (double *) calloc (sizeof(double), n);
+   y = (double *) calloc (sizeof(double), n);
    g2_split(n, 0, points, x, y);
 
 /*
@@ -410,6 +420,8 @@ void g2_c_raspln(int n, double *points, double tn, double *sxy)
 		     (h3[i] * D1x) + (h4[i] * D2x);
       sxy[(i+i+1)] = (h1[i] * y[0]) + (h2[i] * y[1]) +
 		     (h3[i] * D1y) + (h4[i] * D2y);
+   free(x);
+   free(y);
    }
 
 /*
