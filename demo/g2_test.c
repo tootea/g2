@@ -85,7 +85,7 @@ int main()
 	g2_set_auto_flush(dev[3],0);
     g2_attach(d, dev[4]);
 #endif
-	g2_set_auto_flush(d,0);
+    g2_set_auto_flush(d,0);
 
     printf("\n");
 
@@ -157,6 +157,9 @@ int main()
     pts[6]=225; pts[7]=y+100;
     pts[8]=250; pts[9]=y;
     g2_poly_line(d, 5, pts);
+    g2_pen(d, 19);
+    g2_b_spline(d, 5, pts, 20);
+    g2_pen(d, 1);
     
     pts[0]=300; pts[1]=y;
     pts[2]=350; pts[3]=y;
@@ -199,27 +202,6 @@ int main()
     g2_set_line_width(d, 5);
     g2_arc(d, 740, 180, 25, 100, -45+15, -45-15);
     g2_filled_arc(d, 740, 180, 12, 50, -45+15, -45-15);
-
-    {
-	   int i, n=14, o=60;
-	   double dps[(2*n)];
-	   double dx[n];
-	   double dy[]   =   {  10., 280., 140., 200.,  60., 120., 380.,
-			       500., 480., 400., 220., 180., 260., 340.  };
-	   
-	   for (i=0; i<n; i++) {
-	       dx[i]		= (i*o)+20.;  /* from 20 to 800 (20+(13*60)) */
-	       dps[ (i*2)]	= dx[i];
-	       dps[((i*2)+1)]	= dy[i];
-	   }
-	   g2_pen(d, 0);
-	   g2_poly_line(d, n, dps);
-	   g2_set_line_width(d, .12);
-	   g2_pen(d, 1);
-	   g2_spline(d, n, dx, dy, o);
-	   g2_pen(d, 2);
-	   g2_b_spline(d, n, dx, dy, o);
-    }
 
     g2_flush(d);
     printf("\nDone.\n[Enter]\n");

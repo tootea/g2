@@ -67,29 +67,29 @@ enum g2_PS_orientation {
     g2_PS_port			/* portrait */
 };
 
-// Common Library header for DLL and application
+/* Common Library header for DLL and application */
 #ifdef WIN32
 #ifdef G2DLL
 #ifdef MAKEDLL
 /* Create DLL */
-#define LINKDLL __declspec( dllexport)
+#define G2L __declspec( dllexport)
 #else
 /* Use DLL */
-#define LINKDLL __declspec( dllimport)
+#define G2L __declspec( dllimport)
 #endif
 #else 
 /* Use static win32 */
-#define LINKDLL
+#define G2L
 #endif
 #else
 /* Use non-win32 */
-#define LINKDLL
+#define G2L
 #endif
 
 
-LINKDLL int g2_open_PS(const char *file_name,
-	       enum g2_PS_paper paper,
-	       enum g2_PS_orientation orientation);
+G2L int g2_open_PS(const char *file_name,
+		   enum g2_PS_paper paper,
+		   enum g2_PS_orientation orientation);
 
 
 #if defined(__cplusplus)

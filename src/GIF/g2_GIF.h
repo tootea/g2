@@ -26,26 +26,26 @@ extern "C"
 
 #include <stdio.h>
 
-// Common Library header for DLL and application
+/* Common Library header for DLL and application */
 #ifdef WIN32
 #ifdef G2DLL
 #ifdef MAKEDLL
 /* Create DLL */
-#define LINKDLL __declspec( dllexport)
+#define G2L __declspec( dllexport)
 #else
 /* Use DLL */
-#define LINKDLL __declspec( dllimport)
+#define G2L __declspec( dllimport)
 #endif
 #else 
 /* Use static win32 */
-#define LINKDLL
+#define G2L
 #endif
 #else
 /* Use non-win32 */
-#define LINKDLL
+#define G2L
 #endif
 
-LINKDLL int  g2_open_GIF(const char *filename, int width, int height);
+G2L int  g2_open_GIF(const char *filename, int width, int height);
 
 #if defined(__cplusplus)
 } /* end extern "C" */

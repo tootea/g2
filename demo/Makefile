@@ -15,7 +15,7 @@ DEMO_PS = simple_PS
 DEMO_X11 = simple_X11
 DEMO_GIF = simple_GIF
 
-DEMO = g2_test $(DEMO_PS) $(DEMO_X11) $(DEMO_GIF)
+DEMO = g2_test g2_splines_demo $(DEMO_PS) $(DEMO_X11) $(DEMO_GIF)
 
 all:	$(DEMO)
 
@@ -25,6 +25,9 @@ demo:	$(DEMO)
 g2_test:  g2_test.c
 	$(CC) $(CFLAGS) g2_test.c $(LDFLAGS) -o $@
 
+g2_splines_demo:  g2_splines_demo.c
+	$(CC) $(CFLAGS) g2_splines_demo.c $(LDFLAGS) -o $@
+
 simple_PS:  simple_PS.c
 	$(CC) $(CFLAGS) simple_PS.c $(LDFLAGS) -o $@
 
@@ -33,8 +36,6 @@ simple_X11:  simple_X11.c
 
 simple_GIF:  simple_GIF.c
 	$(CC) $(CFLAGS) simple_GIF.c $(LDFLAGS) -o $@
-
-
 
 demo_f: demo_f.f
 	f77 -i8 demo_f.f $(LDFLAGS) -o $@

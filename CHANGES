@@ -1,3 +1,11 @@
+0.41b
+=====
+-added new Tijs Michels spline implementation
+-small fixes in spline package
+-added g2_spline_demo.c
+-changed LINKDLL into G2L in g2.h
+-removed some non ansi parts (e.g. // comments)
+
 0.41a
 =====
 -modified header files for usage with c++
