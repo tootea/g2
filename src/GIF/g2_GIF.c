@@ -181,19 +181,19 @@ int g2_GIF_Line(int pid, void *pdp, int x1, int y1, int x2, int y2)
 	  {
 	  float dx,dy,l;
 	  gdPoint points[4];
-	  dx=-(y2-y1);
-	  dy=x2-x1;
-	  l = PDP->LineWidth/sqrt(dy*dy+dx*dx)/2.;
-	  dx = dx*l;
-	  dy = dy*l;
-	  points[0].x = x1+dx;
-          points[0].y = y1+dy;
-          points[1].x = x1-dx;
-          points[1].y = y1-dy;
-          points[2].x = x2-dx;
-          points[2].y = y2-dy;
-          points[3].x = x2+dx;
-          points[3].y = y2+dy;
+	  dx = -(float)(y2-y1);
+	  dy =  (float)(x2-x1);
+	  l  =  (float)(PDP->LineWidth/sqrt(dy*dy+dx*dx)/2.);
+	  dx =  dx*l;
+	  dy =  dy*l;
+	  points[0].x = (int)(x1+dx);
+      points[0].y = (int)(y1+dy);
+      points[1].x = (int)(x1-dx);
+      points[1].y = (int)(y1-dy);
+      points[2].x = (int)(x2-dx);
+      points[2].y = (int)(y2-dy);
+      points[3].x = (int)(x2+dx);
+      points[3].y = (int)(y2+dy);
 	  gdImageFilledPolygon(PDP->im,points,4,PDP->CurCol);
 	  }
 	return 0;
