@@ -550,7 +550,6 @@ void g2_set_QP(int dev, double d, enum QPshape shape)
 void g2_query_pointer(int dev, double *x, double *y, unsigned int *button)
 {
     g2_device *devp;
-    int i;
     
     if((devp=g2_get_device_pointer(dev))==NULL) {
 	fprintf(stderr, "g2_query_pointer: No such device: %d\n", dev);

@@ -30,8 +30,8 @@ typedef struct _g2_FIG_inks {
 
 typedef struct _g2_FIG_device {
     FILE           *fp;	          /* output file pointer */
-    int            pen;		  /* current pen */
-    int            line_width;    /* line width */
+    int            pen_color;	  /* current pen */
+    int            thickness;     /* line thickness */
     int            font_size;     /* font size */
     int            line_style;    /* line style according to fig format */
     int            style_val;     /* line style value acc. to fig format */
