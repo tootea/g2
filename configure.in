@@ -64,11 +64,12 @@ LDFLAGS="$LDFLAGS $X_LIBS -L/usr/local/lib"
 
 
 DO_PS='#'
+DO_FIG='#'
 DO_X11='#'
 DO_WIN32='#'
 DO_GD='#'
 
-AC_CHECK_LIB(m, main, DO_PS=''; LDFLAGS="$LDFLAGS -lm";AC_DEFINE(DO_PS), break)
+AC_CHECK_LIB(m,main,DO_PS='';DO_FIG='';LDFLAGS="$LDFLAGS -lm";AC_DEFINE(DO_PS) AC_DEFINE(DO_FIG),break)
 AC_CHECK_LIB(X11, main, DO_X11='';LDFLAGS="$LDFLAGS -lX11";AC_DEFINE(DO_X11))
 AC_CHECK_HEADER(windows.h, DO_WIN32='';AC_DEFINE(DO_WIN32)) 
 AC_CHECK_LIB(gd, main, have_gd=yes;LDFLAGS="$LDFLAGS -lgd", have_gd=no)
@@ -81,6 +82,7 @@ fi
 # Declare variables which we want substituted in the Makefile.in's
 #
 AC_SUBST(DO_PS)
+AC_SUBST(DO_FIG)
 AC_SUBST(DO_X11)
 AC_SUBST(DO_WIN32)
 AC_SUBST(DO_GD)
@@ -96,6 +98,22 @@ AC_CHECK_HEADERS(limits.h)
 echo
 AC_OUTPUT(Makefile demo/Makefile g2_perl/Makefile.PL)
 
+echo
+echo "Supported devices:"
+if test "$DO_PS"    != "#"; then echo "    PostScript"; fi
+if test "$DO_FIG"   != "#"; then echo "    Fig"; fi
+if test "$DO_X11"   != "#"; then echo "    X11"; fi
+if test "$DO_WIN32" != "#"; then echo "    Win32"; fi
+if test "$DO_GD"    != "#"; then echo "    GD"; fi
+
+echo
+echo "Unsupported devices:"
+if test "$DO_PS"     = "#"; then echo "    PostScript"; fi
+if test "$DO_FIG"    = "#"; then echo "    Fig"; fi
+if test "$DO_X11"    = "#"; then echo "    X11"; fi
+if test "$DO_WIN32"  = "#"; then echo "    Win32"; fi
+if test "$DO_GD"     = "#"; then echo "    GD"; fi
+		   
 echo
 echo "Run 'make depend' to create dependencies."
 echo

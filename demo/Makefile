@@ -24,17 +24,18 @@ CPP = /lib/cpp
 #F77 = f77 -n32
 #CPP = /lib/cpp -P -DFORTRAN
 
-CFLAGS = -I../src -I../src/X11 -I../src/PS -I../src/GD -g -O2  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
-CXXFLAGS = -I../src -I../src/X11 -I../src/PS -I../src/GD -g -O2  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
+CFLAGS = -I../src -I../src/X11 -I../src/PS -I../src/GD -I../src/FIG -g -O2  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_FIG=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
+CXXFLAGS = -I../src -I../src/X11 -I../src/PS -I../src/FIG/ -I../src/GD -g -O2  -DLINUX=1 -DDO_PS=1 -DDO_FIG=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
 LDFLAGS = -L.. -lg2   -L/usr/X11R6/lib -L/usr/local/lib -lm -lX11 -lgd
 
 DEMO_PS = simple_PS
+DEMO_FIG = simple_FIG
 DEMO_X11 = simple_X11 pointer
 DEMO_GD = simple_gd
 #DEMO_WIN32 = simple_win32
 
 
-DEMO = g2_test g2_splines_demo demo_cpp $(DEMO_PS) $(DEMO_X11) $(DEMO_GD) $(DEMO_WIN32)
+DEMO = g2_test g2_splines_demo demo_cpp $(DEMO_PS) $(DEMO_FIG) $(DEMO_X11) $(DEMO_GD) $(DEMO_WIN32)
 
 all:	$(DEMO)
 
@@ -49,6 +50,9 @@ g2_splines_demo:  g2_splines_demo.c
 
 simple_PS:  simple_PS.c
 	$(CC) $(CFLAGS) simple_PS.c $(LDFLAGS) -o $@
+
+simple_FIG: simple_FIG.c
+	$(CC) $(CFLAGS) simple_FIG.c $(LDFLAGS) -o $@
 
 simple_X11:  simple_X11.c
 	$(CC) $(CFLAGS) simple_X11.c $(LDFLAGS) -o $@
@@ -69,10 +73,10 @@ demo_f: demo_f.f
 	$(F77) $(F77_FLAGS) demo_f.f $(LDFLAGS) -o $@
 
 g2testf: g2_test.f
-	$(CPP)  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1  -E g2_test.f > g2testf.f
+	$(CPP)  -DLINUX=1 -DDO_PS=1 -DDO_FIG=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1  -E g2_test.f > g2testf.f
 	$(F77) g2testf.f $(LDFLAGS) -o g2testf
 
 clean:
-	-rm $(DEMO) g2testf g2testf.f demo_f *~ core *.ps *.eps *.png *.jpg
+	-rm $(DEMO) g2testf g2testf.f demo_f *~ core *.ps *.fig *.eps *.png *.jpg
 
 

@@ -1,5 +1,8 @@
-0.52
+0.60
 ====
+- added FIG device
+- added win32 mouse support
+- added better device initialization
 
 
 0.51

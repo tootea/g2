@@ -94,14 +94,14 @@ G2L int g2_open_PS_generic(const char *file_name,
     psout->fp=fp;			      /* init PostScript structures */
     psout->paper=paper;
     psout->orient=orientation;
-	psout->format=format;
-	psout->width=width;
-	psout->height=height;
+    psout->format=format;
+    psout->width=width;
+    psout->height=height;
     psout->inks=NULL;
     psout->N_ink=0;
     psout->pen=0;
     psout->page_counter=0;
-	psout->bbox = 0;
+    psout->bbox = 0;
 	
     g2_PS_write_file_header(psout);
     

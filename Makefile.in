@@ -48,6 +48,10 @@ BASE_INS = $(BASE_DIR)/g2.h
 @DO_PS@PS_SRC = $(PS_DIR)/g2_PS.c
 @DO_PS@PS_INS = $(PS_DIR)/g2_PS.h
 
+@DO_FIG@FIG_DIR = ./src/FIG
+@DO_FIG@FIG_SRC = $(FIG_DIR)/g2_FIG.c
+@DO_FIG@FIG_INS = $(FIG_DIR)/g2_FIG.h
+
 @DO_X11@X11_DIR = ./src/X11
 @DO_X11@X11_SRC = $(X11_DIR)/g2_X11.c
 @DO_X11@X11_INS = $(X11_DIR)/g2_X11.h
@@ -61,10 +65,10 @@ BASE_INS = $(BASE_DIR)/g2.h
 @DO_GD@GD_INS = $(GD_DIR)/g2_gd.h
 
 
-SRC = $(BASE_SRC) $(PS_SRC) $(X11_SRC) $(WIN32_SRC) $(GD_SRC)
+SRC = $(BASE_SRC) $(PS_SRC) $(FIG_SRC) $(X11_SRC) $(WIN32_SRC) $(GD_SRC)
 OBJ = $(SRC:.c=.o)
 
-INS =  $(BASE_INS) $(PS_INS) $(X11_INS) $(WIN32_INS) $(GD_INS)
+INS =  $(BASE_INS) $(PS_INS) $(FIG_INS) $(X11_INS) $(WIN32_INS) $(GD_INS)
 
 #
 # define some phony targets

@@ -23,6 +23,9 @@
 #ifdef DO_PS
 #include <g2_PS.h>
 #endif
+#ifdef DO_FIG
+#include <g2_FIG.h>
+#endif
 #ifdef DO_X11
 #include <g2_X11.h>
 #endif
@@ -58,7 +61,7 @@ int main()
     printf("..PS");
     dev[ndev]=g2_open_PS("g2_test.ps", g2_A4, g2_PS_land);
     g2_attach(d, dev[ndev]);
-	ndev++;
+    ndev++;
 	
     printf("..EPSF");
     dev[ndev]=g2_open_EPSF("g2_test.eps");
@@ -69,11 +72,17 @@ int main()
     g2_attach(d, dev[ndev]);
     ndev++;
 #endif
+#ifdef DO_FIG
+    printf("..FIG");
+    dev[ndev]=g2_open_FIG("g2_test.fig");
+    g2_attach(d, dev[ndev]);
+    ndev++;
+#endif
 #ifdef DO_X11
     printf("..X11");
     dev[ndev]=g2_open_X11(775, 575);
     g2_attach(d, dev[ndev]);
-	ndev++;
+    ndev++;
 #endif
 #ifdef DO_GD
     printf("..GD(png)");
@@ -111,7 +120,7 @@ int main()
 	sprintf(str, "%d", i);
 	g2_string(d, i*20+7, 21, str);
     }
-    
+
     for(j=0;j<ndev;j++)
 	if(dev[j]>=0)
 	    for(i=0;i<=64;i++) {
