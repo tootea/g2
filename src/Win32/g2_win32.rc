@@ -102,7 +102,7 @@ CAPTION "About g2"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,55,71,50,14
-    CTEXT           "g2 version 0.24\n\n (c) 1996-1998\n  Ljubomir Milanovic\nHorst Wagner",
+    CTEXT           "g2 version 0.40\n\n (c) 1998-1999\n  Ljubomir Milanovic\nHorst Wagner",
                     IDC_STATIC,27,7,105,55
     ICON            IDI_ICON1,IDC_STATIC,9,9,20,20
 END
