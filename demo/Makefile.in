@@ -34,7 +34,7 @@ LDFLAGS = -L.. -lg2 @LDFLAGS@
 @DO_WIN32@DEMO_WIN32 = simple_win32
 
 
-DEMO = g2_test g2_splines_demo demo_cpp $(DEMO_PS) $(DEMO_FIG) $(DEMO_X11) $(DEMO_GD) $(DEMO_WIN32)
+DEMO = g2_test g2_arc g2_splines_demo demo_cpp $(DEMO_PS) $(DEMO_FIG) $(DEMO_X11) $(DEMO_GD) $(DEMO_WIN32)
 
 all:	$(DEMO)
 
@@ -43,6 +43,9 @@ demo:	$(DEMO)
 
 g2_test:  g2_test.c
 	$(CC) $(CFLAGS) g2_test.c $(LDFLAGS) -o $@
+
+g2_arc: g2_arc.c
+	$(CC) $(CFLAGS) g2_arc.c $(LDFLAGS) -o $@
 
 g2_splines_demo:  g2_splines_demo.c
 	$(CC) $(CFLAGS) g2_splines_demo.c $(LDFLAGS) -o $@
