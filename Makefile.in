@@ -80,7 +80,7 @@ libg2.a: $(OBJ)
 	ln -s libg2.a libg2.$(G2_VERSION).a
 
 libg2.so.0.$(G2_VERSION): $(OBJ)
-	$(LD) $(LDFLAGS) -soname libg2.so.0 -o $@ $(OBJ) -L/usr/X11/lib -lX11 -lgd -lm -lc
+	@LD_SHARED@ @LD_SHARED_FLAGS@ @LD_SHARED_OPT@ -o $@ $(OBJ)
 
 install: libg2.a
 	test -d $(LIBDIR) || mkdir -p $(LIBDIR)

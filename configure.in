@@ -6,15 +6,33 @@ AC_INIT(src/g2_device.c)
 
 PRODUCT=g2
 
+
 #
-# check cannonical system name
+# check cannonical system name,
+# and set options for shared libraries (black magic)
 #
 AC_CANONICAL_HOST
 case "$host" in
-*-linux-gnu )  AC_DEFINE(LINUX) ;;
-     *-aix* )  AC_DEFINE(AIX) ;;
-          * )  AC_DEFINE(UNIX) ;;
+  *-linux*)
+		LD_SHARED="ld"
+		LD_SHARED_FLAGS="-shared"
+		LD_SHARED_OPT="-soname libg2.so.0"
+		AC_DEFINE(LINUX);;
+    *-aix*)
+		AC_DEFINE(AIX);;
+    *-osf*)
+		LD_SHARED="ld"
+		LD_SHARED_FLAGS="-shared"
+		LD_SHARED_OPT=""
+		AC_DEFINE(OSF);;
+         *)
+		AC_DEFINE(UNIX);;
 esac
+
+AC_SUBST(LD_SHARED)
+AC_SUBST(LD_SHARED_FLAGS)
+AC_SUBST(LD_SHARED_OPT)
+
 
 #
 # check C compiler, preprocesor, etc.
@@ -25,6 +43,7 @@ AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_CHECK_PROG(FIND, find, find, :)
 AC_CHECK_PROG(MAKEDEPEND, makedepend, makedepend, :)
+AC_CHECK_LIB(dl, dlopen, have_dl=yes, have_dl=no)
 
 
 #
@@ -51,9 +70,9 @@ AC_SUBST(DO_PS)
 AC_SUBST(DO_X11)
 AC_SUBST(DO_GIF)
 
-
 AC_HEADER_STDC
 AC_CHECK_HEADERS(limits.h)
+
 
 
 #
