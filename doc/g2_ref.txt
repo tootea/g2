@@ -349,7 +349,7 @@ Device Functions
      type)
 
           open a new Win32 device
-          width,height: width and height of GIF image in pixels
+          width,height: width and height of win32 window in pixels
           name: depending on the value of "type" (see below)
           either window title or name of the metafile.
           type: Defines the output type of win32 device:
