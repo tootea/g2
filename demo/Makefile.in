@@ -6,6 +6,7 @@
 
 
 CC = @CC@
+CXX = @CXX@
 ##Linux
 F77 = g77
 CPP = /lib/cpp
@@ -22,7 +23,8 @@ CPP = /lib/cpp
 #F77 = f77 -n32
 #CPP = /lib/cpp -P -DFORTRAN
 
-CFLAGS = -I../src -I../src/X11 -I../src/PS -I../src/GIF -I../src/GD @CFLAGS@ @DEFS@
+CFLAGS = -Wall -I../src -I../src/X11 -I../src/PS -I../src/GIF -I../src/GD @CFLAGS@ @DEFS@
+CXXFLAGS = -Wall -I../src -I../src/X11 -I../src/PS -I../src/GIF -I../src/GD @CXXFLAGS@ @DEFS@
 LDFLAGS = -L.. -lg2 @LDFLAGS@
 
 @DO_PS@DEMO_PS = simple_PS
@@ -32,7 +34,7 @@ LDFLAGS = -L.. -lg2 @LDFLAGS@
 @DO_WIN32@DEMO_WIN32 = simple_win32
 
 
-DEMO = g2_test g2_splines_demo $(DEMO_PS) $(DEMO_X11) $(DEMO_GIF) $(DEMO_GD) $(DEMO_WIN32)
+DEMO = g2_test g2_splines_demo demo_cpp $(DEMO_PS) $(DEMO_X11) $(DEMO_GIF) $(DEMO_GD) $(DEMO_WIN32)
 
 all:	$(DEMO)
 
@@ -62,6 +64,9 @@ simple_GIF:  simple_GIF.c
 
 simple_gd:  simple_gd.c
 	$(CC) $(CFLAGS) simple_gd.c $(LDFLAGS) -o $@
+
+demo_cpp: demo_cpp.cpp
+	$(CXX) $(CXXFLAGS) demo_cpp.cpp $(LDFLAGS) -o $@	
 
 demo_f: demo_f.f
 	$(F77) $(F77_FLAGS) demo_f.f $(LDFLAGS) -o $@
