@@ -331,15 +331,16 @@ int  g2_open_gd(const char *filename, int width, int height,enum g2_gd_type gd_t
 	pdp->f = fopen(filename,"wb");
 	pdp->NoOfInks = 0;
 	pdp->BackCol = 0;
-	g2_gd_Clear(pid,pdp);
-
+	
     pid = g2_register_physical_device(pid, pdp,
 				      g2_IntCoor, g2_gd_funix,
 				      1.0, -1.0,
 				      0.0, height-1);
 
+	g2_gd_Clear(pid,pdp);
+	g2_set_line_width(pid, 0.0);
 	g2_set_font_size(pid, 12.0);
-    g2_allocate_basic_colors(pid);
+	g2_allocate_basic_colors(pid);
     g2_pen(pid, 1);
     	
 	return pid;
