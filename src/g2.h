@@ -60,8 +60,13 @@ extern "C"
 #if defined(DO_GD)
 %include "GD/g2_gd.h"
 #endif
+#if defined(DO_WIN32)
+%include "WIN32/g2_win32.h"
+#endif
 
 %module g2
+
+%include typemaps.i
 
 %{
 #include "g2.h"
@@ -73,6 +78,9 @@ extern "C"
 #endif
 #if defined(DO_GD)
 #include "g2_gd.h"
+#endif
+#if defined(DO_WIN32)
+#include "WIN32/g2_win32.h"
 #endif
 %}
 
@@ -153,9 +161,11 @@ G2L void g2_image(int dev,
 
 G2L void g2_set_QP(int dev, double d, enum QPshape shape);
 G2L void g2_plot_QP(int dev, double x, double y);
-
+#if !defined(SWIG) 
 G2L void g2_query_pointer(int dev, double *x, double *y, unsigned int *button);
-
+#else
+extern void g2_query_pointer(int dev, double *OUTPUT,double *OUTPUT,unsigned int *OUTPUT);
+#endif
     
  /* Tijs Michels */
  /* 06/16/99	 */
