@@ -21,9 +21,11 @@ esac
 #
 AC_PROG_CC
 AC_PROG_CPP
+AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_CHECK_PROG(FIND, find, find, :)
 AC_CHECK_PROG(MAKEDEPEND, makedepend, makedepend, :)
+
 
 #
 # Try to locate the X Window System include files and libraries

@@ -4,6 +4,8 @@
 #
 #
 
+G2_VERSION = 0.40
+
 #
 # g2 installation directories
 #
@@ -25,7 +27,11 @@ INSTALL_DATA = @INSTALL_DATA@
 FIND         = @FIND@
 MAKEDEPEND   = @MAKEDEPEND@
 AR           = ar
-ARFLAGS      = -rs
+ARFLAGS      = -cr
+RANLIB       = @RANLIB@
+LD           = ld
+LDFLAGS      = 
+
 
 BASE_DIR = ./src
 BASE_SRC = $(BASE_DIR)/g2_device.c         $(BASE_DIR)/g2_ui_control.c \
@@ -65,15 +71,16 @@ all: libg2.a
 	test -d ./include || mkdir ./include
 	cp $(INS) ./include/
 
-shared: libg2.so
+shared: libg2.so.0.$(G2_VERSION)
 	@echo
 
 libg2.a: $(OBJ)
 	$(AR) $(ARFLAGS) libg2.a $(OBJ)
-	ln -s libg2.a libg2.0.40.a
+	test -n "$(RANLIB)" && $(RANLIB) $@
+	ln -s libg2.a libg2.$(G2_VERSION).a
 
-libg2.so: $(OBJ)
-	$(CC) -shared -o libg2.so $(OBJ) -lc -lm
+libg2.so.0.$(G2_VERSION): $(OBJ)
+	$(LD) $(LDFLAGS) -soname libg2.so.0 -o $@ $(OBJ) -L/usr/X11/lib -lX11 -lgd -lm -lc
 
 install: libg2.a
 	test -d $(LIBDIR) || mkdir -p $(LIBDIR)
@@ -91,7 +98,7 @@ clean:
 	-$(FIND) . -name "*~" -exec rm -f {} \;
 	-(cd ./g2_perl ; make clean)
 	-rm -f ./g2_perl/test.ps ./g2_perl/test.gif
-	-rm -f ./libg2.0.40.a
+	-rm -f ./libg2.$(G2_VERSION).a
 
 demo:	libg2.a
 	(cd ./demo ; make)
