@@ -489,12 +489,10 @@ int InitApplication()
 
   if (g2res_DLL == NULL) 
 		printf("Warning: Could not load g2 resource DLL\n Menu and Icon are disabled\n");
-//	  	errhandler("Could not load g2res.dll",NULL);
   
 
-    wc.style = CS_HREDRAW | CS_VREDRAW; // Class style(s).
-  wc.lpfnWndProc = g2_WndProc; // Function to retrieve messages for
-							   // windows of this class.
+  wc.style = CS_HREDRAW | CS_VREDRAW; // Class style(s).
+  wc.lpfnWndProc = g2_WndProc; // Function to retrieve messages for windows of this class.
   wc.cbClsExtra = 0;	// No per-class extra data.
   wc.cbWndExtra = 0;	// No per-window extra data.
   wc.hInstance = 0;		// Application that owns the class.
@@ -584,7 +582,6 @@ int  g2_open_win32(int width, int height, const char *title, int type)
 				fprintf(stderr,"g2_win32: Thread could not be started\n");
 
 		    SetThreadPriority(PDP->hThread,THREAD_PRIORITY_ABOVE_NORMAL);
-//			printf("Waiting for thread\n");
 			//Wait till window is created by Thread
 			while( PDP->messageloop == 0)
 				Sleep(10);
