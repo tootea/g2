@@ -50,6 +50,36 @@ extern "C"
 
 #define G2LD g2_ld()
 
+#if defined(SWIG)
+#if defined(DO_X11)
+%include "X11/g2_X11.h"
+#endif
+#if defined(DO_PS)
+%include "PS/g2_PS.h"
+#endif
+#if defined(DO_GD)
+%include "GD/g2_gd.h"
+#endif
+
+%module g2
+
+%{
+#include "g2.h"
+#if defined(DO_X11)
+#include "g2_X11.h"
+#endif
+#if defined(DO_PS)
+#include "g2_PS.h"
+#endif
+#if defined(DO_GD)
+#include "g2_gd.h"
+#endif
+%}
+
+#endif
+/* end SWIG */
+
+
 enum QPshape {
     QPrect,
     QPcirc
