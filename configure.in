@@ -28,7 +28,7 @@ case "$host" in
     *-osf*)
 		LD_SHARED='ld'
 		LD_SHARED_FLAGS='-shared'
-		LD_SHARED_OPT='$(LDFLAGS)'
+		LD_SHARED_OPT='$(LDFLAGS) -lc'
 		LD_SHARED_EXT='so'
 		AC_DEFINE(OSF);;
          *)
