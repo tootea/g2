@@ -607,14 +607,16 @@ void g2_filled_arc_pd(g2_physical_device *pd,
 	N=(a2==a1)?360:(int)fabs(a2-a1)+8;
 	a=a1*2.*PI/360.;
 	da=((a2>a1)? (a2-a1):360.-(a1-a2))*2.*PI/360./(N-1);
-	pt=g2_malloc(2*(N+1)*sizeof(double));
+	pt=g2_malloc(2*(N+2)*sizeof(double));
 	pt[0]=x;
 	pt[1]=y;
 	for(i=0;i<N;i++) {
 	    pt[2*i+2]=x+r1*cos(a+i*da);
 	    pt[2*i+3]=y+r2*sin(a+i*da);
 	}
-	g2_filled_polygon_pd(pd, N, pt);	  /* using filled polygon */
+	pt[2*N+2]=x;
+	pt[2*N+3]=y;
+	g2_filled_polygon_pd(pd, N+2, pt);	  /* using filled polygon */
 	g2_free(pt);
     }
 }
