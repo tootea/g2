@@ -398,7 +398,7 @@ void FIF(g2_plot_qp)(F_REAL *dev, F_REAL *x, F_REAL *y)
 
 /* thanks to Yuri Sbitnev for contributing the g2_image code for FORTRAN */
 void FIF(g2_image)(F_REAL *dev, F_REAL *x, F_REAL *y, F_REAL *x_size, F_REAL *y_size,
-		   F_REAL pens[dtoi(*y_size)][dtoi(*x_size)])
+		   F_REAL *pens)
 {
     int i, j, xs, ys;
     int *mypens;
@@ -407,7 +407,7 @@ void FIF(g2_image)(F_REAL *dev, F_REAL *x, F_REAL *y, F_REAL *x_size, F_REAL *y_
     mypens=(int *) g2_malloc(xs*ys*sizeof(int));
     for(j=0;j<ys;j++) 
       for(i=0;i<xs;i++) 
-        mypens[(xs*j)+i]=dtoi(pens[j][i]);
+        mypens[j*xs+i]=dtoi(pens[j*xs+i]);         /* pens[dtoi(*y_size)][dtoi(*x_size)] */
     g2_image(dtoi(*dev), *x, *y, xs, ys, mypens);
     g2_free(mypens);
 }
