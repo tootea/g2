@@ -324,41 +324,20 @@ int g2_gd_Ellipse(int pid, void *pdp, int x, int y, int r1, int r2)
 int g2_gd_FilledEllipse(int pid, void *pdp, int x, int y, int r1, int r2)
 	{
 	return 0;
-    }
+	}
 
 int g2_gd_Arc(int pid, void *pdp, int x, int y, int r1, int r2, double a1, double a2)
 	{
 	gdImageArc(PDP->im,x,y,2*r1,2*r2,dtoi(a1),dtoi(a2),PDP->CurCol);
 	return 0;
-    }
+	}
 
 int g2_gd_FilledArc(int pid, void *pdp, int x, int y,
 		  int r1, int r2,
 		  double a1, double a2)
 	{
-	double  a, da;			  /* emulate filled arc */
-	int pts[6];
-	int N, i;
-	pts[0] = dtoi(x);
-	pts[1] = dtoi(y);
-	N=(int)fabs(a2-a1)+8;
-	while (a2 < a1) a2+=360;
-	a=a1*2.*PI/360.;
-	da=(a2-a1)*2.*PI/360./(N-1);
-	pts[2] = dtoi(x+r1*cos(a));
-	pts[3] = dtoi(y+r2*sin(a));
-	for(i=1;i<N;i++) {
-		pts[4] = dtoi(x+r1*cos(a+i*da));
-		pts[5] = dtoi(y-r2*sin(a+i*da));
-		if ((pts[4] != pts[2]) || (pts[5] != pts[3])) /* skip identical points */
-			{
-			g2_gd_FilledPolygon(pid,pdp,3,pts);
-			}
-		pts[2] = pts[4];
-		pts[3] = pts[5];
-		}
 	return 0;
-    }
+	}
 
 int g2_gd_DrawString(int pid, void *pdp, int x, int y, const char *text)
 	{

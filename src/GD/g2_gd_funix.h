@@ -46,7 +46,7 @@ const g2_funix_fun g2_gd_funix[] =
 		 /*	{g2_Ellipse,g2_gd_Ellipse}, */
 		 /*	{g2_FilledEllipse,g2_gd_FilledEllipse}, */
 		 /*     {g2_Arc,g2_gd_Arc}, */
-		{g2_FilledArc,g2_gd_FilledArc},
+		 /* {g2_FilledArc,g2_gd_FilledArc}, */
 		{g2_String,g2_gd_DrawString},
 		{g2_FUNIX_NULL, NULL}};
 
