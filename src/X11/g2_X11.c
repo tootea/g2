@@ -654,9 +654,8 @@ int g2_X11_draw_string(int pid, void *pdp, int x, int y, char *text)
 }
 
 
-
-
-int g2_X11_image(int pid, int x, int y, int width, int height, int *pen_array)
+int g2_X11_image(int pid, void *pdp,
+		 int x, int y, int width, int height, int *pen_array)
 {
     g2_X11_device *xout=&g2_X11_dev[pid];
     XImage *image=NULL;
@@ -692,3 +691,25 @@ int g2_X11_image(int pid, int x, int y, int width, int height, int *pen_array)
     free(ink_array);
     return 0;
 }
+
+
+int g2_X11_query_pointer(int pid, void *pdp,
+			 int *x, int *y, unsigned int *button)
+{
+    Bool rv;
+    g2_X11_device *xout=&g2_X11_dev[pid];
+    Window root, child;
+    int rx, ry;
+
+    rv = XQueryPointer(xout->display, xout->window,
+		       &root, &child, &rx, &ry,
+		       x, y, button);
+
+    if(rv)
+	return 0;
+    else
+	return 1;
+}
+
+
+

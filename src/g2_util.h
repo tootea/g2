@@ -31,6 +31,8 @@ void g2_us2pds_int(g2_physical_device *pd, double x, double y,
 		   int *ix, int *iy);
 void g2_us2pds_double(g2_physical_device *pd, double x, double y,
 		      double *dx, double *dy);
+void g2_pdc2uc(g2_physical_device *pd, double ix, double iy,
+		   double *x, double *y);
 void g2_sort2_i(int *a, int *b);
 void g2_sort2_d(double *a, double *b);
 void *g2_malloc(size_t size);

@@ -74,7 +74,10 @@ int g2_X11_filled_arc(int pid, void *pdp, int x, int y,
 int g2_X11_ellipse(int pid, void *pdp, int x, int y, int r1, int r2);
 int g2_X11_filled_ellipse(int pid, void *pdp, int x, int y, int r1, int r2);
 int g2_X11_draw_string(int pid, void *pdp, int x, int y, char *text);
-int g2_X11_image(int pid, int x, int y, int width, int height, int *pen_array);
+int g2_X11_image(int pid, void *pdp,
+		 int x, int y, int width, int height, int *pen_array);
+int g2_X11_query_pointer(int pid, void *pdp,
+			 int *x, int *y, unsigned int *button);
 
 #endif /* _G2_X11_P_H */
 

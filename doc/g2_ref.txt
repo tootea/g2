@@ -6,7 +6,7 @@
 
           To check for news and latest version see the g2-home page
             (http://www.ap.univie.ac.at/users/ljubo/g2/g2.shtml)
-----------------------------------------------------------------------------
+  ------------------------------------------------------------------------
 
 Contents
 
@@ -39,6 +39,8 @@ g2 Function Reference
         o Line Styles
         o Text
 
+   * Other Functions
+
 g2 Device Support
 
 Developing new devices
@@ -49,7 +51,7 @@ Appendix
 
    * PostScript paper sizes
 
-----------------------------------------------------------------------------
+  ------------------------------------------------------------------------
 License Notice
 
 This program is covered with GNU General Public License (GPL) and  not with
@@ -106,7 +108,7 @@ g2_plot---> | Virtual device: id |--------> X11:   g2_attach(id_X11,...
 
 If you don't need or like the concept of virtual devices, simply ignore it.
 
-----------------------------------------------------------------------------
+  ------------------------------------------------------------------------
 Getting Started
 
 Preinstallation tasks:
@@ -305,7 +307,7 @@ arguments as the open functions in the C version.
 See the perl documentation (perldoc G2) for more details and the test.pl
 script for a more extensive example.
 
-----------------------------------------------------------------------------
+  ------------------------------------------------------------------------
 
 g2 Function Reference
 
@@ -403,7 +405,7 @@ Device Functions
           Returns id of last accessed device (macro G2LD is defined as
           g2_ld() )
 
-----------------------------------------------------------------------------
+  ------------------------------------------------------------------------
 
 Drawing Functions
 
@@ -531,7 +533,7 @@ Images
           x_size,y_size: size of image
           pens: integer array of size x_size x y_size specifying pen colors
 
-----------------------------------------------------------------------------
+  ------------------------------------------------------------------------
 
 Style Functions
 
@@ -565,7 +567,19 @@ Text
           set font size for device dev
           size: new font size
 
-----------------------------------------------------------------------------
+  ------------------------------------------------------------------------
+
+Other Functions
+
+Query Pointer (mouse)
+
+     void g2_query_pointer(int dev, double *x, double *y, unsigned int
+     *button)
+          query pointer (usually mouse) position for physical device dev
+          x, y: pointer coordinates
+          button: button status (device dependent)
+
+  ------------------------------------------------------------------------
 
 Device Support
 

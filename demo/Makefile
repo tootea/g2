@@ -8,12 +8,12 @@
 
 CC = gcc
 
-CFLAGS = -I../src -I../src/X11 -I../src/PS -I../src/GIF -g -O2  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DDO_GIF=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
-LDFLAGS = -L.. -lg2   -L/usr/X11R6/lib -L/usr/local/lib -lm -lX11 -lgd
+CFLAGS = -I../src -I../src/X11 -I../src/PS -I../src/GIF -g -O2  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_X11=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
+LDFLAGS = -L.. -lg2   -L/usr/X11R6/lib -L/usr/local/lib -lm -lX11
 
 DEMO_PS = simple_PS
-DEMO_X11 = simple_X11
-DEMO_GIF = simple_GIF
+DEMO_X11 = simple_X11 pointer
+#DEMO_GIF = simple_GIF
 
 DEMO = g2_test g2_splines_demo $(DEMO_PS) $(DEMO_X11) $(DEMO_GIF)
 
@@ -33,6 +33,9 @@ simple_PS:  simple_PS.c
 
 simple_X11:  simple_X11.c
 	$(CC) $(CFLAGS) simple_X11.c $(LDFLAGS) -o $@
+
+pointer:  pointer.c
+	$(CC) $(CFLAGS) pointer.c $(LDFLAGS) -o $@
 
 simple_GIF:  simple_GIF.c
 	$(CC) $(CFLAGS) simple_GIF.c $(LDFLAGS) -o $@

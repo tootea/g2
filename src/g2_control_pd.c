@@ -265,3 +265,34 @@ void g2_set_dash_pd(g2_physical_device *pd, int N, double *dashes)
 	/* emulate ... with .... */  
     }
 }
+
+
+
+/*
+ *
+ * Query pointer position and button state
+ *
+ */
+void g2_query_pointer_pd(g2_physical_device *pd,
+			 double *x, double *y, unsigned int *button)
+{
+    int    ix, iy;
+    double dx, dy;
+
+    if(pd->ff[g2_QueryPointer].fun!=NULL) {
+	switch(pd->coor_type) {
+	  case g2_IntCoor:
+	    pd->ff[g2_QueryPointer].fun(pd->pid, pd->pdp,
+				 &ix, &iy, button);
+	    g2_pdc2uc(pd, ix, iy, x, y);
+	    break;
+	  case g2_DoubleCoor:
+	    pd->ff[g2_QueryPointer].fun(pd->pid, pd->pdp,
+				        &dx, &dy, button);
+	    g2_pdc2uc(pd, dx, dy, x, y);
+	    break;
+	}
+    } else {
+	/* no emulation for query pointer */
+    }
+}

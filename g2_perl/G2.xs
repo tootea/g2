@@ -674,26 +674,13 @@ g2_plot_QP(dev, x, y)
 		g2_plot_QP(*dev, x, y);
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void
+g2_query_pointer(dev)
+	G2::Device	dev
+	PROTOTYPE: $$
+	CODE:
+	{
+		double x, y;
+		unsigned int button;
+		g2_query_pointer(*dev, &x, &y, &button);
+	}

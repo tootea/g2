@@ -5,6 +5,7 @@
 -added g2_spline_demo.c
 -changed LINKDLL into G2L in g2.h
 -removed some non ansi parts (e.g. // comments)
+-added query pointer for X11 (mouse)
 
 0.41a
 =====

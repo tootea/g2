@@ -102,6 +102,12 @@ Contents</h1>
 </ul>
 </ul>
 
+<ul>
+<li>
+<font size=+1><a href="#otherfunctions">Other Functions</a></font></li>
+
+</ul>
+
 <h2>
 <a href="#Device Support">g2 Device Support</a></h2>
 
@@ -742,6 +748,20 @@ for device <b>dev</b></ul>
 <ul><b>void g2_set_font_size(int dev, double size)</b>
 <ul>set font size for device <b>dev</b>
 <br><b>size: </b>new font size</ul>
+</ul>
+
+<hr WIDTH="100%">
+
+<h2>
+<a NAME="otherfunctions"></a>Other Functions</h2>
+
+<h3>
+<a NAME="QueryPointer"></a>Query Pointer (mouse)</h3>
+
+<ul><b>void g2_query_pointer(int dev, double *x, double *y, unsigned int *button)</b>
+<ul>query pointer (usually mouse) position for physical device <b>dev</b>
+<br><b>x, y: </b>pointer coordinates
+<br><b>button: </b>button status (device dependent)</ul>
 </ul>
 
 <hr WIDTH="100%">

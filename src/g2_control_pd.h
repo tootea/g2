@@ -31,5 +31,7 @@ void g2_allocate_basic_colors_pd(g2_physical_device *pd);
 void g2_set_font_size_pd(g2_physical_device *pd, double size);
 void g2_set_line_width_pd(g2_physical_device *pd, double w);
 void g2_set_dash_pd(g2_physical_device *pd, int N, double *dashes);
+void g2_query_pointer_pd(g2_physical_device *pd,
+			 double *x, double *y, unsigned int *button);
 
 #endif /* _G2_CONTROL_PD_H */

@@ -37,7 +37,7 @@ int dtoi(double x)
 
 /*
  *
- * Transform user coord. in phyisical device coord (int)
+ * Transform user coord. in physical device coord (int)
  *
  */
 void g2_uc2pdc_int(g2_physical_device *pd, double x, double y,
@@ -55,7 +55,7 @@ void g2_uc2pdc_int(g2_physical_device *pd, double x, double y,
 
 /*
  *
- * Transform user coord. in phyisical device coord (double)
+ * Transform user coord. in physical device coord (double)
  *
  */
 void g2_uc2pdc_double(g2_physical_device *pd, double x, double y,
@@ -73,7 +73,7 @@ void g2_uc2pdc_double(g2_physical_device *pd, double x, double y,
 
 /*
  *
- * Transform user size in phyisical device size (int)
+ * Transform user size in physical device size (int)
  *
  */
 void g2_us2pds_int(g2_physical_device *pd, double x, double y,
@@ -88,7 +88,7 @@ void g2_us2pds_int(g2_physical_device *pd, double x, double y,
 
 /*
  *
- * Transform user size in phyisical device size (double)
+ * Transform user size in physical device size (double)
  *
  */
 void g2_us2pds_double(g2_physical_device *pd, double x, double y,
@@ -98,6 +98,23 @@ void g2_us2pds_double(g2_physical_device *pd, double x, double y,
 	*dx=x*fabs(pd->x_mul*pd->a11);
     if(dy!=NULL)
 	*dy=y*fabs(pd->y_mul*pd->a22);
+}
+
+
+/*
+ *
+ * Transform physical device coord in user coord
+ *
+ */
+void g2_pdc2uc(g2_physical_device *pd, double ix, double iy,
+		   double *x, double *y)
+{
+    double pcx, pcy;
+    pcx=(ix-pd->b1)/pd->a11;
+    pcy=(iy-pd->b2)/pd->a22;
+
+    *x=(pcx-pd->x_origin)/pd->x_mul;
+    *y=(pcy-pd->y_origin)/pd->y_mul;
 }
 
 

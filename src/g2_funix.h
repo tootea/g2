@@ -24,7 +24,7 @@
  *
  */
 
-#define G2_N_FUNIX  29	  /* WARNING !! */
+#define G2_N_FUNIX  30	  /* WARNING !! */
 			  /* number of funix excl. g2_FUNIX_NULL !!! */
 
 typedef enum g2_funix {
@@ -144,10 +144,14 @@ typedef enum g2_funix {
     g2_String,	          /* draw string */
 			  /* ... = (double)x, (double)y, (const char*)string */
 
-    g2_Image		  /* draw (pen) image */
+    g2_Image,		  /* draw (pen) image */
 			  /* ... = (double)x, (double)y,
 			           (int)x_size, (int)y_size, (int*)pen_array */
 
+    g2_QueryPointer	  /* query pointer position (mouse) */
+			  /* ... =  (double)*x, (double)*y,
+			            (unsigned int)*button */
+    
 } g2_funix;
 
 
