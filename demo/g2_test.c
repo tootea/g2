@@ -23,9 +23,6 @@
 #ifdef DO_PS
 #include <g2_PS.h>
 #endif
-#ifdef DO_EPSF
-#include <g2_PS.h>
-#endif
 #ifdef DO_X11
 #include <g2_X11.h>
 #endif
@@ -67,14 +64,11 @@ int main()
     dev[ndev]=g2_open_PS("g2_test.ps", g2_A4, g2_PS_land);
     g2_attach(d, dev[ndev]);
 	ndev++;
-#endif
-#ifdef DO_EPSF
+	
     printf("..EPSF");
     dev[ndev]=g2_open_EPSF("g2_test.eps");
     g2_attach(d, dev[ndev]);
 	ndev++;
-#endif
-#ifdef DO_EPSF_CLIP
     printf("..EPSF_CLIP");
     dev[ndev]=g2_open_EPSF_CLIP("g2_test_clip.eps",200,200);
     g2_attach(d, dev[ndev]);

@@ -22,14 +22,15 @@ CPP = /lib/cpp
 #F77 = f77 -n32
 #CPP = /lib/cpp -P -DFORTRAN
 
-CFLAGS = -I../src -I../src/X11 -I../src/PS -I../src/GIF @CFLAGS@ @DEFS@
+CFLAGS = -I../src -I../src/X11 -I../src/PS -I../src/GIF -I../src/GD @CFLAGS@ @DEFS@
 LDFLAGS = -L.. -lg2 @LDFLAGS@
 
 @DO_PS@DEMO_PS = simple_PS
 @DO_X11@DEMO_X11 = simple_X11 pointer
 @DO_GIF@DEMO_GIF = simple_GIF
+@DO_GD@DEMO_GD = simple_gd
 
-DEMO = g2_test g2_splines_demo $(DEMO_PS) $(DEMO_X11) $(DEMO_GIF)
+DEMO = g2_test g2_splines_demo $(DEMO_PS) $(DEMO_X11) $(DEMO_GIF) $(DEMO_GD)
 
 all:	$(DEMO)
 
@@ -53,6 +54,9 @@ pointer:  pointer.c
 
 simple_GIF:  simple_GIF.c
 	$(CC) $(CFLAGS) simple_GIF.c $(LDFLAGS) -o $@
+
+simple_gd:  simple_gd.c
+	$(CC) $(CFLAGS) simple_gd.c $(LDFLAGS) -o $@
 
 demo_f: demo_f.f
 	$(F77) $(F77_FLAGS) demo_f.f $(LDFLAGS) -o $@

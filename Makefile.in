@@ -58,10 +58,15 @@ BASE_INS = $(BASE_DIR)/g2.h
 @DO_GIF@GIF_INS = $(GIF_DIR)/g2_GIF.h
 
 
-SRC = $(BASE_SRC) $(PS_SRC) $(X11_SRC) $(GIF_SRC)
+@DO_GD@GD_DIR = ./src/GD
+@DO_GD@GD_SRC = $(GD_DIR)/g2_gd.c
+@DO_GD@GD_INS = $(GD_DIR)/g2_gd.h
+
+
+SRC = $(BASE_SRC) $(PS_SRC) $(X11_SRC) $(GIF_SRC) $(GD_SRC)
 OBJ = $(SRC:.c=.o)
 
-INS =  $(BASE_INS) $(PS_INS) $(X11_INS) $(GIF_INS)
+INS =  $(BASE_INS) $(PS_INS) $(X11_INS) $(GIF_INS) $(GD_INS)
 
 .c.o:  
 	$(CC) $(CFLAGS) -c $< -o $@
