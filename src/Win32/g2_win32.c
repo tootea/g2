@@ -88,8 +88,8 @@ g2_win32_SetPen(int pid, void *pdp)
 	if (PDP->hPen != NULL) 
 		{
 		SelectObject(PDP->hMemDC,PDP->hPen);
-		if (PDP->type == g2_win32)
-			DeleteObject(oldpen);
+/*		if (PDP->type == g2_win32)*/
+		DeleteObject(oldpen);
 		}
 	else
 		{
@@ -101,8 +101,8 @@ g2_win32_SetPen(int pid, void *pdp)
 	PDP->hNullPen = CreatePen(PS_SOLID,1,PDP->Inks[PDP->Pen]);
 	if (PDP->hNullPen != NULL) 
 		{
-		if (PDP->type == g2_win32)
-			DeleteObject(oldpen);
+/*		if (PDP->type == g2_win32)*/
+		DeleteObject(oldpen);
 		}
 	else
 		{
@@ -193,8 +193,8 @@ int g2_win32_Pen(int pid, void *pdp, int color)
 		PDP->hBrush = oldbrush;
 		}
 	else
-		if (PDP->type == g2_win32)
-			DeleteObject(oldbrush);
+/*		if (PDP->type == g2_win32)*/
+		DeleteObject(oldbrush);
 	return 0;
     }
 

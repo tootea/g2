@@ -76,6 +76,10 @@ LIB32=link.exe -lib
 # Name "g2 - Win32 Debug"
 # Begin Source File
 
+SOURCE=.\src\g2_control_pd.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\g2_device.c
 # End Source File
 # Begin Source File
@@ -129,13 +133,6 @@ SOURCE=.\src\Win32\g2_win32.c
 # Begin Source File
 
 SOURCE=.\src\Win32\g2_win32_thread.c
-
-!IF  "$(CFG)" == "g2 - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "g2 - Win32 Debug"
-
-!ENDIF 
-
 # End Source File
 # End Target
 # End Project
