@@ -45,7 +45,7 @@ extern "C"
 #endif
 
 
-#define G2_VERSION "0.40"
+#define G2_VERSION "0.41a"
 
 #define G2LD g2_ld()
 
