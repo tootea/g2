@@ -121,6 +121,11 @@ LINKDLL void g2_image(int dev, double x, double y, int x_size, int y_size, int *
 LINKDLL void g2_set_QP(int dev, double d, enum QPshape shape);
 LINKDLL void g2_plot_QP(int dev, double x, double y);
 
+LINKDLL void g2_spline(int id, int n, double *x, double *y, int o);
+LINKDLL void g2_b_spline(int id, int n, double *x, double *y, int o);
+LINKDLL void g2_filled_spline(int id, int n, double *x, double *y, int o);
+LINKDLL void g2_filled_b_spline(int id, int n, double *x, double *y, int o);
+
 
 /** Actualy private function, but... **/
 LINKDLL int g2_device_exist(int dix);

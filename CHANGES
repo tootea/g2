@@ -1,12 +1,13 @@
-post 0.40
-=========
-
+0.41a
+=====
 -modified header files for usage with c++
 -modified header files for building Win32 DLL
 -added DLL version to Win32 workspace
+-added Tijs Michels spline implementation
+-small fixes in Makefile.in
 
-0.40 ()
-=======
+0.40
+====
 - added perl support
 - g2_draw_string replaced with g2_string
 - added g2_image function

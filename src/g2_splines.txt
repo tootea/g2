@@ -1,0 +1,35 @@
+The functions "g2_c_spline" and "g2_c_b_spline" are derived from
+"mth_spline" and "mth_b_spline" in the file "/gli/src/math.c".
+This file is part of GLI, a powerful graphics package by Josef
+Heinen <J.Heinen@KFA-Juelich.de>. GLI is copyrighted software,
+distributed to the public at:
+
+   ftp://iffftp.iff.kfa-juelich.de/pub/gli/gli-4.5.24.tar.gz
+
+/*
+ * Copyright @ 1984 - 1999  Josef Heinen
+ *
+ * Permission to use, copy, and distribute this software and its
+ * documentation for any purpose with or without fee is hereby
+ * granted, provided that the above copyright notice appear in all
+ * copies and that both that copyright notice and this permission
+ * notice appear in supporting documentation.
+ *
+ * This software is provided "as is" without express or implied
+ * warranty.
+ */
+
+Both functions are, however, heavily modified.
+
+The following functions take five arguments:
+
+void g2_spline		(int id, int n, double *x, double *y, int o);
+void g2_b_spline	(int id, int n, double *x, double *y, int o);
+void g2_filled_spline	(int id, int n, double *x, double *y, int o);
+void g2_filled_b_spline	(int id, int n, double *x, double *y, int o);
+
+Given an array of n x-coordinates and an array of n y-coordinates a
+spline curve is plotted on device id with o interpolated points per
+data point. So the larger o, the more fluent the curve.
+
+The sample program "g2_splines_demo.c" shows how to use these functions.

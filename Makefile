@@ -40,7 +40,7 @@ BASE_SRC = $(BASE_DIR)/g2_device.c         $(BASE_DIR)/g2_ui_control.c \
            $(BASE_DIR)/g2_virtual_device.c $(BASE_DIR)/g2_physical_device.c \
            $(BASE_DIR)/g2_graphic_pd.c     $(BASE_DIR)/g2_control_pd.c \
            $(BASE_DIR)/g2_ui_graphic.c     $(BASE_DIR)/g2_ui_virtual_device.c \
-           $(BASE_DIR)/g2_ui_device.c
+           $(BASE_DIR)/g2_ui_device.c      $(BASE_DIR)/g2_splines.c
 BASE_INS = $(BASE_DIR)/g2.h
 
 
@@ -78,7 +78,8 @@ shared: libg2.so.0.$(G2_VERSION)
 
 libg2.a: $(OBJ)
 	$(AR) $(ARFLAGS) libg2.a $(OBJ)
-	test -n "$(RANLIB)" && $(RANLIB) $@
+	test ! -n "$(RANLIB)" || $(RANLIB) $@
+	test ! -f ./libg2.$(G2_VERSION).a || rm ./libg2.$(G2_VERSION).a
 	ln -s libg2.a libg2.$(G2_VERSION).a
 
 libg2.so.0.$(G2_VERSION): $(OBJ)
@@ -101,6 +102,7 @@ clean:
 	-(cd ./g2_perl ; make clean)
 	-rm -f ./g2_perl/test.ps ./g2_perl/test.gif
 	-rm -f ./libg2.so.0.$(G2_VERSION)
+	-rm -f libg2.$(G2_VERSION).a
 
 demo:	libg2.a
 	(cd ./demo ; make)
