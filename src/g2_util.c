@@ -214,10 +214,10 @@ double *g2_floatp2doublep(float *f, int N)
  */
 void g2_log(enum g2_log_level log_level, const char *format, ...)
 {
+    va_list arg;
     if(log_level > g2_LogLevel) {
 	return;
     }
-    va_list arg;
     va_start(arg, format);
     vfprintf(stderr, format, arg);
     va_end(arg);    

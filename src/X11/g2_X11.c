@@ -267,7 +267,7 @@ int g2_X11_init_X11X(int pid, int width, int height,
  
     XMapRaised(xout->display, xout->window);
     
-    //    XSetWindowBackground(xout->display, xout->window, w_scr.pixel);
+    /*    XSetWindowBackground(xout->display, xout->window, w_scr.pixel); */
     XClearWindow(xout->display,xout->window);
     
     g2_X11_paper(pid, NULL, 0);
