@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.5 [en] (X11; I; Linux 2.0.34 i686) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
    <title>g2_ref</title>
 </head>
 <body>
@@ -310,17 +310,17 @@ main()&nbsp;
 {&nbsp;
 int id_PS,id_GIF,id;&nbsp;
 
-id_PS&nbsp; = g2_open_PS("rect.ps", g2_A4, g2_PS_land);&nbsp;
-id_GIF = g2_open_GIF("rect.gif",300,200);
-id&nbsp;&nbsp;&nbsp;&nbsp; = g2_open_vd();</pre>
+id_PS&nbsp; = <a href="#g2_attach_PS">g2_open_PS</a>("rect.ps", g2_A4, g2_PS_land);&nbsp;
+id_GIF = <a href="#g2_attach_GIF">g2_open_GIF</a>("rect.gif",300,200);
+id&nbsp;&nbsp;&nbsp;&nbsp; = <a href="#g2_open_vd">g2_open_vd</a>();</pre>
 
-<pre>g2_attach(id,id_PS);
-g2_attach(id,id_GIF);</pre>
+<pre><a href="#g2_attach">g2_attach</a>(id,id_PS);
+<a href="#g2_attach">g2_attach</a>(id,id_GIF);</pre>
 
-<pre>g2_rectangle(id,20,20,150,150);&nbsp;
-g2_circle(id,50,60,100);&nbsp;
+<pre><a href="#g2_rectangle">g2_rectangle</a>(id,20,20,150,150);&nbsp;
+<a href="#g2_circle">g2_circle</a>(id,50,60,100);&nbsp;
 
-g2_close(id);
+<a href="#g2_close">g2_close</a>(id);
 }</pre>
 Note: closing a virtual device automatically closes all attached devices.
 <h3>
@@ -344,44 +344,20 @@ constants defined by #define in C (e.g.&nbsp; g2_A4) do not work. Get correspond
 values from the apropriate header files.</li>
 </ul>
 A short Fortran example:
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; program demo</pre>
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; program demo
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; real d,color
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; d=g2_open_PS('demo_f.ps', 4.0, 1.0)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call g2_plot(d, 50.0, 50.0)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call g2_string(d, 25.0, 75.0, 'TEST ')
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; color=g2_ink(d, 1.0, 0.0, 0.0)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; write (6,*) color
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call g2_pen(d, color)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call g2_circle(d, 20.0, 20.0, 10.0)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call g2_flush(d)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call g2_close(d)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; stop
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; end</pre>
 
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; real d,color</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; d=g2_open_PS('demo_f.ps', 4.0, 1.0)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call g2_plot(d, 50.0, 50.0)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call g2_string(d, 25.0, 75.0, 'TEST ')</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; color=g2_ink(d, 1.0, 0.0, 0.0)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; write (6,*) color</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call g2_pen(d, color)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call g2_circle(d, 20.0, 20.0, 10.0)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call g2_flush(d)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call g2_close(d)</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; stop</pre>
-
-<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; end</pre>
-&nbsp;
-<p>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
-<p>
 <hr SIZE=5 WIDTH="100%">
 <h2>
 <a NAME="Function Reference"></a>g2 Function Reference</h2>
@@ -447,24 +423,22 @@ int height, const char *filename)</b></blockquote>
 <br><b>returns :</b> device id of new GIF device</blockquote>
 </blockquote>
 
-<blockquote><b>int&nbsp;<a NAME="g2_attach_GIF"></a>g2_open_vd(void)</b></blockquote>
+<blockquote><b>int&nbsp;<a NAME="g2_open_vd"></a>g2_open_vd(void)</b></blockquote>
 
 <blockquote>
 <blockquote>open a new virtual device
 <br><b>returns : </b>device id of new virtual device.</blockquote>
 </blockquote>
-<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; void&nbsp;<a NAME="g2_attach_GIF"></a>g2_attach(int
+<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; void&nbsp;<a NAME="g2_attach"></a>g2_attach(int
 vd_dev, int dev)</b>
-<br><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-</b>attach a device to an existing virtual device
+<br><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b>attach
+a device to an existing virtual device
 <br><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 vd_dev : </b>device id of virtual device to attach to.
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-<b>dev : </b>device id of device to attach, this can be either a physical
-or a virtual device.
-<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; void&nbsp;<a NAME="g2_attach_GIF"></a>g2_detach(int
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>dev
+: </b>device id of device to attach, this can be either a physical or a
+virtual device.
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; void&nbsp;<a NAME="g2_detach"></a>g2_detach(int
 vd_dev, int dev)</b>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 detach a device attached to a virtual device
@@ -647,8 +621,8 @@ x, double y, double r1, double r2, double a1, double a2)</b>
 <h3>
 <a NAME="text"></a>Text</h3>
 
-<ul><b>void&nbsp;<a NAME="g2_string"></a>g2_string(int dev, double
-x, double y, char *text)</b>
+<ul><b>void&nbsp;<a NAME="g2_string"></a>g2_string(int dev, double x, double
+y, char *text)</b>
 <ul>Draw a text string on device <b>dev</b>
 <br><b>x,y: </b>Position of text
 <br><b>text:</b> pointer to text string</ul>
