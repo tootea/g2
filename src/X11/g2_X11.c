@@ -655,14 +655,15 @@ int g2_X11_arc(int pid, void *pdp, int x, int y,
 	       int r1, int r2, double a1, double a2)
 {
     g2_X11_device *xout=&g2_X11_dev[pid];
-    a1=fmod(a1, 360.);
-    a2=fmod(a2, 360.);
-    if(a2-a1<0)
-	a2+=360.;
+    double a0, d;
+
+    a0=fmod(a1, 360.) + (a1<0? 360:0);   /* map a1 to [0, 360) */
+    d=a2>a1? a2-a1:a2-a1+360;
+     
     XDrawArc(xout->display,xout->dest,xout->gc,
 	     x-r1, y-r2,
 	     r1*2, r2*2,
-	     (int)(a1*64.), (int)((a2-a1)*64.));
+	     (int)(a0*64.), (int)(d*64.));
     return 0;
 }
  
@@ -671,18 +672,19 @@ int g2_X11_filled_arc(int pid, void *pdp, int x, int y,
 		      int r1, int r2, double a1, double a2)
 {
     g2_X11_device *xout=&g2_X11_dev[pid];
-    a1=fmod(a1, 360.);
-    a2=fmod(a2, 360.);
-    if(a2-a1<0)
-	a2+=360.;
+    double a0, d;
+    
+    a0=fmod(a1, 360.) + (a1<0? 360:0);   /* map a1 to [0, 360) */
+    d=a2>a1? a2-a1:a2-a1+360;
+    
     XDrawArc(xout->display,xout->dest,xout->gc,
 	     x-r1, y-r2,
 	     r1*2, r2*2,
-	     a1*64, (a2-a1)*64.0);
+	     (int)(a0*64.), (int)(d*64.));
     XFillArc(xout->display,xout->dest,xout->gc,
 	     x-r1, y-r2,
 	     r1*2, r2*2,
-	     (int)(a1*64.), (int)((a2-a1)*64.));
+	     (int)(a0*64.), (int)(d*64.));
     return 0;
 }
  
