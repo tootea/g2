@@ -14,14 +14,18 @@ UNIX
 
 2. Run './configure'
 
-3. Optionally run 'make depend'
+3. Run 'make depend'
 
-4. Run 'make' 
+4. Optionally edit src/g2_config.h to fine-tune g2 behavior (only if
+   you know what are you doing)
 
-5. Run 'make install' or copy libg2.a and g2.h, g2_X11.h, g2_gd.h, and
+5. Run 'make' 
+
+6. Run 'make install' or copy libg2.a and g2.h, g2_X11.h, g2_gd.h, and
    g2_PS.h to the default locations for library and include files. 
 
-6. Optional: run 'make demo' to compile demo applications 
+7. cd to demo directory and  run 'make demo' to compile demo
+   applications
 
 
 WINDOWS NT
