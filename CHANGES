@@ -1,3 +1,7 @@
+0.62
+====
+- PS in place of X11 for demo_cpp
+
 0.61
 ====
 - ANSI C streamlining
