@@ -13,11 +13,13 @@ public:
     : _d(d), _x(x), _y(y), _r(r)
   {
     g2_circle(d, x, y, r);
+    g2_flush(d);
   }
 
   void Fill()
   {
     g2_filled_circle(_d, _x, _y, _r);
+    g2_flush(_d);
   }
 private:
   int _d;

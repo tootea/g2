@@ -27,6 +27,9 @@ UNIX
 7. cd to demo directory and  run 'make demo' to compile demo
    applications
 
+8. To rebuild documentation run 'make doc' (html, PS and pdf manual
+   should be already included into documentation).
+
 
 WINDOWS NT
 ----------
@@ -46,6 +49,9 @@ WINDOWS NT
 
 VMS
 ---
+
+Note: VMS is not tested in latest builds. However descrip.mms is a
+good starting point.
 
 1. set default to root of distribution directory
 

@@ -5,7 +5,7 @@
 #
 #
 
-G2_VERSION = 0.52
+G2_VERSION = 0.51
 
 #
 # g2 installation directories
@@ -95,12 +95,14 @@ install: libg2.a
 		$(INSTALL_DATA) $$IFILE  $(INCDIR); \
 	done
 
-release: clean
-	(cd ./doc ; doxygen Doxyfile)
-	(cd ./doc/latex ; make ps ; make pdf)
+release: clean doc
 	cp ./doc/latex/refman.ps  ./doc/g2_refman.ps
 	cp ./doc/latex/refman.pdf ./doc/g2_refman.pdf
 	rm -r ./doc/latex
+
+doc:
+	(cd ./doc ; doxygen Doxyfile)
+	(cd ./doc/latex ; make ps ; make pdf)
 
 
 clean:
