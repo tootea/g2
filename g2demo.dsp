@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="g2demo" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 5.00
+# Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Console Application" 0x0103
@@ -22,6 +22,7 @@ CFG=g2demo - Win32 Debug
 !MESSAGE 
 
 # Begin Project
+# PROP AllowPerConfigDependencies 0
 # PROP Scc_ProjName ""
 # PROP Scc_LocalPath ""
 CPP=cl.exe
@@ -41,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "../gd" /I "./src" /I "src" /I "src/PS" /I "src/GIF" /I "src/WIN32" /D "NDEBUG" /D "DO_WMF32" /D "_CONSOLE" /D "_MBCS" /D "WIN32" /D "DO_PS" /D "DO_GIF" /D "DO_WIN32" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I "../gd" /I "./src" /I "src" /I "src/PS" /I "src/GIF" /I "src/WIN32" /D "NDEBUG" /D "G2DLL" /D "_CONSOLE" /D "_MBCS" /D "WIN32" /D "DO_PS" /D "DO_GIF" /D "DO_WIN32" /D "DO_WMF32" /YX /FD /c
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -66,7 +67,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /I "../gd" /I "./src" /I "src" /I "src/PS" /I "src/GIF" /I "src/WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "WIN32" /D "DO_PS" /D "DO_GIF" /D "DO_WIN32" /D "DO_WMF32" /FR /YX /FD /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "../gd" /I "./src" /I "src" /I "src/PS" /I "src/GIF" /I "src/WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "WIN32" /D "DO_PS" /D "DO_GIF" /D "DO_WIN32" /D "DO_WMF32" /FR /YX /FD /c
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /fo"g2_win32.res" /d "_DEBUG"
 BSC32=bscmake.exe
@@ -85,6 +86,10 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=.\demo\g2_test.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\g2dll___Win32_Debug\g2dll.lib
 # End Source File
 # End Target
 # End Project

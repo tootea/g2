@@ -1,3 +1,10 @@
+post 0.40
+=========
+
+-modified header files for usage with c++
+-modified header files for building Win32 DLL
+-added DLL version to Win32 workspace
+
 0.40 ()
 =======
 - added perl support
