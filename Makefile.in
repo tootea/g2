@@ -52,6 +52,9 @@ BASE_INS = $(BASE_DIR)/g2.h
 @DO_X11@X11_SRC = $(X11_DIR)/g2_X11.c
 @DO_X11@X11_INS = $(X11_DIR)/g2_X11.h
 
+@DO_WIN32@WIN32_DIR = ./src/WIN32
+@DO_WIN32@WIN32_SRC = $(WIN32_DIR)/g2_win32.c $(WIN32_DIR)/g2_win32_thread.c 
+@DO_WIN32@WIN32_INS = $(WIN32_DIR)/g2_win32.h
 
 @DO_GIF@GIF_DIR = ./src/GIF
 @DO_GIF@GIF_SRC = $(GIF_DIR)/g2_GIF.c
@@ -63,10 +66,10 @@ BASE_INS = $(BASE_DIR)/g2.h
 @DO_GD@GD_INS = $(GD_DIR)/g2_gd.h
 
 
-SRC = $(BASE_SRC) $(PS_SRC) $(X11_SRC) $(GIF_SRC) $(GD_SRC)
+SRC = $(BASE_SRC) $(PS_SRC) $(X11_SRC) $(WIN32_SRC) $(GIF_SRC) $(GD_SRC)
 OBJ = $(SRC:.c=.o)
 
-INS =  $(BASE_INS) $(PS_INS) $(X11_INS) $(GIF_INS) $(GD_INS)
+INS =  $(BASE_INS) $(PS_INS) $(X11_INS) $(WIN32_INS) $(GIF_INS) $(GD_INS)
 
 .c.o:  
 	$(CC) $(CFLAGS) -c $< -o $@
