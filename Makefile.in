@@ -62,6 +62,7 @@ INS =  $(BASE_INS) $(PS_INS) $(X11_INS) $(GIF_INS)
 
 
 all: libg2.a
+	test -d ./include || mkdir ./include
 	cp $(INS) ./include/
 
 shared: libg2.so
