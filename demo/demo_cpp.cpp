@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <iostream>
-#include <g2_X11.h>
+#include <g2_PS.h>
 #include <g2.h>
 
 /* A very simple example to demonstrate g2 in a C++ environment */
@@ -30,12 +30,11 @@ private:
 int main(int argc, char *argv[])
 {
     int d;
-    d=g2_open_X11(100, 100);
-    Circle c(d, 50, 50, 25);
-    std::cout << "Press [Enter]" << std::endl;
-    getchar();
+    d=g2_open_PS("demo_cpp.ps", g2_A4, g2_PS_port);
+    Circle c(d, 150, 150, 25);
     c.Fill();
-    std::cout << "Press [Enter]" << std::endl;
-    getchar();
+    Circle c2(d, 150, 175, 25);
+    g2_close(d);
+    std::cout << "demo_cpp.ps generated\n";
     return 0;
 }
