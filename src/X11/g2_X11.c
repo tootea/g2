@@ -144,7 +144,7 @@ int g2_X11_init_X11X(int pid, int width, int height,
     XClassHint class_hint;
 
     if((xout->display=XOpenDisplay(NULL))==NULL) { 
-	fputs("g2: can not open display\n", stderr);
+	g2_log(Error, "g2: can't open display\n");
 	exit(-1);
     }
 
@@ -315,18 +315,15 @@ int g2_X11_clear(int pid, void *pdp)
 {
     g2_X11_device *xout=&g2_X11_dev[pid];
     
-    if (xout->backing_pixmap == None)
-      {
-      XClearWindow(xout->display,xout->window);
-      }
-    else
-      {
-      XSetForeground (xout->display, xout->gc,
-                  xout->background);
-      XFillRectangle(xout->display, xout->dest, xout->gc,
-                 0, 0, xout->width, xout->height);
-      }
-    g2_X11_flush(pid,pdp);
+    if (xout->backing_pixmap == None) {
+	XClearWindow(xout->display,xout->window);
+    } else {
+	XSetForeground (xout->display, xout->gc,
+			xout->background);
+	XFillRectangle(xout->display, xout->dest, xout->gc,
+		       0, 0, xout->width, xout->height);
+    }
+    g2_X11_flush(pid, pdp);
     return 0;
 }
 
@@ -336,9 +333,9 @@ int g2_X11_flush(int pid, void *pdp)
 {
     g2_X11_device *xout=&g2_X11_dev[pid];
     if( xout->backing_pixmap != None ) {
-      XCopyArea(xout->display, xout->dest, xout->window, xout->gc,
-              0, 0, xout->width, xout->height, 0, 0);
-      }
+	XCopyArea(xout->display, xout->dest, xout->window, xout->gc,
+		  0, 0, xout->width, xout->height, 0, 0);
+    }
     XFlush(xout->display);
     return 0;
 }
