@@ -64,7 +64,8 @@ void g2_c_spline(int n, const double *points, int m, double *sxy)
  *
  *	n			number of data points
  *	points			data points (x[i],y[i])
- *	m			number of interpolated points
+ *	m			number of interpolated points; m = (n-1)*o+1
+ *				for o curve points for every data point
  *	sxy			interpolated points (sx[j],sy[j])
  *
  *	IMPLICIT INPUTS:	NONE
@@ -91,6 +92,17 @@ void g2_c_spline(int n, const double *points, int m, double *sxy)
    int i, j;
    double *x, *y, *g, *h;
    double k, u, delta_g;
+
+   if (n < 3) {
+      fputs("\nERROR calling function \"g2_c_spline\":\n"
+	    "number of data points input should be at least three\n", stderr);
+      return;
+   }
+   if ((m-1)%(n-1)) {
+      fputs("\nWARNING from function \"g2_c_spline\":\n"
+	    "number of curve points output for every data point input "
+	    "is not an integer\n", stderr);
+   }
 
    x = (double *) g2_malloc(n*4*sizeof(double));
    y = x + n;
@@ -158,8 +170,8 @@ void g2_spline(int id, int n, double *points, int o)
  *	points			data points (x[i],y[i])
  *	o			number of interpolated points per data point
  *
- *	Given an array of n data points {x1, y1, ..., xn, yn} a spline curve
- *	is plotted on device id with o interpolated points per data point.
+ *	Given an array of n data points {x[1], y[1], ... x[n], y[n]} plot a
+ *	spline curve on device id with o interpolated points per data point.
  *	So the larger o, the more fluent the curve.
  */
 
@@ -214,6 +226,11 @@ void g2_c_b_spline(int n, const double *points, int m, double *sxy)
    double t, bl1, bl2, bl3, bl4;
    double interval, xi_3, yi_3, xi, yi;
 
+   if (n < 3) {
+      fputs("\nERROR calling function \"g2_c_b_spline\":\n"
+	    "number of data points input should be at least three\n", stderr);
+      return;
+   }
    x = (double *) g2_malloc(n*2*sizeof(double));
    y = x + n;
    g2_split(n, points, x, y);
@@ -528,6 +545,9 @@ void g2_filled_raspln(int id, int n, double *points, double tn)
  */
 
 #define MaxPts 21
+#define xstr(s) __str(s)
+#define __str(s) #s
+
 /*
  * Maximum number of data points allowed
  * 21 would correspond to a polynomial of degree 20
@@ -547,9 +567,8 @@ void g2_c_newton(int n, const double *c1, const double *c2,
    }
 
    if (n > MaxPts) {
-      fprintf(stderr,
-	      "g2_c_newton: Error! More than %d points passed "
-	      "to function g2_c_newton\n", MaxPts);
+      fputs("g2_c_newton: Error! More than " xstr(MaxPts) " points passed "
+	    "to function g2_c_newton\n", stderr);
       return;
    }
 
@@ -858,3 +877,4 @@ void g2_filled_para_5(int id, int n, double *points)
 
    g2_free(sxy);
 }
+
