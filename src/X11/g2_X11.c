@@ -265,19 +265,23 @@ int g2_X11_init_X11X(int pid, int width, int height,
     xout->backing_pixmap = None;
 
     if(XDoesBackingStore(XDefaultScreenOfDisplay(xout->display))!=Always) {
-	/* fputs("g2: Warning! Backing store is not available.Allocating pixmap instead.\n", stderr); */
-	
-	xout->backing_pixmap = XCreatePixmap(xout->display, xout->window,
-					     xout->width, xout->height,
-					     DefaultDepth(xout->display, DefaultScreen(xout->display)));
-	XSetWindowBackgroundPixmap(xout->display, xout->window,
-				   xout->backing_pixmap);
+	if(g2_EmulateBackingStore) {
+	    g2_log(Warning, "g2: Warning! Backing store is not available. Allocating pixmap instead.\n");
+
+	    xout->backing_pixmap = XCreatePixmap(xout->display, xout->window,
+						 xout->width, xout->height,
+						 DefaultDepth(xout->display, DefaultScreen(xout->display)));
+	    XSetWindowBackgroundPixmap(xout->display, xout->window,
+				       xout->backing_pixmap);
 	  
-	XSetForeground (xout->display, xout->gc, w_scr.pixel);
+	    XSetForeground (xout->display, xout->gc, w_scr.pixel);
           
-	XFillRectangle(xout->display, xout->backing_pixmap, xout->gc,
-		       0, 0, xout->width, xout->height);
-	xout->dest = xout->backing_pixmap;
+	    XFillRectangle(xout->display, xout->backing_pixmap, xout->gc,
+			   0, 0, xout->width, xout->height);
+	    xout->dest = xout->backing_pixmap;
+	} else {
+		g2_log(Warning, "g2: Warning! Backing store is not available.\n");
+	}
     }
 
     XFlush(xout->display);
@@ -477,7 +481,7 @@ int g2_X11_set_font_size(int pid, void *pdp, int size)
     
     for(n=1;n<32;n++) {
 	d=((n&0x01)? -1:1)*(n>>1);
-	sprintf(font_name, G2_X11_FONT, sizei+d);
+	sprintf(font_name, g2_X11Font, sizei+d);
 	fnt_str=XLoadQueryFont(xout->display, font_name);
 	if(fnt_str==NULL) {
 	    if(!d)
