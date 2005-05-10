@@ -250,12 +250,14 @@ int g2_X11_init_X11X(int pid, int width, int height,
 					       w_scr.pixel, r_scr.pixel,
 					       1ul);
     }
-    
+
+    sizehints.x = xposition;
+    sizehints.y = yposition;
     sizehints.min_width = width;
     sizehints.max_width = width;
     sizehints.min_height = height;
     sizehints.max_height = height;
-    sizehints.flags = PMinSize | PMaxSize;
+    sizehints.flags = PPosition | PMinSize | PMaxSize;
     XSetStandardProperties(xout->display, xout->window,
 			   window_name, icon_name, iconPixmap,
 			   (char **)NULL, 0, &sizehints);
