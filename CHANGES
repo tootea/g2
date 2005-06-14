@@ -1,3 +1,17 @@
+0.70
+====
+- added support for access to the physical devices low level handles
+- added animation demo for Win32
+- improved cygwin compatibility
+- improved spline implementation
+- improved pixel compatibility between X11 and GD
+- fixed X11 window position problem occured with some window managers
+- fixed arc and filled arc functions
+- fixed memory bug (thanks to Kurihara Satoshi)
+- fixed problem with black bar if resource DLL was not compiled
+- fixed problem with flickering and background behind text
+- bug fix for background color in g2_win32_SetBackground
+
 0.62
 ====
 - PS in place of X11 for demo_cpp
