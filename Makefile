@@ -5,7 +5,7 @@
 #
 #
 
-G2_VERSION = 0.61
+G2_VERSION = 0.70
 
 #
 # g2 installation directories
@@ -24,7 +24,7 @@ SHELL = /bin/sh
 
 CC           = gcc
 CFLAGS       = -I./src -g -O2  -I/usr/X11R6/include -I/usr/local/include  -DLINUX=1 -DDO_PS=1 -DDO_FIG=1 -DDO_X11=1 -DDO_GD=1 -DSTDC_HEADERS=1 -DHAVE_LIMITS_H=1 
-INSTALL      = /usr//bin/install -c
+INSTALL      = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 FIND         = find
 MAKEDEPEND   = makedepend

@@ -34,5 +34,6 @@ void g2_set_line_width_pd(g2_physical_device *pd, double w);
 void g2_set_dash_pd(g2_physical_device *pd, int N, double *dashes);
 void g2_query_pointer_pd(g2_physical_device *pd,
 			 double *x, double *y, unsigned int *button);
+void g2_get_pd_handles_pd(g2_physical_device *pd, void *handles[G2_PD_HANDLES_SIZE]);
 
 #endif /* _G2_CONTROL_PD_H */

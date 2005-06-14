@@ -29,7 +29,7 @@ LDFLAGS = -L.. -lg2 @LDFLAGS@
 
 @DO_PS@DEMO_PS = simple_PS
 @DO_FIG@DEMO_FIG = simple_FIG
-@DO_X11@DEMO_X11 = simple_X11 pointer
+@DO_X11@DEMO_X11 = simple_X11 pointer handles
 @DO_GD@DEMO_GD = simple_gd
 @DO_WIN32@DEMO_WIN32 = simple_win32
 
@@ -64,6 +64,9 @@ simple_win32:  simple_win32.c
 
 pointer:  pointer.c
 	$(CC) $(CFLAGS) pointer.c $(LDFLAGS) -o $@
+
+handles: handles.c
+	$(CC) $(CFLAGS) handles.c $(LDFLAGS) -o $@
 
 simple_gd:  simple_gd.c
 	$(CC) $(CFLAGS) simple_gd.c $(LDFLAGS) -o $@

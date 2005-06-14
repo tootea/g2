@@ -30,7 +30,7 @@ LDFLAGS = -L.. -lg2   -L/usr/X11R6/lib -L/usr/local/lib -lm -lX11 -lgd
 
 DEMO_PS = simple_PS
 DEMO_FIG = simple_FIG
-DEMO_X11 = simple_X11 pointer
+DEMO_X11 = simple_X11 pointer handles
 DEMO_GD = simple_gd
 #DEMO_WIN32 = simple_win32
 
@@ -65,6 +65,9 @@ simple_win32:  simple_win32.c
 
 pointer:  pointer.c
 	$(CC) $(CFLAGS) pointer.c $(LDFLAGS) -o $@
+
+handles: handles.c
+	$(CC) $(CFLAGS) handles.c $(LDFLAGS) -o $@
 
 simple_gd:  simple_gd.c
 	$(CC) $(CFLAGS) simple_gd.c $(LDFLAGS) -o $@

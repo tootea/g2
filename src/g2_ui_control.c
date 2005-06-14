@@ -23,6 +23,7 @@
 #include "g2.h"
 #include "g2_device.h"
 #include "g2_control_pd.h"
+#include "g2_util.h"
 
 /**
  * \ingroup interface
@@ -570,3 +571,42 @@ void g2_query_pointer(int dev, double *x, double *y, unsigned int *button)
     __g2_last_device=dev;
 }
 
+
+
+/**
+ *
+ * Get pointers to physical device specific handles. This function
+ * should be used only if you are familiar with the g2 source code.
+ * For details see physical device source code (e.g. in src/X11/).
+ * Example usage can be found in demo/handles.c.
+ *
+ * \param pd physical device
+ * \param handles returns pointers to physical device low level handles
+ *
+ * \ingroup control
+ */
+void g2_get_pd_handles(int pd, void *handles[G2_PD_HANDLES_SIZE])
+{
+    g2_device *devp;
+    int i;
+
+    for(i=0;i<G2_PD_HANDLES_SIZE;i++) {
+	handles[i]=NULL;
+    }
+    if((devp=g2_get_device_pointer(pd))==NULL) {
+	g2_log(Error, "g2: Error! g2_get_pd_handles: No such device: %d\n", pd);
+	return;
+    }
+    
+    switch(devp->t) {
+      case g2_PD:
+	g2_get_pd_handles_pd(devp->d.pd, handles);
+	break;
+      case g2_VD:
+	break;
+      case g2_ILLEGAL:
+	break;
+      case g2_NDEV:
+	break;
+    }
+}

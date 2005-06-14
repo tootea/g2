@@ -25,6 +25,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
+#include "g2.h"
 #include "g2_device.h"
 #include "g2_util.h"
 #include "g2_X11_P.h"
@@ -782,3 +783,15 @@ int g2_X11_query_pointer(int pid, void *pdp,
 
 
 
+int g2_X11_get_pd_handles(int pid, void *pdp, void *handles[G2_PD_HANDLES_SIZE])
+{
+    g2_X11_device *xout=&g2_X11_dev[pid];
+
+    handles[0]=xout->display;
+    handles[1]=&xout->window;
+    handles[2]=&xout->root;
+    handles[3]=&xout->colormap;
+    handles[4]=&xout->gc;
+    handles[5]=&xout->dest;
+    return 0;
+}

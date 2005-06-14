@@ -53,6 +53,7 @@ const g2_funix_fun g2_X11_funix[] = {
     { g2_String,          g2_X11_draw_string },
     { g2_Image,           NULL },
     { g2_QueryPointer,    g2_X11_query_pointer },
+    { g2_GetPDHandles,    g2_X11_get_pd_handles },
     { g2_FUNIX_NULL,      NULL } };
 
 

@@ -297,3 +297,18 @@ void g2_query_pointer_pd(g2_physical_device *pd,
 	/* no emulation for query pointer */
     }
 }
+
+
+/*
+ *
+ * Get low level handles
+ *
+ */
+void g2_get_pd_handles_pd(g2_physical_device *pd, void *handles[G2_PD_HANDLES_SIZE])
+{
+    if(pd->ff[g2_GetPDHandles].fun!=NULL) {
+	pd->ff[g2_GetPDHandles].fun(pd->pid, pd->pdp, handles);
+    } else {
+	/* no emulation for low level handles */
+    }
+}

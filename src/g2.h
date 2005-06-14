@@ -1,5 +1,5 @@
 /*****************************************************************************
-**  Copyright (C) 1998-2004  Ljubomir Milanovic & Horst Wagner
+**  Copyright (C) 1998-2005  Ljubomir Milanovic & Horst Wagner
 **  This file is part of the g2 library
 **
 **  This library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@
 
 
 /* g2 version */
-#define G2_VERSION "0.61"
+#define G2_VERSION "0.70"
 
 
 #if defined(__cplusplus)
@@ -168,6 +168,7 @@ G2L void g2_query_pointer(int dev, double *x, double *y, unsigned int *button);
 #else
 extern void g2_query_pointer(int dev, double *OUTPUT,double *OUTPUT,unsigned int *OUTPUT);
 #endif
+
     
  /* Tijs Michels */
  /* 06/16/99	 */
@@ -186,6 +187,10 @@ G2L void g2_filled_para_5(int id, int n, double *points);
 
 /** Actualy private function, but... **/
 G2L int g2_device_exist(int dix);
+
+/** Use only if you know what are you doing **/
+#define G2_PD_HANDLES_SIZE 32
+G2L void g2_get_pd_handles(int pd, void *handles[G2_PD_HANDLES_SIZE]);
 
     
 #if defined(__cplusplus)
