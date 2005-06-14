@@ -2328,7 +2328,7 @@ CYGWIN=
 test "$ac_cv_cygwin" = yes && CYGWIN=yes
 if test "$CYGWIN" = yes
 then
-	LDFLAGS="$LDFLAGS -L/lib/win32api"
+	LDFLAGS="$LDFLAGS -L/lib/w32api"
 	echo $ac_n "checking for main in -lgdi32""... $ac_c" 1>&6
 echo "configure:2334: checking for main in -lgdi32" >&5
 ac_lib_var=`echo gdi32'_'main | sed 'y%./+-%__p_%'`
