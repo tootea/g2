@@ -29,9 +29,9 @@ LDFLAGS = -L.. -lg2 @LDFLAGS@
 
 @DO_PS@DEMO_PS = simple_PS
 @DO_FIG@DEMO_FIG = simple_FIG
-@DO_X11@DEMO_X11 = simple_X11 pointer handles
+@DO_X11@DEMO_X11 = simple_X11 pointer handles g2_anim
 @DO_GD@DEMO_GD = simple_gd
-@DO_WIN32@DEMO_WIN32 = simple_win32
+@DO_WIN32@DEMO_WIN32 = simple_win32 g2_anim
 
 
 DEMO = g2_test g2_arc g2_splines_demo demo_cpp $(DEMO_PS) $(DEMO_FIG) $(DEMO_X11) $(DEMO_GD) $(DEMO_WIN32)
@@ -49,6 +49,10 @@ g2_arc: g2_arc.c
 
 g2_splines_demo:  g2_splines_demo.c
 	$(CC) $(CFLAGS) g2_splines_demo.c $(LDFLAGS) -o $@
+
+g2_anim:  g2_anim.c
+	$(CC) $(CFLAGS) g2_anim.c $(LDFLAGS) -o $@
+
 
 simple_PS:  simple_PS.c
 	$(CC) $(CFLAGS) simple_PS.c $(LDFLAGS) -o $@
