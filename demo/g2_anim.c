@@ -18,7 +18,12 @@
 ******************************************************************************/
 #include <stdio.h>
 #include <g2.h>
+#ifdef DO_X11
+#include <g2_X11.h>
+#endif
+#ifdef DO_WIN32
 #include <g2_win32.h>
+#endif
 
 
 #define N 300
@@ -27,13 +32,26 @@
 
 int main()
 {
-    int d;
+    int d,dwin,dX11;
 	int x[N];
 	int y[N];
 	int c[N];
 	int i,t;
 
-    d=g2_open_win32(W, H, "simple_animation", 0);
+    d=g2_open_vd();				  /* open virtual device */
+
+    printf("Random Walk demo\n");
+
+#ifdef DO_WIN32
+    printf("Adding win32..\n");
+    dwin=g2_open_win32(W, H, "simple_animation", 0);
+    g2_attach(d, dwin);
+#endif
+#ifdef DO_X11
+    printf("Adding X11.. (X11 might flicker and not be usable)\n");
+    dX11=g2_open_X11(W, H);
+    g2_attach(d, dX11);
+#endif
     g2_set_auto_flush(d,0);
 
 	for (i=0;i<N;i++)
