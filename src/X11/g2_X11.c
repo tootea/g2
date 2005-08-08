@@ -170,7 +170,7 @@ int g2_X11_init_X11X(int pid, int width, int height,
     XClassHint class_hint;
 
     if((xout->display=XOpenDisplay(NULL))==NULL) { 
-	g2_log(Error, "g2: can't open display\n");
+	g2_log(Error, "g2: can't open X11 display - check DISPLAY environment variable\n");
 	exit(-1);
     }
 
