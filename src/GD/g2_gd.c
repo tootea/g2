@@ -46,7 +46,7 @@
 
 /**
  *
- * Create a GD device.
+ * Create a GD (bitmap image) device.
  *
  * \param filename output file name
  * \param width width
@@ -110,6 +110,10 @@ int g2_gd_Save(int pid, void *pdp)
 		gdImagePng(PDP->im,PDP->f);
 	else if (PDP->gd_type == g2_gd_jpeg)	
 		gdImageJpeg(PDP->im,PDP->f,-1);
+#ifdef DO_GIF
+	else if (PDP->gd_type == g2_gd_gif)	
+		gdImageGif(PDP->im,PDP->f);
+#endif 
 	fflush(PDP->f);
 	rewind(PDP->f);
 	return 0;

@@ -53,7 +53,8 @@ extern "C"
  */
 enum g2_gd_type {
     g2_gd_jpeg = 0,	/**< jpeg */
-    g2_gd_png  = 1	/**< png */
+    g2_gd_png  = 1,	/**< png */
+    g2_gd_gif  = 2	/**< gif */
 };
 
 
