@@ -24,6 +24,7 @@ $d = newvd G2::Device();
 #PS
 if ($d->can(newPS))
   {
+  print "attaching: PS\n";
   $dev[0] = newPS  G2::Device("test.ps", 4, 0);
   $d->attach($dev[0]);
   }
@@ -36,6 +37,7 @@ else
 #FIG
 if ($d->can(newFIG))
   {
+  print "attaching: FIG\n";
   $dev[1] = newFIG  G2::Device("test.fig");
   $d->attach($dev[1]);
 }
@@ -48,6 +50,7 @@ else
 #X11
 if ($d->can(newX11))
   {
+  print "attaching: X11\n";
   $dev[2] = newX11 G2::Device(775, 575);
   $d->attach($dev[2]); 
   }
@@ -60,8 +63,9 @@ else
 #Win32
 if ($d->can(newWin32))
   {
-  $dev[2] = newWin32 G2::Device(775, 575);
-  $d->attach($dev[2]);
+  print "attaching: Win32\n";
+  $dev[3] = newWin32 G2::Device(775, 575);
+  $d->attach($dev[3]);
   }
 else
   {  
@@ -71,8 +75,9 @@ else
 #GD
 if ($d->can(newGD))
   {
-  $dev[3] = newGD G2::Device("test.png", 775, 575, 1);
-  $d->attach($dev[3]);
+  print "attaching: PNG (GD)\n";
+  $dev[4] = newGD G2::Device("test.png", 775, 575, 1);
+  $d->attach($dev[4]);
   }	
 else
   {  
