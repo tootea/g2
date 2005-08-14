@@ -1,3 +1,10 @@
+0.xx
+====
+- GIF support returned (patent has expired)
+- fixed problem with configuration script (LIBS were not handled properly)
+- g2_anim demo now supports X11 too (although it does not seem to work well on X11)
+
+
 0.70
 ====
 - added support for access to the physical devices low level handles
