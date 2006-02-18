@@ -19,7 +19,7 @@
 /*
  * g2_splines.c
  * Tijs Michels
- * tijs@vimec.nl
+ * tijs@users.sourceforge.net
  * 06/16/99
  */
 
