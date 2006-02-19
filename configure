@@ -842,6 +842,10 @@ else
     CFLAGS=
   fi
 fi
+if test -n "`echo "$host_cpu" | grep "sparc"`" && test "$GCC" = yes; then
+  CFLAGS="$CFLAGS -fPIC"
+  LD_SHARED_FLAGS="-fPIC $LD_SHARED_FLAGS"
+fi
 
 echo $ac_n "checking how to run the C preprocessor""... $ac_c" 1>&6
 echo "configure:848: checking how to run the C preprocessor" >&5
@@ -1064,6 +1068,9 @@ else
   else
     CXXFLAGS=
   fi
+fi
+if test -n "`echo "$host_cpu" | grep "sparc"`" && test "$GXX" = yes; then
+  CXXFLAGS="$CXXFLAGS -fPIC"
 fi
 
 # Extract the first word of "ranlib", so it can be a program name with args.
