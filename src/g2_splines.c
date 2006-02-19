@@ -20,7 +20,8 @@
  * g2_splines.c
  * Tijs Michels
  * tijs@users.sourceforge.net
- * 06/16/99
+ * 06/16/99 : initial release
+ * 19/02/06 : eliminated duplicates by using pointers to functions
  */
 
 #include <math.h>
@@ -28,15 +29,39 @@
 #include "g2.h"
 #include "g2_util.h"
 
-static void g2_split(int n, const double *points, double *x, double *y);
-static void g2_c_spline(int n, const double *points, int m, double *sxy);
-static void g2_c_b_spline(int n, const double *points, int m, double *sxy);
-static void g2_c_raspln(int n, const double *points, double tn, double *sxy);
-static void g2_c_newton(int n, const double *c1, const double *c2, int o, const double *xv, double *yv);
-static void g2_c_para_3(int n, const double *points, double *sxy);
-static void g2_c_para_5(int n, const double *points, double *sxy);
+typedef void calc_f( int, const double *, int,    double *);
+typedef void calc_d( int, const double *, double, double *);
 
-void g2_split(int n, const double *points, double *x, double *y)
+static calc_f g2_c_spline;
+static calc_f g2_c_b_spline;
+static calc_d g2_c_raspln;
+static calc_f g2_c_para_3;
+static calc_f g2_c_para_5;
+
+static void g2_p_spline(int id, int n, const double *points, int o, calc_f *f)
+{
+   const int m = (n-1)*o+1;
+   double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
+
+   (*f)(n, points, m, sxy);
+   g2_poly_line(id, m, sxy);
+
+   g2_free(sxy);
+}
+
+static void g2_p_filled_spline(int id, int n, const double *points, int o, calc_f *f)
+{
+   const int m = (n-1)*o+2;
+   double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
+
+   (*f)(n, points, m, sxy);
+   sxy[m+m-2] = points[n+n-2];
+   sxy[m+m-1] = points[1];
+   g2_filled_polygon(id, m, sxy);
+   g2_free(sxy);
+}
+
+static void g2_split(int n, const double *points, double *x, double *y)
 {
    int i;
    for (i = 0; i < n; i++) {
@@ -160,8 +185,6 @@ void g2_c_spline(int n, const double *points, int m, double *sxy)
    g2_free(x);
 }
 
-void g2_spline(int id, int n, double *points, int o)
-
 /*
  *	FORMAL ARGUMENTS:
  *
@@ -175,42 +198,14 @@ void g2_spline(int id, int n, double *points, int o)
  *	So the larger o, the more fluent the curve.
  */
 
+void g2_spline(int id, int n, double *points, int o)
 {
-   int m;
-   double *sxy;
-
-   m = (n-1)*o+1;
-   sxy = (double*)g2_malloc(m*2*sizeof(double));
-
-   g2_c_spline(n, points, m, sxy);
-   g2_poly_line(id, m, sxy);
-
-   g2_free(sxy);
+   g2_p_spline(id, n, points, o, g2_c_spline);
 }
 
 void g2_filled_spline(int id, int n, double *points, int o)
-
-/*
- *	FORMAL ARGUMENTS:
- *
- *	id			device id
- *	n			number of data points
- *	points			data points (x[i],y[i])
- *	o			number of interpolated points per data point
- */
-
 {
-   int m;
-   double *sxy;
-
-   m = (n-1)*o+1;
-   sxy = (double*)g2_malloc((m+1)*2*sizeof(double));
-
-   g2_c_spline(n, points, m, sxy);
-   sxy[m+m] = points[n+n-2];
-   sxy[m+m+1] = points[1];
-   g2_filled_polygon(id, m+1, sxy);
-   g2_free(sxy);
+   g2_p_filled_spline(id, n, points, o, g2_c_spline);
 }
 
 void g2_c_b_spline(int n, const double *points, int m, double *sxy)
@@ -278,8 +273,6 @@ void g2_c_b_spline(int n, const double *points, int m, double *sxy)
    g2_free(x);
 }
 
-void g2_b_spline(int id, int n, double *points, int o)
-
 /*
  *	FORMAL ARGUMENTS:
  *
@@ -289,43 +282,14 @@ void g2_b_spline(int id, int n, double *points, int o)
  *	o			number of interpolated points per data point
  */
 
+void g2_b_spline(int id, int n, double *points, int o)
 {
-   int m;
-   double *sxy;
-
-   m = (n-1)*o+1;
-   sxy = (double*)g2_malloc(m*2*sizeof(double));
-
-   g2_c_b_spline(n, points, m, sxy);
-   g2_poly_line(id, m, sxy);
-
-   g2_free(sxy);
+   g2_p_spline(id, n, points, o, g2_c_b_spline);
 }
 
 void g2_filled_b_spline(int id, int n, double *points, int o)
-
-/*
- *	FORMAL ARGUMENTS:
- *
- *	id			device id
- *	n			number of data points
- *	points			data points (x[i],y[i])
- *	o			number of interpolated points per data point
- */
-
 {
-   int m;
-   double *sxy;
-
-   m = (n-1)*o+1;
-   sxy = (double*)g2_malloc((m+1)*2*sizeof(double));
-
-   g2_c_b_spline(n, points, m, sxy);
-   sxy[m+m] = points[n+n-2];
-   sxy[m+m+1] = points[1];
-   g2_filled_polygon(id, m+1, sxy);
-
-   g2_free(sxy);
+   g2_p_filled_spline(id, n, points, o, g2_c_b_spline);
 }
 
 /*
@@ -377,7 +341,6 @@ void g2_filled_b_spline(int id, int n, double *points, int o)
 void g2_c_raspln(int n, const double *points, double tn, double *sxy)
 {
    int i, j;
-   double *x, *y;
    double bias, tnFactor, tangentL1, tangentL2;
    double D1x, D1y, D2x, D2y, t1x, t1y, t2x, t2y;
    double h1[nb+1];	/* Values of the Hermite basis functions */
@@ -385,8 +348,8 @@ void g2_c_raspln(int n, const double *points, double tn, double *sxy)
    double h3[nb+1];
    double h4[nb+1];
 
-   x = (double *) g2_malloc(n*2*sizeof(double));
-   y = x + n;
+   double * const x = (double *) g2_malloc(n*2*sizeof(double));
+   double * const y = x + n;
    g2_split(n, points, x, y);
 
 /*
@@ -466,10 +429,8 @@ void g2_raspln(int id, int n, double *points, double tn)
  */
 
 {
-   int m;
-   double *sxy;		/*	coords of the entire spline curve */
-   m = (n-1)*nb+1;
-   sxy = (double *) g2_malloc(m*2*sizeof(double));
+   const int m = (n-1)*nb+1;
+   double * const sxy = (double *) g2_malloc(m*2*sizeof(double)); /* coords of the entire spline curve */
 
    g2_c_raspln(n, points, tn, sxy);
    g2_poly_line(id, m, sxy);
@@ -491,14 +452,12 @@ void g2_filled_raspln(int id, int n, double *points, double tn)
  */
 
 {
-   int m;
-   double *sxy;		/*	coords of the entire spline curve */
-   m = (n-1)*nb+2;
-   sxy = (double *) g2_malloc(m*2*sizeof(double));
+   const int m = (n-1)*nb+2;
+   double * const sxy = (double *) g2_malloc(m*2*sizeof(double)); /* coords of the entire spline curve */
 
    g2_c_raspln(n, points, tn, sxy);
-   sxy[(n+n-2) * nb + 2] = points[n+n-2];
-   sxy[(n+n-2) * nb + 3] = points[1];
+   sxy[m+m-2] = points[n+n-2];
+   sxy[m+m-1] = points[1];
    g2_filled_polygon(id, m, sxy);
 
    g2_free(sxy);
@@ -553,8 +512,8 @@ void g2_filled_raspln(int id, int n, double *points, double tn)
  * 21 would correspond to a polynomial of degree 20
  */
 
-void g2_c_newton(int n, const double *c1, const double *c2,
-		 int o, const double *xv, double *yv)
+static void g2_c_newton(int n, const double *c1, const double *c2,
+			int o, const double *xv, double *yv)
 {
    int i, j;
    double p, s;
@@ -624,7 +583,7 @@ void g2_c_newton(int n, const double *c1, const double *c2,
  * So between one data point and the next, (nb-1) points are placed.
  */
 
-void g2_c_para_3(int n, const double *points, double *sxy)
+void g2_c_para_3(int n, const double *points, int m, double *sxy)
 {
 #define dgr	(3+1)
 #define nb2	(nb*2)
@@ -637,6 +596,7 @@ void g2_c_para_3(int n, const double *points, double *sxy)
    double Xpts[dgr];		/* x-coords data point subsection */
    double Ypts[dgr];		/* y-coords data point subsection */
    double s[nb2];		/* parameter values at which to interpolate */
+   m = m;			/* dummy argument; stop compiler complaints */
 
    /* Do first TWO subintervals first */
 
@@ -710,38 +670,12 @@ void g2_c_para_3(int n, const double *points, double *sxy)
 
 void g2_para_3(int id, int n, double *points)
 {
-   int m;
-   double *sxy;		/*	coords of the entire spline curve */
-   m = (n-1)*nb+1;
-   sxy = (double *) g2_malloc(m*2*sizeof(double));
-
-   g2_c_para_3(n, points, sxy);
-   g2_poly_line(id, m, sxy);
-
-   g2_free(sxy);
+   g2_p_spline(id, n, points, nb, g2_c_para_3);
 }
-
-/*
- *	FORMAL ARGUMENTS:
- *
- *	id			device id
- *	n			number of data points
- *	points			data points (x[i],y[i])
- */
 
 void g2_filled_para_3(int id, int n, double *points)
 {
-   int m;
-   double *sxy;		/*	coords of the entire spline curve */
-   m = (n-1)*nb+2;
-   sxy = (double *) g2_malloc(m*2*sizeof(double));
-
-   g2_c_para_3(n, points, sxy);
-   sxy[m+m-2] = points[n+n-2];
-   sxy[m+m-1] = points[1];
-   g2_filled_polygon(id, m, sxy);
-
-   g2_free(sxy);
+   g2_p_filled_spline(id, n, points, nb, g2_c_para_3);
 }
 
 /*
@@ -751,13 +685,11 @@ void g2_filled_para_3(int id, int n, double *points)
  */
 
 /*
- * #undef  nb
- * #define nb 40
  * Number of straight connecting lines of which each polynomial consists.
  * So between one data point and the next, (nb-1) points are placed.
  */
 
-void g2_c_para_5(int n, const double *points, double *sxy)
+void g2_c_para_5(int n, const double *points, int m, double *sxy)
 {
 #undef	dgr
 #define dgr	(5+1)
@@ -771,6 +703,7 @@ void g2_c_para_5(int n, const double *points, double *sxy)
    double Xpts[dgr];		/* x-coords data point subsection */
    double Ypts[dgr];		/* y-coords data point subsection */
    double s[nb3];		/* parameter values at which to interpolate */
+   m = m;			/* dummy argument; stop compiler complaints */
 
    /* Do first THREE subintervals first */
 
@@ -844,37 +777,10 @@ void g2_c_para_5(int n, const double *points, double *sxy)
 
 void g2_para_5(int id, int n, double *points)
 {
-   int m;
-   double *sxy;		/*	coords of the entire spline curve */
-   m = (n-1)*nb+1;
-   sxy = (double *) g2_malloc(m*2*sizeof(double));
-
-   g2_c_para_5(n, points, sxy);
-   g2_poly_line(id, m, sxy);
-
-   g2_free(sxy);
+   g2_p_spline(id, n, points, nb, g2_c_para_5);
 }
-
-/*
- *	FORMAL ARGUMENTS:
- *
- *	id			device id
- *	n			number of data points
- *	points			data points (x[i],y[i])
- */
 
 void g2_filled_para_5(int id, int n, double *points)
 {
-   int m;
-   double *sxy;		/*	coords of the entire spline curve */
-   m = (n-1)*nb+2;
-   sxy = (double *) g2_malloc(m*2*sizeof(double));
-
-   g2_c_para_5(n, points, sxy);
-   sxy[m+m-2] = points[n+n-2];
-   sxy[m+m-1] = points[1];
-   g2_filled_polygon(id, m, sxy);
-
-   g2_free(sxy);
+   g2_p_filled_spline(id, n, points, nb, g2_c_para_5);
 }
-
