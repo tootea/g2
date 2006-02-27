@@ -261,6 +261,47 @@ C_g2_open_X11X(PyObject *self, PyObject *args)
 }
 
 #endif
+#ifdef _G2_PS_H
+
+PyDoc_STRVAR(doc_g2_open_PS, "--");
+
+static PyObject *
+C_g2_open_PS(PyObject *self, PyObject *args)
+{
+   const char *filename;
+   int paper, orientation;
+
+   if (PyArg_ParseTuple(args, "sii", &filename, &paper, &orientation))
+      return Py_BuildValue("i", g2_open_PS(filename, paper, orientation));
+   return NULL;
+}
+
+PyDoc_STRVAR(doc_g2_open_EPSF, "--");
+
+static PyObject *
+C_g2_open_EPSF(PyObject *self, PyObject *args)
+{
+   const char *filename;
+
+   if (PyArg_ParseTuple(args, "s", &filename))
+      return Py_BuildValue("i", g2_open_EPSF(filename));
+   return NULL;
+}
+
+PyDoc_STRVAR(doc_g2_open_EPSF_CLIP, "--");
+
+static PyObject *
+C_g2_open_EPSF_CLIP(PyObject *self, PyObject *args)
+{
+   const char *filename;
+   int width, height;
+
+   if (PyArg_ParseTuple(args, "sii", &filename, &width, &height))
+      return Py_BuildValue("i", g2_open_EPSF_CLIP(filename, width, height));
+   return NULL;
+}
+
+#endif
 #ifdef _G2_GD_H
 
 PyDoc_STRVAR(doc_g2_open_gd, "--");
@@ -273,6 +314,37 @@ C_g2_open_gd(PyObject *self, PyObject *args)
 
    if (PyArg_ParseTuple(args, "siii", &filename, &width, &height, &gd_type))
       return Py_BuildValue("i", g2_open_gd(filename, width, height, gd_type));
+   return NULL;
+}
+
+#endif
+#ifdef _G2_FIG_H
+
+PyDoc_STRVAR(doc_g2_open_FIG, "--");
+
+static PyObject *
+C_g2_open_FIG(PyObject *self, PyObject *args)
+{
+   const char *filename;
+
+   if (PyArg_ParseTuple(args, "s", &filename))
+      return Py_BuildValue("i", g2_open_FIG(filename));
+   return NULL;
+}
+
+#endif
+#ifdef _G2_WIN32_H
+
+PyDoc_STRVAR(doc_g2_open_win32, "--");
+
+static PyObject *
+C_g2_open_win32(PyObject *self, PyObject *args)
+{
+   int width, height, win32_type;
+   const char *name; /* filename or window title */
+
+   if (PyArg_ParseTuple(args, "iisi", &width, &height, &name, &win32_type))
+      return Py_BuildValue("i", g2_open_win32(width, height, name, win32_type));
    return NULL;
 }
 
@@ -290,8 +362,19 @@ static PyMethodDef module_functions[] = {
    { "g2_open_X11", C_g2_open_X11, METH_VARARGS, doc_g2_open_X11 },
    { "g2_open_X11X", C_g2_open_X11X, METH_VARARGS, doc_g2_open_X11X },
 #endif
+#ifdef _G2_PS_H
+   { "g2_open_PS", C_g2_open_PS, METH_VARARGS, doc_g2_open_PS },
+   { "g2_open_EPSF", C_g2_open_EPSF, METH_VARARGS, doc_g2_open_EPSF },
+   { "g2_open_EPSF_CLIP", C_g2_open_EPSF_CLIP, METH_VARARGS, doc_g2_open_EPSF_CLIP },
+#endif
 #ifdef _G2_GD_H
    { "g2_open_gd", C_g2_open_gd, METH_VARARGS, doc_g2_open_gd },
+#endif
+#ifdef _G2_FIG_H
+   { "g2_open_FIG", C_g2_open_FIG, METH_VARARGS, doc_g2_open_FIG },
+#endif
+#ifdef _G2_WIN32_H
+   { "g2_open_win32", C_g2_open_win32, METH_VARARGS, doc_g2_open_win32 },
 #endif
    { NULL }
 };
@@ -303,10 +386,53 @@ add_enums(PyObject *m)
 {
    typedef struct { const char *name; int value; } tInt;
    const tInt enums[] = {
+#ifdef _G2_PS_H
+      { "g2_A0",               g2_A0               },
+      { "g2_A1",               g2_A1               },
+      { "g2_A2",               g2_A2               },
+      { "g2_A3",               g2_A3               },
+      { "g2_A4",               g2_A4               },
+      { "g2_A5",               g2_A5               },
+      { "g2_A6",               g2_A6               },
+      { "g2_A7",               g2_A7               },
+      { "g2_A8",               g2_A8               },
+      { "g2_A9",               g2_A9               },
+      { "g2_B0",               g2_B0               },
+      { "g2_B1",               g2_B1               },
+      { "g2_B2",               g2_B2               },
+      { "g2_B3",               g2_B3               },
+      { "g2_B4",               g2_B4               },
+      { "g2_B5",               g2_B5               },
+      { "g2_B6",               g2_B6               },
+      { "g2_B7",               g2_B7               },
+      { "g2_B8",               g2_B8               },
+      { "g2_B9",               g2_B9               },
+      { "g2_B10",              g2_B10              },
+      { "g2_Comm_10_Envelope", g2_Comm_10_Envelope },
+      { "g2_C5_Envelope",      g2_C5_Envelope      },
+      { "g2_DL_Envelope",      g2_DL_Envelope      },
+      { "g2_Folio",            g2_Folio            },
+      { "g2_Executive",        g2_Executive        },
+      { "g2_Letter",           g2_Letter           },
+      { "g2_Legal",            g2_Legal            },
+      { "g2_Ledger",           g2_Ledger           },
+      { "g2_Tabloid",          g2_Tabloid          },
+      /* orientation */
+      { "g2_PS_land",          g2_PS_land },
+      { "g2_PS_port",          g2_PS_port },
+      /* g2 Format */
+      { "g2_PS_PostScript",    g2_PS_PostScript },
+      { "g2_PS_EPSF",          g2_PS_EPSF       },
+      { "g2_PS_EPSF_CLIP",     g2_PS_EPSF_CLIP  },
+#endif
 #ifdef _G2_GD_H
       { "g2_gd_jpeg", g2_gd_jpeg },
       { "g2_gd_png",  g2_gd_png  },
       { "g2_gd_gif",  g2_gd_gif  },
+#endif
+#ifdef _G2_WIN32_H
+      { "g2_win32",   g2_win32 },
+      { "g2_wmf32",   g2_wmf32 },
 #endif
       { "QPrect",     QPrect },
       { "QPcirc",     QPcirc }
