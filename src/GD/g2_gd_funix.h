@@ -16,8 +16,8 @@
 **  License along with this library; if not, write to the Free Software
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ******************************************************************************/
-#ifndef _g2_GD_TOKEN_FUN_H
-#define _g2_GD_TOKEN_FUN_H
+#ifndef _G2_GD_TOKEN_FUN_H
+#define _G2_GD_TOKEN_FUN_H
 		
 	
 #include "g2_virtual_device.h"
@@ -51,4 +51,4 @@ const g2_funix_fun g2_gd_funix[] =
 		{g2_FUNIX_NULL, NULL}};
 
 
-#endif /* _g2_GD_TOKEN_FUN_H */
+#endif /* _G2_GD_TOKEN_FUN_H */

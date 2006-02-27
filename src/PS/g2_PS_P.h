@@ -96,4 +96,3 @@ int g2_PS_draw_string(int pid, void *pdp,
 		      double x, double y, const char *text);
 
 #endif /* _G2_PS_P_H */
-

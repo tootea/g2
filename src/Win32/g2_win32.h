@@ -16,7 +16,6 @@
 **  License along with this library; if not, write to the Free Software
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ******************************************************************************/
-/* This is g2_win32.h */
 #ifndef _G2_WIN32_H
 #define _G2_WIN32_H
 

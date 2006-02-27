@@ -16,8 +16,8 @@
 **  License along with this library; if not, write to the Free Software
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ******************************************************************************/
-#ifndef _g2_GD_P_H
-#define _g2_GD_P_H
+#ifndef _G2_GD_P_H
+#define _G2_GD_P_H
 
 #include <gd.h>
 #include <gdfontt.h>
@@ -108,11 +108,4 @@ int g2_gd_DrawString(int pid, void *pdp, int x, int y, const char *text);
 
 int g2_gd_AllocateBasicColors(int pid, void *pdp);
 
-
-
-#endif /* _g2_GD_P_H */
-
-
-
-
-
+#endif /* _G2_GD_P_H */

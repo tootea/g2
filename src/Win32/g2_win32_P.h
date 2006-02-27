@@ -16,9 +16,8 @@
 **  License along with this library; if not, write to the Free Software
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ******************************************************************************/
-
-#ifndef G2_WIN32_P_H
-#define G2_WIN32_P_H
+#ifndef _G2_WIN32_P_H
+#define _G2_WIN32_P_H
 
 #include "windows.h"
 #include <stdio.h>
@@ -110,10 +109,4 @@ int g2_win32_AllocateBasicColors(int pid, void *pdp);
 
 int g2_win32_Cleanup(int pid, void *pdp);
 
-
-#endif /* g2_win32_P_H */
-
-
-
-
-
+#endif /* _G2_WIN32_P_H */

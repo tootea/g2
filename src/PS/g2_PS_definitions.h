@@ -16,6 +16,8 @@
 **  License along with this library; if not, write to the Free Software
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ******************************************************************************/
+#ifndef _G2_PS_DEFINITIONS_H
+#define _G2_PS_DEFINITIONS_H
 
 /*
  *
@@ -101,4 +103,4 @@ char *g2_PS_operators[]={
     NULL
 };
 
-
+#endif /* _G2_PS_DEFINITIONS_H */

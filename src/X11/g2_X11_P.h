@@ -86,9 +86,5 @@ int g2_X11_image(int pid, void *pdp,
 int g2_X11_query_pointer(int pid, void *pdp,
 			 int *x, int *y, unsigned int *button);
 int g2_X11_get_pd_handles(int pid, void *pdp, void *handles[G2_PD_HANDLES_SIZE]);
+
 #endif /* _G2_X11_P_H */
-
-
-
-
-

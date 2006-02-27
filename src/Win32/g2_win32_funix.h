@@ -16,8 +16,8 @@
 **  License along with this library; if not, write to the Free Software
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ******************************************************************************/
-#ifndef G2_WIN32_FUNIX_H
-#define G2_WIN32_FUNIX_H
+#ifndef _G2_WIN32_FUNIX_H
+#define _G2_WIN32_FUNIX_H
 
 #include "g2_win32_P.h"
 #include "g2_physical_device.h"
@@ -52,5 +52,4 @@ const g2_funix_fun g2_win32_funix[] = {
     { g2_FUNIX_NULL,      NULL } };
 
 
-#endif /* G2_WIN32_FUNIX_H */
-
+#endif /* _G2_WIN32_FUNIX_H */

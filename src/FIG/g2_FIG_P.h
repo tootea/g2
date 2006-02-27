@@ -79,4 +79,3 @@ int g2_FIG_draw_string(int pid, void *pdp,
 		      int x, int y, const char *text);
 
 #endif /* _G2_FIG_P_H */
-

@@ -38,8 +38,3 @@ int g2_open_X11X(int width, int height,
 #endif
 
 #endif /* _G2_X11_H */
-
-
-
-
-
