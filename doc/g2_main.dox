@@ -46,7 +46,7 @@ Copyright (C) 1998-2004 Ljubomir Milanovic & Horst Wagner.
 
 \subsubsection short Short version (if you are in hurry)
 
-    - 2D graphic library
+    - 2D graphics library
     - Simple to use
     - Supports several types of output devices (currently X11,
       PostScript, devices supported by gd http://www.boutell.com/gd/
@@ -64,14 +64,14 @@ Copyright (C) 1998-2004 Ljubomir Milanovic & Horst Wagner.
 g2 is a simple to use graphics library for 2D graphical applications
 written in Ansi-C. This library provides a comprehensive set of
 functions for simultaneous generation of graphical output on different
-types of devices. Presently, following devices are currently supported
+types of devices. Currently, the following devices are supported
 by g2: X11, gd (PNG and JPEG), PostScript and FIG (xfig).
 One major feature of the g2_library is the concept of virtual devices.
-An arbitrary number of physical devices (such as PostScript, or X11) can
+An arbitrary number of physical devices (such as PostScript or X11) can
 be grouped to create a so-called virtual device. Commands sent to such a
-virtual devices will automatically issued to all attached physical
+virtual device are automatically issued to all attached physical
 devices. This allows for example simultaneous output to a PNG file and a
-Postscript file. A virtual device in turn can be attached to another
+PostScript file. A virtual device in turn can be attached to another
 virtual device, allowing to construct trees of devices.
 Virtual devices can also be useful when using different user-coordinate
 systems. E.g. one X11 window showing an overview of a graphical output,
@@ -104,7 +104,7 @@ If you don't need or like the concept of virtual devices, simply ignore it.
     which should be available at your local RedHat mirrorsite.
     NT users should install the gd source package in a subdirectory
     named "gd" which should be located in the same directory as the g2
-    subdirectory (but not in the g2 directory itself). Otherwise file
+    subdirectory (but not in the g2 directory itself). Otherwise, file
     locations for gd must be modified in the g2 project workspace.
     Unix and VMS users will have to build and install gd according to
     the instructions found in the gd distribution.
@@ -125,16 +125,16 @@ UNIX
     -# Optionally run 'make depend'
     -# Run 'make'
     -# Run 'make install' or copy libg2.a and g2.h, g2_X11.h, g2_gd.h,
-      anf g2_PS.h to the default locations for library and include files.
+      and g2_PS.h to the default locations for library and include files
     -# Optional: cd to demo directory and run 'make demo' to compile demo applications
 
 WINDOWS NT
 
     -# Extract package using either the .tar.gz or the .zip distribution
     -# MS Visual C++ users can build both library and demos with the
-      supplied project file: g2.dsw (To obtain an icon and use menu
-      functions you must also build the g2res project in g2.dsw)
-    -# users of gcc or other commandline based compilers with make
+      supplied project file: g2.dsw (to obtain an icon and use menu
+      functions, you must also build the g2res project in g2.dsw)
+    -# Users of gcc or other commandline based compilers with make
       support continue as in Unix example
     -# It is also possible to compile g2 on winNT/95 using the free
       cygwin32 library and a X-windows library for windows.
@@ -156,14 +156,14 @@ VMS
 
   -# Try to extract either the tar.gz or the zip distribution (whatever
     is easier for you)
-  -# type mms to compile library (descrip.mms file is suplied)
-  -# run mms in demo directory to compile demo applications
+  -# Type mms to compile library (descrip.mms file is suplied)
+  -# Run mms in demo directory to compile demo applications
 
 
 \subsection simple A simple example
 
 The following example is a minimal application. It draws a rectangle in
-a postscript file.
+a PostScript file.
 
 \code
 #include <g2.h>
@@ -248,11 +248,11 @@ The Fortran interface for g2 is currently tested for Linux and Digital
 Unix/OSF. Function names for Fortran are the same as in C, however
 following differences exist:
 
-    * all variables including device IDs are of type REAL
-    * void functions are implemented as subroutines and must be called
-      with CALL
-    * constants defined by #define in C (e.g. g2_A4) do not work. Get
-      corresponding values from the apropriate header files.
+  -# All variables, including device IDs, are of type REAL
+  -# Void functions are implemented as subroutines and must be called
+    with CALL
+  -# Constants defined by #define in C (e.g. g2_A4) do not work. Get
+    corresponding values from the appropriate header files.
 
 A short Fortran example:
 
@@ -277,7 +277,7 @@ A short Fortran example:
 The perl interface for g2 is currently tested for Linux and Digital
 Unix/OSF. Function names in perl are the same as in C, however the
 device itself is implemented object orientated, i.e. the device argument
-is ommited in all functions.
+is omitted in all functions.
 E.g., following simple perl script:
 
 \code
