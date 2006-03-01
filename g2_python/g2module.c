@@ -887,6 +887,64 @@ C_g2_string(G2 *self, PyObject *args)
    return NULL;
 }
 
+PyDoc_STRVAR(doc_g2_image, "--");
+
+static PyObject *
+C_g2_image(G2 *self, PyObject *args)
+{
+   double x, y;
+   PyObject *list; /* a list of lists, to be unpacked as a two-dimensional array */
+
+   if (PyArg_ParseTuple(args, "ddO!", &x, &y, &PyList_Type, &list)) {
+      int h = PyList_Size(list); /* the nr of lines, i.e. the height */
+      if (h) {
+         int i = 0;
+         int j = 0;
+         PyObject * po;
+         PyObject ** const lines = malloc(h * sizeof(PyObject *));
+         if (lines == NULL) return PyErr_NoMemory();
+         while (i < h) {
+            po = PyList_GET_ITEM(list, i++);
+            if (PyList_Check(po)) lines[j++] = po; /* only store lists */
+         }
+         i -= j; /* in case not all elements were lists, i.e. lines, */
+         h -= i; /* decrement the height */
+         if (h) { /* our outer list contained at least one nested list, i.e. line */
+            PyObject * const * const e = lines + h;
+            PyObject * const * l = e;
+            int w = 0; /* set width to the longest list */
+            while (l-- > lines) if ((i = PyList_Size(*l)) > w) w = i;
+            if (w) { /* at least one line had a width > 0 */
+               int * const pens = PyMem_New(int, w * h * sizeof(int));
+               int * pen = pens;
+               if (pens == NULL) {
+                  free(lines);
+                  return PyErr_NoMemory();
+               }
+               while (l < e) { /* the previous loop ended with l == lines */
+                  PyObject * const pl = *l;
+                  i = 0;
+                  j = PyList_Size(pl);
+                  while (i < j) {
+                     po = PyList_GET_ITEM(pl, i);
+                     pen[i++] = PyInt_Check(po) ? PyInt_AsLong(po) : 0;
+                  }
+                  while (i < w) pen[i++] = 0;
+                  pen += w;
+                  l++;
+               }
+               g2_image(self->dev, x, y, w, h, pens);
+               PyMem_Del(pens);
+            }
+         }
+         free(lines);
+         Py_RETURN_NONE;
+      }
+      PyErr_SetString(PyExc_ValueError, "empty list");
+   }
+   return NULL;
+}
+
 PyDoc_STRVAR(doc_g2_set_QP, "--");
 
 static PyObject *
@@ -1048,7 +1106,7 @@ static PyMethodDef G2_methods[] = {
    { "g2_arc", (PyCFunction)C_g2_arc, METH_VARARGS, doc_g2_arc },
    { "g2_filled_arc", (PyCFunction)C_g2_filled_arc, METH_VARARGS, doc_g2_filled_arc },
    { "g2_string", (PyCFunction)C_g2_string, METH_VARARGS, doc_g2_string },
-/* { "g2_image", (PyCFunction)C_g2_image, METH_VARARGS, doc_g2_image }, */
+   { "g2_image", (PyCFunction)C_g2_image, METH_VARARGS, doc_g2_image },
    { "g2_set_QP", (PyCFunction)C_g2_set_QP, METH_VARARGS, doc_g2_set_QP },
    { "g2_plot_QP", (PyCFunction)C_g2_plot_QP, METH_VARARGS, doc_g2_plot_QP },
    { "g2_query_pointer", (PyCFunction)C_g2_query_pointer, METH_NOARGS, doc_g2_query_pointer },
