@@ -39,15 +39,14 @@
 
 typedef struct {
    PyObject_HEAD
-   int dev; /* (virtual) device */
+   int dev; /* (virtual) device (readonly: set by 'constructor')*/
 } G2;
 
 /* in Python, say for instance:
  *
  * import g2
  *
- * graph = g2.G2()
- * graph.dev = g2.g2_open_gd('g2_demo.png', 400, 400, g2.g2_gd_png)
+ * graph = g2.g2_open_gd('g2_demo.png', 400, 400, g2.g2_gd_png)
  * graph.g2_set_coordinate_system(200, 200, 1.0, 1.0)
  * # no device argument; all G2 methods use G2.dev
  */
@@ -57,6 +56,8 @@ typedef struct {
 typedef void list_f(int, int, double *);
 typedef void list_i_f(int, int, double *, int);
 typedef void list_d_f(int, int, double *, double);
+
+static PyTypeObject G2_Type; /* forward declaration */
 
 static double
 helper_item_float(PyObject *item)
@@ -142,43 +143,7 @@ helper_ild(const G2 *self, const PyObject *args, list_d_f *f)
  * functions from g2.h
  */
 
-/* six unbound functions */
-
-PyDoc_STRVAR(doc_g2_open_vd, "--");
-
-static PyObject *
-C_g2_open_vd(PyObject *self)
-{
-   return Py_BuildValue("i", g2_open_vd());
-}
-
-PyDoc_STRVAR(doc_g2_attach, "--");
-
-static PyObject *
-C_g2_attach(PyObject *self, PyObject *args)
-{
-   int vd_dev, dev;
-
-   if (PyArg_ParseTuple(args, "ii", &vd_dev, &dev)) {
-      g2_attach(vd_dev, dev);
-      Py_RETURN_NONE;
-   }
-   return NULL;
-}
-
-PyDoc_STRVAR(doc_g2_detach, "--");
-
-static PyObject *
-C_g2_detach(PyObject *self, PyObject *args)
-{
-   int vd_dev, dev;
-
-   if (PyArg_ParseTuple(args, "ii", &vd_dev, &dev)) {
-      g2_detach(vd_dev, dev);
-      Py_RETURN_NONE;
-   }
-   return NULL;
-}
+/* three unbound functions */
 
 PyDoc_STRVAR(doc_g2_ld, "--");
 
@@ -214,20 +179,20 @@ C_g2_device_exist(PyObject *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_ink, "--");
+/* (device specific) 'constructors', all returning an object of class G2 */
+
+PyDoc_STRVAR(doc_g2_open_vd, "--");
 
 static PyObject *
-C_g2_ink(PyObject *self, PyObject *args)
+C_g2_open_vd(PyObject *self)
 {
-   int pd_dev; /* physical device */
-   double red, green, blue;
-
-   if (PyArg_ParseTuple(args, "iddd", &pd_dev, &red, &green, &blue))
-      return Py_BuildValue("i", g2_ink(pd_dev, red, green, blue));
+   G2 * const obj = (G2 *) PyType_GenericAlloc(&G2_Type, 0);
+   if (obj) {
+      obj->dev = g2_open_vd();
+      return (PyObject *)obj;
+   }
    return NULL;
 }
-
-/* device specific functions */
 
 #ifdef _G2_X11_H
 
@@ -238,8 +203,13 @@ C_g2_open_X11(PyObject *self, PyObject *args)
 {
    int width, height;
 
-   if (PyArg_ParseTuple(args, "ii", &width, &height))
-      return Py_BuildValue("i", g2_open_X11(width, height));
+   if (PyArg_ParseTuple(args, "ii", &width, &height)) {
+      G2 * const obj = (G2 *) PyType_GenericAlloc(&G2_Type, 0);
+      if (obj) {
+         obj->dev = g2_open_X11(width, height);
+         return (PyObject *)obj;
+      }
+   }
    return NULL;
 }
 
@@ -253,10 +223,15 @@ C_g2_open_X11X(PyObject *self, PyObject *args)
 
    if (PyArg_ParseTuple(args, "iiiisssii", &width, &height, &x, &y,
                         &window_name, &icon_name, &icon_data,
-                        &icon_width, &icon_height))
-      return Py_BuildValue("i", g2_open_X11X(width, height, x, y,
-                                             window_name, icon_name, icon_data,
-                                             icon_width, icon_height));
+                        &icon_width, &icon_height)) {
+      G2 * const obj = (G2 *) PyType_GenericAlloc(&G2_Type, 0);
+      if (obj) {
+         obj->dev = g2_open_X11X(width, height, x, y,
+                                 window_name, icon_name, icon_data,
+                                 icon_width, icon_height);
+         return (PyObject *)obj;
+      }
+   }
    return NULL;
 }
 
@@ -271,8 +246,13 @@ C_g2_open_PS(PyObject *self, PyObject *args)
    const char *filename;
    int paper, orientation;
 
-   if (PyArg_ParseTuple(args, "sii", &filename, &paper, &orientation))
-      return Py_BuildValue("i", g2_open_PS(filename, paper, orientation));
+   if (PyArg_ParseTuple(args, "sii", &filename, &paper, &orientation)) {
+      G2 * const obj = (G2 *) PyType_GenericAlloc(&G2_Type, 0);
+      if (obj) {
+         obj->dev = g2_open_PS(filename, paper, orientation);
+         return (PyObject *)obj;
+      }
+   }
    return NULL;
 }
 
@@ -283,8 +263,13 @@ C_g2_open_EPSF(PyObject *self, PyObject *args)
 {
    const char *filename;
 
-   if (PyArg_ParseTuple(args, "s", &filename))
-      return Py_BuildValue("i", g2_open_EPSF(filename));
+   if (PyArg_ParseTuple(args, "s", &filename)) {
+      G2 * const obj = (G2 *) PyType_GenericAlloc(&G2_Type, 0);
+      if (obj) {
+         obj->dev = g2_open_EPSF(filename);
+         return (PyObject *)obj;
+      }
+   }
    return NULL;
 }
 
@@ -296,8 +281,13 @@ C_g2_open_EPSF_CLIP(PyObject *self, PyObject *args)
    const char *filename;
    int width, height;
 
-   if (PyArg_ParseTuple(args, "sii", &filename, &width, &height))
-      return Py_BuildValue("i", g2_open_EPSF_CLIP(filename, width, height));
+   if (PyArg_ParseTuple(args, "sii", &filename, &width, &height)) {
+      G2 * const obj = (G2 *) PyType_GenericAlloc(&G2_Type, 0);
+      if (obj) {
+         obj->dev = g2_open_EPSF_CLIP(filename, width, height);
+         return (PyObject *)obj;
+      }
+   }
    return NULL;
 }
 
@@ -312,8 +302,13 @@ C_g2_open_gd(PyObject *self, PyObject *args)
    const char *filename;
    int width, height, gd_type;
 
-   if (PyArg_ParseTuple(args, "siii", &filename, &width, &height, &gd_type))
-      return Py_BuildValue("i", g2_open_gd(filename, width, height, gd_type));
+   if (PyArg_ParseTuple(args, "siii", &filename, &width, &height, &gd_type)) {
+      G2 * const obj = (G2 *) PyType_GenericAlloc(&G2_Type, 0);
+      if (obj) {
+         obj->dev = g2_open_gd(filename, width, height, gd_type);
+         return (PyObject *)obj;
+      }
+   }
    return NULL;
 }
 
@@ -327,8 +322,13 @@ C_g2_open_FIG(PyObject *self, PyObject *args)
 {
    const char *filename;
 
-   if (PyArg_ParseTuple(args, "s", &filename))
-      return Py_BuildValue("i", g2_open_FIG(filename));
+   if (PyArg_ParseTuple(args, "s", &filename)) {
+      G2 * const obj = (G2 *) PyType_GenericAlloc(&G2_Type, 0);
+      if (obj) {
+         obj->dev = g2_open_FIG(filename);
+         return (PyObject *)obj;
+      }
+   }
    return NULL;
 }
 
@@ -343,21 +343,24 @@ C_g2_open_win32(PyObject *self, PyObject *args)
    int width, height, win32_type;
    const char *name; /* filename or window title */
 
-   if (PyArg_ParseTuple(args, "iisi", &width, &height, &name, &win32_type))
-      return Py_BuildValue("i", g2_open_win32(width, height, name, win32_type));
+   if (PyArg_ParseTuple(args, "iisi", &width, &height, &name, &win32_type)) {
+      G2 * const obj = (G2 *) PyType_GenericAlloc(&G2_Type, 0);
+      if (obj) {
+         obj->dev = g2_open_win32(width, height, name, win32_type);
+         return (PyObject *)obj;
+      }
+   }
    return NULL;
 }
 
 #endif
 
 static PyMethodDef module_functions[] = {
-   { "g2_open_vd", (PyCFunction)C_g2_open_vd, METH_NOARGS, doc_g2_open_vd },
-   { "g2_attach", C_g2_attach, METH_VARARGS, doc_g2_attach },
-   { "g2_detach", C_g2_detach, METH_VARARGS, doc_g2_detach },
    { "g2_ld", (PyCFunction)C_g2_ld, METH_NOARGS, doc_g2_ld },
    { "g2_set_ld", C_g2_set_ld, METH_VARARGS, doc_g2_set_ld },
    { "g2_device_exist", C_g2_device_exist, METH_VARARGS, doc_g2_device_exist },
-   { "g2_ink", C_g2_ink, METH_VARARGS, doc_g2_ink },
+   /* nine functions that construct an instance of class G2 */
+   { "g2_open_vd", (PyCFunction)C_g2_open_vd, METH_NOARGS, doc_g2_open_vd },
 #ifdef _G2_X11_H
    { "g2_open_X11", C_g2_open_X11, METH_VARARGS, doc_g2_open_X11 },
    { "g2_open_X11X", C_g2_open_X11X, METH_VARARGS, doc_g2_open_X11X },
@@ -440,9 +443,54 @@ add_enums(PyObject *m)
    const tInt *c = enums + sizeof(enums)/sizeof(tInt);
    while (c-- > enums)
       PyModule_AddIntConstant(m, (char *)c->name, c->value);
+   PyModule_AddStringConstant(m, "G2_VERSION", G2_VERSION);
 }
 
 /* methods of class G2, all of which use G2 member dev */
+
+/* methods that operate on a single device */
+
+PyDoc_STRVAR(doc_g2_attach, "--");
+
+static PyObject *
+C_g2_attach(G2 *self, PyObject *args)
+{
+   PyObject *dev;
+
+   if (PyArg_ParseTuple(args, "O!", &G2_Type, &dev)) {
+      g2_attach(self->dev, ((G2 *)dev)->dev);
+      Py_RETURN_NONE;
+   }
+   return NULL;
+}
+
+PyDoc_STRVAR(doc_g2_detach, "--");
+
+static PyObject *
+C_g2_detach(G2 *self, PyObject *args)
+{
+   PyObject *dev;
+
+   if (PyArg_ParseTuple(args, "O!", &G2_Type, &dev)) {
+      g2_detach(self->dev, ((G2 *)dev)->dev);
+      Py_RETURN_NONE;
+   }
+   return NULL;
+}
+
+PyDoc_STRVAR(doc_g2_ink, "--");
+
+static PyObject *
+C_g2_ink(G2 *self, PyObject *args) /* only on a physical device */
+{
+   double red, green, blue;
+
+   if (PyArg_ParseTuple(args, "ddd", &red, &green, &blue))
+      return Py_BuildValue("i", g2_ink(self->dev, red, green, blue));
+   return NULL;
+}
+
+/* methods that can operate on multiple devices */
 
 PyDoc_STRVAR(doc_g2_close, "--");
 
@@ -1070,6 +1118,11 @@ C_g2_filled_para_5(G2 *self, PyObject *args)
 }
 
 static PyMethodDef G2_methods[] = {
+   /* methods that operate on a single device */
+   { "g2_attach", (PyCFunction)C_g2_attach, METH_VARARGS, doc_g2_attach },
+   { "g2_detach", (PyCFunction)C_g2_detach, METH_VARARGS, doc_g2_detach },
+   { "g2_ink", (PyCFunction)C_g2_ink, METH_VARARGS, doc_g2_ink },
+   /* methods that can operate on multiple devices */
    { "g2_close", (PyCFunction)C_g2_close, METH_NOARGS, doc_g2_close },
    { "g2_set_auto_flush", (PyCFunction)C_g2_set_auto_flush, METH_VARARGS, doc_g2_set_auto_flush },
    { "g2_flush", (PyCFunction)C_g2_flush, METH_NOARGS, doc_g2_flush },
@@ -1124,7 +1177,7 @@ static PyMethodDef G2_methods[] = {
 };
 
 static PyMemberDef G2_members[] = { /* cf. structmember.h */
-   { "dev", T_INT, offsetof(G2, dev), 0, "g2 device number" }, /* flags 0 : no restriction */
+   { "dev", T_INT, offsetof(G2, dev), READONLY, "g2 device number" }, /* flags 0 : no restriction */
    { NULL }
 };
 
@@ -1134,7 +1187,7 @@ G2_dealloc(G2 *self)
    self->ob_type->tp_free((PyObject *)self);
 }
 
-static PyTypeObject G2Type = {
+static PyTypeObject G2_Type = {
    PyObject_HEAD_INIT(NULL)
    0,                      /* ob_size*/
    "g2.G2",                /* tp_name*/
@@ -1175,12 +1228,11 @@ initg2(void)
 {
    PyObject *m;
 
-   G2Type.tp_new = PyType_GenericNew;
-   if ((PyType_Ready(&G2Type) == 0) &&
+   if ((PyType_Ready(&G2_Type) == 0) &&
        (m = Py_InitModule3("g2", module_functions,
                            "Python interface to the g2 library."))) {
-      Py_INCREF(&G2Type);
-      PyModule_AddObject(m, "G2", (PyObject *)&G2Type);
+      Py_INCREF(&G2_Type);
+      PyModule_AddObject(m, "G2", (PyObject *)&G2_Type);
       add_enums(m);
    }
 }
