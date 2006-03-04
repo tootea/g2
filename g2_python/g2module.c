@@ -77,7 +77,7 @@ helper_il(const G2 *self, const PyObject *args, list_f *f)
       if (s) {
          double * const points = malloc(s * sizeof(double)); /* in one case the buffer holds dashes, not points */
          if (points) {
-            const int np = s >> 1; /* two co-ordinates per point */
+            const int np = (f == g2_set_dash) ? s : s >> 1; /* two co-ordinates per point */
             while (s--) points[s] = helper_item_float(PyList_GET_ITEM(list, s));
             (*f)(self->dev, np, points);
             free(points);
@@ -951,17 +951,19 @@ C_g2_image(G2 *self, PyObject *args)
          PyObject * po;
          PyObject ** const lines = malloc(h * sizeof(PyObject *));
          if (lines == NULL) return PyErr_NoMemory();
-         while (i < h) {
+         do {
             po = PyList_GET_ITEM(list, i++);
             if (PyList_Check(po)) lines[j++] = po; /* only store lists */
-         }
+         } while (i < h);
          i -= j; /* in case not all elements were lists, i.e. lines, */
          h -= i; /* decrement the height */
          if (h) { /* our outer list contained at least one nested list, i.e. line */
             PyObject * const * const e = lines + h;
             PyObject * const * l = e;
-            int w = 0; /* set width to the longest list */
-            while (l-- > lines) if ((i = PyList_Size(*l)) > w) w = i;
+            int w = 0;
+            do { /* set width to the longest list */
+               if ((i = PyList_Size(*--l)) > w) w = i;
+            } while (l > lines);
             if (w) { /* at least one line had a width > 0 */
                int * const pens = PyMem_New(int, w * h * sizeof(int));
                int * pen = pens;
@@ -969,7 +971,7 @@ C_g2_image(G2 *self, PyObject *args)
                   free(lines);
                   return PyErr_NoMemory();
                }
-               while (l < e) { /* the previous loop ended with l == lines */
+               do {
                   PyObject * const pl = *l;
                   i = 0;
                   j = PyList_Size(pl);
@@ -980,7 +982,7 @@ C_g2_image(G2 *self, PyObject *args)
                   while (i < w) pen[i++] = 0;
                   pen += w;
                   l++;
-               }
+               } while (l < e); /* the previous loop ended with l == lines */
                g2_image(self->dev, x, y, w, h, pens);
                PyMem_Del(pens);
             }
