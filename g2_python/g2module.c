@@ -39,7 +39,7 @@
 
 typedef struct {
    PyObject_HEAD
-   int dev; /* (virtual) device (readonly: set by 'constructor')*/
+   int dev; /* (virtual) device (readonly: set by 'constructor') */
 } G2;
 
 /* in Python, say for instance:
@@ -64,7 +64,7 @@ helper_item_float(PyObject *item)
 {
    if PyFloat_Check(item) return PyFloat_AsDouble(item);
    if PyInt_Check(item) return (double) PyInt_AsLong(item);
-   return 0; /* list is supposed to contain floats and/or integers */
+   return 0; /* list is assumed to contain floats and/or integers */
 }
 
 static PyObject *
@@ -145,7 +145,9 @@ helper_ild(const G2 *self, const PyObject *args, list_d_f *f)
 
 /* three unbound functions */
 
-PyDoc_STRVAR(doc_g2_ld, "--");
+PyDoc_STRVAR(doc_g2_ld,
+             "int g2_ld()\n"
+             "Return the latest accessed device (an int).");
 
 static PyObject *
 C_g2_ld(PyObject *self)
@@ -153,7 +155,10 @@ C_g2_ld(PyObject *self)
    return Py_BuildValue("i", g2_ld());
 }
 
-PyDoc_STRVAR(doc_g2_set_ld, "--");
+PyDoc_STRVAR(doc_g2_set_ld,
+             "g2_set_ld(int dev)\n"
+             "Set the latest accessed device.\n"
+             "e.g. : g2_set_ld(PS_graph.dev)");
 
 static PyObject *
 C_g2_set_ld(PyObject *self, PyObject *args)
@@ -167,7 +172,9 @@ C_g2_set_ld(PyObject *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_device_exist, "--");
+PyDoc_STRVAR(doc_g2_device_exist,
+             "bool g2_device_exist(int dev)\n"
+             "Return True if device exists, False if not.");
 
 static PyObject *
 C_g2_device_exist(PyObject *self, PyObject *args)
@@ -181,7 +188,13 @@ C_g2_device_exist(PyObject *self, PyObject *args)
 
 /* (device specific) 'constructors', all returning an object of class G2 */
 
-PyDoc_STRVAR(doc_g2_open_vd, "--");
+PyDoc_STRVAR(doc_g2_open_vd,
+             "G2 g2_open_vd()\n"
+             "Construct an object of class G2 that plots on a virtual device.\n"
+             "e.g. : graph = g2_open_vd()\n"
+             "       graph.g2_attach(g2_open_X11(800, 600))\n"
+             "       graph.g2_attach(g2_open_PS(\"foo.ps\", g2_A4, g2_PS_land))\n"
+             "       graph.g2_line(3, 3, 9, 9)");
 
 static PyObject *
 C_g2_open_vd(PyObject *self)
@@ -196,7 +209,10 @@ C_g2_open_vd(PyObject *self)
 
 #ifdef _G2_X11_H
 
-PyDoc_STRVAR(doc_g2_open_X11, "--");
+PyDoc_STRVAR(doc_g2_open_X11,
+             "G2 g2_open_X11(int width, int height)\n"
+             "Construct an object of class G2 that plots on an X11 window.\n"
+             "e.g. : graph = g2_open_X11(800, 600)");
 
 static PyObject *
 C_g2_open_X11(PyObject *self, PyObject *args)
@@ -213,7 +229,11 @@ C_g2_open_X11(PyObject *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_open_X11X, "--");
+PyDoc_STRVAR(doc_g2_open_X11X,
+             "G2 g2_open_X11X(int width, int height, int x, int y,\n"
+             "                str window_name, str icon_name, str icon_data,\n"
+             "                int icon_width, int icon_height)\n"
+             "Construct an object of class G2 that plots on an X11 window.");
 
 static PyObject *
 C_g2_open_X11X(PyObject *self, PyObject *args)
@@ -238,7 +258,10 @@ C_g2_open_X11X(PyObject *self, PyObject *args)
 #endif
 #ifdef _G2_PS_H
 
-PyDoc_STRVAR(doc_g2_open_PS, "--");
+PyDoc_STRVAR(doc_g2_open_PS,
+             "G2 g2_open_PS(str filename, enum paper, enum orientation)\n"
+             "Construct an object of class G2 that writes a PostScript file.\n"
+             "e.g. : graph = g2_open_PS(\"foo.ps\", g2_A4, g2_PS_land)");
 
 static PyObject *
 C_g2_open_PS(PyObject *self, PyObject *args)
@@ -256,7 +279,10 @@ C_g2_open_PS(PyObject *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_open_EPSF, "--");
+PyDoc_STRVAR(doc_g2_open_EPSF,
+             "G2 g2_open_EPSF(str filename)\n"
+             "Construct an object of class G2 that writes\n"
+             "an Encapsulated PostScript file.\n");
 
 static PyObject *
 C_g2_open_EPSF(PyObject *self, PyObject *args)
@@ -273,7 +299,10 @@ C_g2_open_EPSF(PyObject *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_open_EPSF_CLIP, "--");
+PyDoc_STRVAR(doc_g2_open_EPSF_CLIP,
+             "G2 g2_open_EPSF_CLIP(str filename, int width, int height)\n"
+             "Construct an object of class G2 that writes\n"
+             "a clipped Encapsulated PostScript file.\n");
 
 static PyObject *
 C_g2_open_EPSF_CLIP(PyObject *self, PyObject *args)
@@ -294,7 +323,10 @@ C_g2_open_EPSF_CLIP(PyObject *self, PyObject *args)
 #endif
 #ifdef _G2_GD_H
 
-PyDoc_STRVAR(doc_g2_open_gd, "--");
+PyDoc_STRVAR(doc_g2_open_gd,
+             "G2 g2_open_gd(str filename, int width, int height, enum gd_type)\n"
+             "   'gd_type' must be one of g2_gd_jpeg, g2_gd_png or g2_gd_gif.\n"
+             "Construct an object of class G2 that writes a jpeg/png/gif file.");
 
 static PyObject *
 C_g2_open_gd(PyObject *self, PyObject *args)
@@ -315,7 +347,10 @@ C_g2_open_gd(PyObject *self, PyObject *args)
 #endif
 #ifdef _G2_FIG_H
 
-PyDoc_STRVAR(doc_g2_open_FIG, "--");
+PyDoc_STRVAR(doc_g2_open_FIG,
+             "G2 g2_open_FIG(str filename)\n"
+             "Construct an object of class G2 that plots in the FIG 3.2 format.\n"
+             "See http://www.xfig.org.");
 
 static PyObject *
 C_g2_open_FIG(PyObject *self, PyObject *args)
@@ -335,13 +370,17 @@ C_g2_open_FIG(PyObject *self, PyObject *args)
 #endif
 #ifdef _G2_WIN32_H
 
-PyDoc_STRVAR(doc_g2_open_win32, "--");
+PyDoc_STRVAR(doc_g2_open_win32,
+             "G2 g2_open_win32(int width, int height, str name, enum win32_type)\n"
+             "   'name' is either a file name or a window title.\n"
+             "   'win32_type' is either g2_win32 or g2_wmf32.\n"
+             "Construct an object of class G2 that plots on an MS Windows window or metafile.");
 
 static PyObject *
 C_g2_open_win32(PyObject *self, PyObject *args)
 {
    int width, height, win32_type;
-   const char *name; /* filename or window title */
+   const char *name; /* file name or window title */
 
    if (PyArg_ParseTuple(args, "iisi", &width, &height, &name, &win32_type)) {
       G2 * const obj = (G2 *) PyType_GenericAlloc(&G2_Type, 0);
@@ -450,7 +489,10 @@ add_enums(PyObject *m)
 
 /* methods that operate on a single device */
 
-PyDoc_STRVAR(doc_g2_attach, "--");
+PyDoc_STRVAR(doc_g2_attach,
+             "g2_attach(G2 graph)\n"
+             "Attach an object of class G2 to a virtual device.\n"
+             "e.g. : graph.g2_attach(g2_open_X11(800, 600))");
 
 static PyObject *
 C_g2_attach(G2 *self, PyObject *args)
@@ -464,7 +506,9 @@ C_g2_attach(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_detach, "--");
+PyDoc_STRVAR(doc_g2_detach,
+             "g2_detach(G2 graph)\n"
+             "Detach an object of class G2 from a virtual device.");
 
 static PyObject *
 C_g2_detach(G2 *self, PyObject *args)
@@ -478,7 +522,11 @@ C_g2_detach(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_ink, "--");
+PyDoc_STRVAR(doc_g2_ink,
+             "int g2_ink(float red, float green, float blue)\n"
+             "Return an ink of the specified color.\n"
+             "Arguments must be between 0 and 1.\n"
+             "Use only on instances of class G2 that represent a physical device.");
 
 static PyObject *
 C_g2_ink(G2 *self, PyObject *args) /* only on a physical device */
@@ -492,7 +540,11 @@ C_g2_ink(G2 *self, PyObject *args) /* only on a physical device */
 
 /* methods that can operate on multiple devices */
 
-PyDoc_STRVAR(doc_g2_close, "--");
+PyDoc_STRVAR(doc_g2_close,
+             "g2_close()\n"
+             "Close and delete a device.\n"
+             "Later, garbage collection will delete\n"
+             "the now useless object of class G2.");
 
 static PyObject *
 C_g2_close(G2 *self)
@@ -501,7 +553,10 @@ C_g2_close(G2 *self)
    Py_RETURN_NONE;
 }
 
-PyDoc_STRVAR(doc_g2_set_auto_flush, "--");
+PyDoc_STRVAR(doc_g2_set_auto_flush,
+             "g2_set_auto_flush(bool on_off)\n"
+             "Flush or not after each graphical operation.\n"
+             "Note : this slows g2 down considerably.");
 
 static PyObject *
 C_g2_set_auto_flush(G2 *self, PyObject *args)
@@ -515,7 +570,9 @@ C_g2_set_auto_flush(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_flush, "--");
+PyDoc_STRVAR(doc_g2_flush,
+             "g2_flush()\n"
+             "Flush the device (or devices in case of a virtual device).");
 
 static PyObject *
 C_g2_flush(G2 *self)
@@ -524,7 +581,9 @@ C_g2_flush(G2 *self)
    Py_RETURN_NONE;
 }
 
-PyDoc_STRVAR(doc_g2_save, "--");
+PyDoc_STRVAR(doc_g2_save,
+             "g2_save()\n"
+             "Save the output. This is implied by g2_close.");
 
 static PyObject *
 C_g2_save(G2 *self)
@@ -533,7 +592,10 @@ C_g2_save(G2 *self)
    Py_RETURN_NONE;
 }
 
-PyDoc_STRVAR(doc_g2_set_coordinate_system, "--");
+PyDoc_STRVAR(doc_g2_set_coordinate_system,
+             "g2_set_coordinate_system(float x_origin, float y_origin,\n"
+             "                         float x_multiply, float y_multiply)\n"
+             "Set a user defined co-ordinate system.");
 
 static PyObject *
 C_g2_set_coordinate_system(G2 *self, PyObject *args)
@@ -547,7 +609,10 @@ C_g2_set_coordinate_system(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_pen, "--");
+PyDoc_STRVAR(doc_g2_pen,
+             "g2_pen(int pen)\n"
+             "Set pen color for all following operations. See also g2_ink.\n"
+             "e.g. : graph.g2_pen(graph.g2_ink(.25, .6, 0))");
 
 static PyObject *
 C_g2_pen(G2 *self, PyObject *args)
@@ -561,7 +626,15 @@ C_g2_pen(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_set_dash, "--");
+PyDoc_STRVAR(doc_g2_set_dash,
+             "g2_set_dash(list pattern)\n"
+             "   'pattern' : [length, ... length]\n"
+             "               In the list ints and floats can be mixed freely.\n"
+             "Set line dash. See also g2_set_solid.\n"
+             "e.g. : g2_set_dash([4, 2])\n"
+             "       for lines with dashes twice as long\n"
+             "       as the white spaces between them.\n"
+             "Note : this one argument form is Python specific.");
 
 static PyObject *
 C_g2_set_dash(G2 *self, PyObject *args)
@@ -571,7 +644,10 @@ C_g2_set_dash(G2 *self, PyObject *args)
 
 /* python specific function : more explicit than passing an empty list */
 
-PyDoc_STRVAR(doc_g2_set_solid, "--");
+PyDoc_STRVAR(doc_g2_set_solid,
+             "g2_set_solid()\n"
+             "Set the line style to solid. See also g2_set_dash.\n"
+             "This method is Python specific.");
 
 static PyObject *
 C_g2_set_solid(G2 *self)
@@ -580,7 +656,9 @@ C_g2_set_solid(G2 *self)
    Py_RETURN_NONE;
 }
 
-PyDoc_STRVAR(doc_g2_set_font_size, "--");
+PyDoc_STRVAR(doc_g2_set_font_size,
+             "g2_set_font_size(float size)\n"
+             "Set the font size.");
 
 static PyObject *
 C_g2_set_font_size(G2 *self, PyObject *args)
@@ -594,7 +672,9 @@ C_g2_set_font_size(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_set_line_width, "--");
+PyDoc_STRVAR(doc_g2_set_line_width,
+             "g2_set_line_width(float size)\n"
+             "Set the line width.");
 
 static PyObject *
 C_g2_set_line_width(G2 *self, PyObject *args)
@@ -608,7 +688,9 @@ C_g2_set_line_width(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_clear_palette, "--");
+PyDoc_STRVAR(doc_g2_clear_palette,
+             "g2_clear_palette()\n"
+             "Remove all inks.");
 
 static PyObject *
 C_g2_clear_palette(G2 *self)
@@ -617,7 +699,9 @@ C_g2_clear_palette(G2 *self)
    Py_RETURN_NONE;
 }
 
-PyDoc_STRVAR(doc_g2_reset_palette, "--");
+PyDoc_STRVAR(doc_g2_reset_palette,
+             "g2_reset_palette()\n"
+             "Remove all inks and reallocate the default colors.");
 
 static PyObject *
 C_g2_reset_palette(G2 *self)
@@ -626,7 +710,9 @@ C_g2_reset_palette(G2 *self)
    Py_RETURN_NONE;
 }
 
-PyDoc_STRVAR(doc_g2_allocate_basic_colors, "--");
+PyDoc_STRVAR(doc_g2_allocate_basic_colors,
+             "g2_allocate_basic_colors()\n"
+             "Allocate the default colors.");
 
 static PyObject *
 C_g2_allocate_basic_colors(G2 *self)
@@ -635,7 +721,9 @@ C_g2_allocate_basic_colors(G2 *self)
    Py_RETURN_NONE;
 }
 
-PyDoc_STRVAR(doc_g2_clear, "--");
+PyDoc_STRVAR(doc_g2_clear,
+             "g2_clear()\n"
+             "Clear the device.");
 
 static PyObject *
 C_g2_clear(G2 *self)
@@ -644,7 +732,10 @@ C_g2_clear(G2 *self)
    Py_RETURN_NONE;
 }
 
-PyDoc_STRVAR(doc_g2_set_background, "--");
+PyDoc_STRVAR(doc_g2_set_background,
+             "g2_set_background(int pen)\n"
+             "Set the background color.\n"
+             "e.g. : graph.g2_set_background(graph.g2_ink(.25, .6, 0))");
 
 static PyObject *
 C_g2_set_background(G2 *self, PyObject *args)
@@ -658,7 +749,9 @@ C_g2_set_background(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_move, "--");
+PyDoc_STRVAR(doc_g2_move,
+             "g2_move(float x, float y)\n"
+             "Move graphical cursor to (x, y).");
 
 static PyObject *
 C_g2_move(G2 *self, PyObject *args)
@@ -672,7 +765,10 @@ C_g2_move(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_move_r, "--");
+PyDoc_STRVAR(doc_g2_move_r,
+             "g2_move_r(float x, float y)\n"
+             "Move graphical cursor to (x, y) from\n"
+             "the current graphical cursor position.");
 
 static PyObject *
 C_g2_move_r(G2 *self, PyObject *args)
@@ -686,7 +782,9 @@ C_g2_move_r(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_plot, "--");
+PyDoc_STRVAR(doc_g2_plot,
+             "g2_plot(float x, float y)\n"
+             "Plot a dot at position (x, y).");
 
 static PyObject *
 C_g2_plot(G2 *self, PyObject *args)
@@ -700,7 +798,9 @@ C_g2_plot(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_plot_r, "--");
+PyDoc_STRVAR(doc_g2_plot_r,
+             "g2_plot_r(float x, float y)\n"
+             "Plot a dot at (x, y) from the current graphical cursor position.");
 
 static PyObject *
 C_g2_plot_r(G2 *self, PyObject *args)
@@ -714,7 +814,9 @@ C_g2_plot_r(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_line, "--");
+PyDoc_STRVAR(doc_g2_line,
+             "g2_line(float x1, float y1, float x2, float y2)\n"
+             "Plot a line from (x1, y1) to (x2, y2).");
 
 static PyObject *
 C_g2_line(G2 *self, PyObject *args)
@@ -728,7 +830,10 @@ C_g2_line(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_line_r, "--");
+PyDoc_STRVAR(doc_g2_line_r,
+             "g2_line_r(float x, float y)\n"
+             "Plot a line from the current graphical cursor position\n"
+             "to (x, y) from there.");
 
 static PyObject *
 C_g2_line_r(G2 *self, PyObject *args)
@@ -742,7 +847,9 @@ C_g2_line_r(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_line_to, "--");
+PyDoc_STRVAR(doc_g2_line_to,
+             "g2_line_to(float x, float y)\n"
+             "Plot a line from the current graphical cursor position to (x, y).");
 
 static PyObject *
 C_g2_line_to(G2 *self, PyObject *args)
@@ -756,7 +863,13 @@ C_g2_line_to(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_poly_line, "--");
+PyDoc_STRVAR(doc_g2_poly_line,
+             "g2_poly_line(list points)\n"
+             "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
+             "              In the list ints and floats can be mixed freely.\n"
+             "Plot a line through the points in the list.\n"
+             "e.g. : graph.g2_poly_line([2, 4, 2.5, 6.25, 3, 9, 3.5, 12.25])\n"
+             "Note : this one argument form is Python specific.");
 
 static PyObject *
 C_g2_poly_line(G2 *self, PyObject *args)
@@ -764,7 +877,10 @@ C_g2_poly_line(G2 *self, PyObject *args)
    return helper_il(self, args, g2_poly_line);
 }
 
-PyDoc_STRVAR(doc_g2_triangle, "--");
+PyDoc_STRVAR(doc_g2_triangle,
+             "g2_triangle(float x1, float y1, float x2, float y2,\n"
+             "            float x3, float y3)\n"
+             "Plot a triangle through the points (x1, y1), (x2, y2) and (x3, y3).");
 
 static PyObject *
 C_g2_triangle(G2 *self, PyObject *args)
@@ -778,7 +894,10 @@ C_g2_triangle(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_filled_triangle, "--");
+PyDoc_STRVAR(doc_g2_filled_triangle,
+             "g2_filled_triangle(float x1, float y1, float x2, float y2,\n"
+             "                   float x3, float y3)\n"
+             "Fill a triangle through the points (x1, y1), (x2, y2) and (x3, y3).");
 
 static PyObject *
 C_g2_filled_triangle(G2 *self, PyObject *args)
@@ -792,7 +911,9 @@ C_g2_filled_triangle(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_rectangle, "--");
+PyDoc_STRVAR(doc_g2_rectangle,
+             "g2_rectangle(float x1, float y1, float x2, float y2)\n"
+             "Plot a rectangle through the points (x1, y1) and (x2, y2).");
 
 static PyObject *
 C_g2_rectangle(G2 *self, PyObject *args)
@@ -806,7 +927,9 @@ C_g2_rectangle(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_filled_rectangle, "--");
+PyDoc_STRVAR(doc_g2_filled_rectangle,
+             "g2_filled_rectangle(float x1, float y1, float x2, float y2)\n"
+             "Fill a rectangle through the points (x1, y1) and (x2, y2).");
 
 static PyObject *
 C_g2_filled_rectangle(G2 *self, PyObject *args)
@@ -820,7 +943,13 @@ C_g2_filled_rectangle(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_polygon, "--");
+PyDoc_STRVAR(doc_g2_polygon,
+             "g2_polygon(list points)\n"
+             "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
+             "              In the list ints and floats can be mixed freely.\n"
+             "Plot a polygon through the points in the list.\n"
+             "e.g. : graph.g2_polygon([3, 1, 1, 3, 3, 5, 5, 3])\n"
+             "Note : this one argument form is Python specific.");
 
 static PyObject *
 C_g2_polygon(G2 *self, PyObject *args)
@@ -828,7 +957,12 @@ C_g2_polygon(G2 *self, PyObject *args)
    return helper_il(self, args, g2_polygon);
 }
 
-PyDoc_STRVAR(doc_g2_filled_polygon, "--");
+PyDoc_STRVAR(doc_g2_filled_polygon,
+             "g2_filled_polygon(list points)\n"
+             "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
+             "              In the list ints and floats can be mixed freely.\n"
+             "Fill a polygon through the points in the list.\n"
+             "Note : this one argument form is Python specific.");
 
 static PyObject *
 C_g2_filled_polygon(G2 *self, PyObject *args)
@@ -836,7 +970,9 @@ C_g2_filled_polygon(G2 *self, PyObject *args)
    return helper_il(self, args, g2_filled_polygon);
 }
 
-PyDoc_STRVAR(doc_g2_circle, "--");
+PyDoc_STRVAR(doc_g2_circle,
+             "g2_circle(float x, float y, float r)\n"
+             "Plot a circle with center (x, y) and radius r.");
 
 static PyObject *
 C_g2_circle(G2 *self, PyObject *args)
@@ -850,7 +986,9 @@ C_g2_circle(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_filled_circle, "--");
+PyDoc_STRVAR(doc_g2_filled_circle,
+             "g2_filled_circle(float x, float y, float r)\n"
+             "Fill a circle with center (x, y) and radius r.");
 
 static PyObject *
 C_g2_filled_circle(G2 *self, PyObject *args)
@@ -864,7 +1002,9 @@ C_g2_filled_circle(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_ellipse, "--");
+PyDoc_STRVAR(doc_g2_ellipse,
+             "g2_ellipse(float x, float y, float r1, float r2)\n"
+             "Plot an ellipse with center (x, y) and radii r1 and r2.");
 
 static PyObject *
 C_g2_ellipse(G2 *self, PyObject *args)
@@ -878,7 +1018,9 @@ C_g2_ellipse(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_filled_ellipse, "--");
+PyDoc_STRVAR(doc_g2_filled_ellipse,
+             "g2_filled_ellipse(float x, float y, float r1, float r2)\n"
+             "Fill an ellipse with center (x, y) and radii r1 and r2.");
 
 static PyObject *
 C_g2_filled_ellipse(G2 *self, PyObject *args)
@@ -892,7 +1034,11 @@ C_g2_filled_ellipse(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_arc, "--");
+PyDoc_STRVAR(doc_g2_arc,
+             "g2_arc(float x, float y, float r1, float r2,\n"
+             "       float a1, float a2)\n"
+             "Plot an arc with center (x, y), radii r1 and r2,\n"
+             "and angles a1 and a2.");
 
 static PyObject *
 C_g2_arc(G2 *self, PyObject *args)
@@ -906,7 +1052,11 @@ C_g2_arc(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_filled_arc, "--");
+PyDoc_STRVAR(doc_g2_filled_arc,
+             "g2_filled_arc(float x, float y, float r1, float r2,\n"
+             "              float a1, float a2)\n"
+             "Fill an arc with center (x, y), radii r1 and r2,\n"
+             "and angles a1 and a2.");
 
 static PyObject *
 C_g2_filled_arc(G2 *self, PyObject *args)
@@ -920,7 +1070,9 @@ C_g2_filled_arc(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_string, "--");
+PyDoc_STRVAR(doc_g2_string,
+             "g2_string(float x, float y, str s)\n"
+             "Write string s at position (x, y).");
 
 static PyObject *
 C_g2_string(G2 *self, PyObject *args)
@@ -935,7 +1087,16 @@ C_g2_string(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_image, "--");
+PyDoc_STRVAR(doc_g2_image,
+             "g2_image(float x, float y, list list_of_lists)\n"
+             "   Each list in list_of_lists represents one row,\n"
+             "   where a row is a list of pens.\n"
+             "   The longest row determines the image width.\n"
+             "   Shorter rows are filled with pen 0.\n"
+             "   The number of lists in list_of_lists determines the image height.\n"
+             "e.g. : g2_image(5, 7, [[2, 4, 6], [3, 6, 9], [4, 8, 12]])\n"
+             "       plots a 3x3 bitmap at position (5, 7).\n"
+             "Note : this three argument form is Python specific.");
 
 static PyObject *
 C_g2_image(G2 *self, PyObject *args)
@@ -995,22 +1156,31 @@ C_g2_image(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_set_QP, "--");
+PyDoc_STRVAR(doc_g2_set_QP,
+             "g2_set_QP(float size, enum shape)\n"
+             "   'shape' must be either QPrect or QPcirc.\n"
+             "Set QuasiPixel size and shape. See g2_plot_QP.");
 
 static PyObject *
 C_g2_set_QP(G2 *self, PyObject *args)
 {
-   double d;
+   double size;
    int shape;
 
-   if (PyArg_ParseTuple(args, "di", &d, &shape)) {
-      g2_set_QP(self->dev, d, shape);
+   if (PyArg_ParseTuple(args, "di", &size, &shape)) {
+      g2_set_QP(self->dev, size, shape);
       Py_RETURN_NONE;
    }
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_plot_QP, "--");
+PyDoc_STRVAR(doc_g2_plot_QP,
+             "g2_plot_QP(float x, float y)\n"
+             "Plot a Quasi Pixel at position (x, y).\n"
+             "Quasi Pixels make it easy to plot cellular automata and related\n"
+             "images. QP is simply a big pixel as defined by g2_set_QP.\n"
+             "Co-ordinates are scaled accordingly, so no recalculation is needed\n"
+             "on the client side.");
 
 static PyObject *
 C_g2_plot_QP(G2 *self, PyObject *args)
@@ -1024,7 +1194,12 @@ C_g2_plot_QP(G2 *self, PyObject *args)
    return NULL;
 }
 
-PyDoc_STRVAR(doc_g2_query_pointer, "--");
+PyDoc_STRVAR(doc_g2_query_pointer,
+             "[float x, float y, int button] g2_query_pointer()\n"
+             "Query pointer position and button state (e.g. mouse for X11).\n"
+             "The results are returned in a list of two floats and one int.\n"
+             "e.g. : x, y, button = g2_query_pointer()\n"
+             "Note : this no argument form is Python specific.");
 
 static PyObject *
 C_g2_query_pointer(G2 *self)
@@ -1039,7 +1214,15 @@ C_g2_query_pointer(G2 *self)
    return r;
 }
 
-PyDoc_STRVAR(doc_g2_spline, "--");
+PyDoc_STRVAR(doc_g2_spline,
+             "g2_spline(list points, int ppdp)\n"
+             "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
+             "              In the list ints and floats can be mixed freely.\n"
+             "   'ppdp'   : the number of interpolated points per data point.\n"
+             "              The higher 'ppdp', the rounder the spline curve.\n"
+             "Plot a spline curve through the points in the list\n"
+             "using Young's method of successive over-relaxation.\n"
+             "Note : this two argument form is Python specific.");
 
 static PyObject *
 C_g2_spline(G2 *self, PyObject *args)
@@ -1047,7 +1230,9 @@ C_g2_spline(G2 *self, PyObject *args)
    return helper_ili(self, args, g2_spline);
 }
 
-PyDoc_STRVAR(doc_g2_filled_spline, "--");
+PyDoc_STRVAR(doc_g2_filled_spline,
+             "g2_filled_spline(list points, int ppdp)\n"
+             "As g2_spline, but filled.");
 
 static PyObject *
 C_g2_filled_spline(G2 *self, PyObject *args)
@@ -1055,7 +1240,15 @@ C_g2_filled_spline(G2 *self, PyObject *args)
    return helper_ili(self, args, g2_filled_spline);
 }
 
-PyDoc_STRVAR(doc_g2_b_spline, "--");
+PyDoc_STRVAR(doc_g2_b_spline,
+             "g2_b_spline(list points, int ppdp)\n"
+             "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
+             "              In the list ints and floats can be mixed freely.\n"
+             "   'ppdp'   : the number of interpolated points per data point.\n"
+             "              The higher 'ppdp', the rounder the spline curve.\n"
+             "Plot a b-spline curve through the points in the list.\n"
+             "For most averaging purposes, this is the right spline.\n"
+             "Note : this two argument form is Python specific.");
 
 static PyObject *
 C_g2_b_spline(G2 *self, PyObject *args)
@@ -1063,7 +1256,9 @@ C_g2_b_spline(G2 *self, PyObject *args)
    return helper_ili(self, args, g2_b_spline);
 }
 
-PyDoc_STRVAR(doc_g2_filled_b_spline, "--");
+PyDoc_STRVAR(doc_g2_filled_b_spline,
+             "g2_filled_b_spline(list points, int ppdp)\n"
+             "As g2_b_spline, but filled.");
 
 static PyObject *
 C_g2_filled_b_spline(G2 *self, PyObject *args)
@@ -1071,7 +1266,17 @@ C_g2_filled_b_spline(G2 *self, PyObject *args)
    return helper_ili(self, args, g2_filled_b_spline);
 }
 
-PyDoc_STRVAR(doc_g2_raspln, "--");
+PyDoc_STRVAR(doc_g2_raspln,
+             "g2_raspln(list points, float tfact)\n"
+             "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
+             "              In the list ints and floats can be mixed freely.\n"
+             "   'tfact'  : tension factor between 0 (very rounded) and 2.\n"
+             "              With tfact 2, the curve is essentially a polyline\n"
+             "              through the given data points.\n"
+             "Plot a cubic polynomial through the points in the list. Each\n"
+             "Hermite polynomial between two data points consists of 40 lines.\n"
+             "See g2_splines.c for further information.\n"
+             "Note : this two argument form is Python specific.");
 
 static PyObject *
 C_g2_raspln(G2 *self, PyObject *args)
@@ -1079,7 +1284,9 @@ C_g2_raspln(G2 *self, PyObject *args)
    return helper_ild(self, args, g2_raspln);
 }
 
-PyDoc_STRVAR(doc_g2_filled_raspln, "--");
+PyDoc_STRVAR(doc_g2_filled_raspln,
+             "g2_filled_raspln(list points, float tfact)\n"
+             "As g2_raspln, but filled.");
 
 static PyObject *
 C_g2_filled_raspln(G2 *self, PyObject *args)
@@ -1087,7 +1294,13 @@ C_g2_filled_raspln(G2 *self, PyObject *args)
    return helper_ild(self, args, g2_filled_raspln);
 }
 
-PyDoc_STRVAR(doc_g2_para_3, "--");
+PyDoc_STRVAR(doc_g2_para_3,
+             "g2_para_3(list points)\n"
+             "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
+             "              In the list ints and floats can be mixed freely.\n"
+             "Plot a piecewise parametric interpolation polynomial of degree 3\n"
+             "through the given points, using Newton's Divided Differences method.\n"
+             "Note : this one argument form is Python specific.");
 
 static PyObject *
 C_g2_para_3(G2 *self, PyObject *args)
@@ -1095,7 +1308,9 @@ C_g2_para_3(G2 *self, PyObject *args)
    return helper_il(self, args, g2_para_3);
 }
 
-PyDoc_STRVAR(doc_g2_filled_para_3, "--");
+PyDoc_STRVAR(doc_g2_filled_para_3,
+             "g2_filled_para_3(list points)\n"
+             "As g2_para_3, but filled.");
 
 static PyObject *
 C_g2_filled_para_3(G2 *self, PyObject *args)
@@ -1103,7 +1318,9 @@ C_g2_filled_para_3(G2 *self, PyObject *args)
    return helper_il(self, args, g2_filled_para_3);
 }
 
-PyDoc_STRVAR(doc_g2_para_5, "--");
+PyDoc_STRVAR(doc_g2_para_5,
+             "g2_para_5(list points)\n"
+             "As g2_para_3, but with degree 5 instead of 3.");
 
 static PyObject *
 C_g2_para_5(G2 *self, PyObject *args)
@@ -1111,7 +1328,9 @@ C_g2_para_5(G2 *self, PyObject *args)
    return helper_il(self, args, g2_para_5);
 }
 
-PyDoc_STRVAR(doc_g2_filled_para_5, "--");
+PyDoc_STRVAR(doc_g2_filled_para_5,
+             "g2_filled_para_5(list points)\n"
+             "As g2_para_5, but filled.");
 
 static PyObject *
 C_g2_filled_para_5(G2 *self, PyObject *args)
@@ -1179,7 +1398,8 @@ static PyMethodDef G2_methods[] = {
 };
 
 static PyMemberDef G2_members[] = { /* cf. structmember.h */
-   { "dev", T_INT, offsetof(G2, dev), READONLY, "g2 device number" }, /* flags 0 : no restriction */
+   { "dev", T_INT, offsetof(G2, dev), READONLY, "g2 device number\n"
+     "readonly : set by g2_open_..." }, /* flags 0 : no restriction */
    { NULL }
 };
 
