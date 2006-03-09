@@ -1,5 +1,6 @@
 /*****************************************************************************
 **  Copyright (C) 1998-2001  Ljubomir Milanovic & Horst Wagner
+**  Copyright (C) 1999-2006  Tijs Michels
 **  This file is part of the g2 library
 **
 **  This library is free software; you can redistribute it and/or
@@ -28,6 +29,11 @@
 #include <stdio.h>
 #include "g2.h"
 #include "g2_util.h"
+
+/**
+ * \ingroup graphic
+ * \defgroup splines splines
+ */
 
 typedef void calc_f( int, const double *, int,    double *);
 typedef void calc_d( int, const double *, double, double *);
@@ -185,27 +191,40 @@ void g2_c_spline(int n, const double *points, int m, double *sxy)
    g2_free(x);
 }
 
-/*
- *	FORMAL ARGUMENTS:
+/**
  *
- *	id			device id
- *	n			number of data points
- *	points			data points (x[i],y[i])
- *	o			number of interpolated points per data point
+ * Using Young's method of successive over-relaxation,
+ * plot a spline curve with \a o interpolated points per data point.
+ * So the larger \a o, the more fluent the curve.
  *
- *	Given an array of n data points {x[1], y[1], ... x[n], y[n]} plot a
- *	spline curve on device id with o interpolated points per data point.
- *	So the larger o, the more fluent the curve.
+ * \param dev device id
+ * \param n number of data points (not the size of buffer \a points)
+ * \param points buffer of \a n data points x1, y1, ... xn, yn
+ * \param o number of interpolated points per data point
+ *
+ * \ingroup splines
  */
-
-void g2_spline(int id, int n, double *points, int o)
+void g2_spline(int dev, int n, double *points, int o)
 {
-   g2_p_spline(id, n, points, o, g2_c_spline);
+   g2_p_spline(dev, n, points, o, g2_c_spline);
 }
 
-void g2_filled_spline(int id, int n, double *points, int o)
+/**
+ *
+ * Using Young's method of successive over-relaxation,
+ * plot a filled spline curve with \a o interpolated points per data point.
+ * So the larger \a o, the more fluent the curve.
+ *
+ * \param dev device id
+ * \param n number of data points (not the size of buffer \a points)
+ * \param points buffer of \a n data points x1, y1, ... xn, yn
+ * \param o number of interpolated points per data point
+ *
+ * \ingroup splines
+ */
+void g2_filled_spline(int dev, int n, double *points, int o)
 {
-   g2_p_filled_spline(id, n, points, o, g2_c_spline);
+   g2_p_filled_spline(dev, n, points, o, g2_c_spline);
 }
 
 void g2_c_b_spline(int n, const double *points, int m, double *sxy)
@@ -273,23 +292,40 @@ void g2_c_b_spline(int n, const double *points, int m, double *sxy)
    g2_free(x);
 }
 
-/*
- *	FORMAL ARGUMENTS:
+/**
  *
- *	id			device id
- *	n			number of data points
- *	points			data points (x[i],y[i])
- *	o			number of interpolated points per data point
+ * Plot a b-spline curve with \a o interpolated points per data point.
+ * So the larger \a o, the more fluent the curve.
+ * For most averaging purposes, this is the right spline.
+ *
+ * \param dev device id
+ * \param n number of data points (not the size of buffer \a points)
+ * \param points buffer of \a n data points x1, y1, ... xn, yn
+ * \param o number of interpolated points per data point
+ *
+ * \ingroup splines
  */
-
-void g2_b_spline(int id, int n, double *points, int o)
+void g2_b_spline(int dev, int n, double *points, int o)
 {
-   g2_p_spline(id, n, points, o, g2_c_b_spline);
+   g2_p_spline(dev, n, points, o, g2_c_b_spline);
 }
 
-void g2_filled_b_spline(int id, int n, double *points, int o)
+/**
+ *
+ * Plot a filled b-spline curve with \a o interpolated points per data point.
+ * So the larger \a o, the more fluent the curve.
+ * For most averaging purposes, this is the right spline.
+ *
+ * \param dev device id
+ * \param n number of data points (not the size of buffer \a points)
+ * \param points buffer of \a n data points x1, y1, ... xn, yn
+ * \param o number of interpolated points per data point
+ *
+ * \ingroup splines
+ */
+void g2_filled_b_spline(int dev, int n, double *points, int o)
 {
-   g2_p_filled_spline(id, n, points, o, g2_c_b_spline);
+   g2_p_filled_spline(dev, n, points, o, g2_c_b_spline);
 }
 
 /*
@@ -415,42 +451,48 @@ void g2_c_raspln(int n, const double *points, double tn, double *sxy)
    g2_free(x);
 }
 
-void g2_raspln(int id, int n, double *points, double tn)
-
-/*
- *	FORMAL ARGUMENTS:
+/**
  *
- *	id			device id
- *	n			number of data points
- *	points			data points (x[i],y[i])
- *	tn			tension factor [0.0, 2.0]
- *				0.0  very rounded
- *				2.0  not rounded at all
+ * Plot a piecewise cubic polynomial with adjustable roundness
+ * through the given data points.
+ * Each Hermite polynomial between two data points is made up of 40 lines.
+ * Tension factor \a tn must be between 0.0 (very rounded)
+ * and 2.0 (not rounded at all, i.e. essentially a polyline).
+ *
+ * \param dev device id
+ * \param n number of data points (not the size of buffer \a points)
+ * \param points buffer of \a n data points x1, y1, ... xn, yn
+ * \param tn tension factor in the range [0.0, 2.0]
+ *
+ * \ingroup splines
  */
-
+void g2_raspln(int dev, int n, double *points, double tn)
 {
    const int m = (n-1)*nb+1;
    double * const sxy = (double *) g2_malloc(m*2*sizeof(double)); /* coords of the entire spline curve */
 
    g2_c_raspln(n, points, tn, sxy);
-   g2_poly_line(id, m, sxy);
+   g2_poly_line(dev, m, sxy);
 
    g2_free(sxy);
 }
 
-void g2_filled_raspln(int id, int n, double *points, double tn)
-
-/*
- *	FORMAL ARGUMENTS:
+/**
  *
- *	id			device id
- *	n			number of data points
- *	points			data points (x[i],y[i])
- *	tn			tension factor [0.0, 2.0]
- *				0.0  very rounded
- *				2.0  not rounded at all
+ * Plot a filled piecewise cubic polynomial with adjustable roundness
+ * through the given data points.
+ * Each Hermite polynomial between two data points is made up of 40 lines.
+ * Tension factor \a tn must be between 0.0 (very rounded)
+ * and 2.0 (not rounded at all, i.e. essentially a polyline).
+ *
+ * \param dev device id
+ * \param n number of data points (not the size of buffer \a points)
+ * \param points buffer of \a n data points x1, y1, ... xn, yn
+ * \param tn tension factor in the range [0.0, 2.0]
+ *
+ * \ingroup splines
  */
-
+void g2_filled_raspln(int dev, int n, double *points, double tn)
 {
    const int m = (n-1)*nb+2;
    double * const sxy = (double *) g2_malloc(m*2*sizeof(double)); /* coords of the entire spline curve */
@@ -458,7 +500,7 @@ void g2_filled_raspln(int id, int n, double *points, double tn)
    g2_c_raspln(n, points, tn, sxy);
    sxy[m+m-2] = points[n+n-2];
    sxy[m+m-1] = points[1];
-   g2_filled_polygon(id, m, sxy);
+   g2_filled_polygon(dev, m, sxy);
 
    g2_free(sxy);
 }
@@ -660,22 +702,38 @@ void g2_c_para_3(int n, const double *points, int m, double *sxy)
    sxy[(n - 1) * nb2 + 1] = points[n+n-1];
 }
 
-/*
- *	FORMAL ARGUMENTS:
+/**
  *
- *	id			device id
- *	n			number of data points
- *	points			data points (x[i],y[i])
+ * Using Newton's Divided Differences method, plot a piecewise
+ * parametric interpolation polynomial of degree 3
+ * through the given data points.
+ *
+ * \param dev device id
+ * \param n number of data points (not the size of buffer \a points)
+ * \param points buffer of \a n data points x1, y1, ... xn, yn
+ *
+ * \ingroup splines
  */
-
-void g2_para_3(int id, int n, double *points)
+void g2_para_3(int dev, int n, double *points)
 {
-   g2_p_spline(id, n, points, nb, g2_c_para_3);
+   g2_p_spline(dev, n, points, nb, g2_c_para_3);
 }
 
-void g2_filled_para_3(int id, int n, double *points)
+/**
+ *
+ * Using Newton's Divided Differences method, plot a filled piecewise
+ * parametric interpolation polynomial of degree 3
+ * through the given data points.
+ *
+ * \param dev device id
+ * \param n number of data points (not the size of buffer \a points)
+ * \param points buffer of \a n data points x1, y1, ... xn, yn
+ *
+ * \ingroup splines
+ */
+void g2_filled_para_3(int dev, int n, double *points)
 {
-   g2_p_filled_spline(id, n, points, nb, g2_c_para_3);
+   g2_p_filled_spline(dev, n, points, nb, g2_c_para_3);
 }
 
 /*
@@ -767,20 +825,36 @@ void g2_c_para_5(int n, const double *points, int m, double *sxy)
    sxy[(n - 1) * nb2 + 1] = points[n+n-1];
 }
 
-/*
- *	FORMAL ARGUMENTS:
+/**
  *
- *	id			device id
- *	n			number of data points
- *	points			data points (x[i],y[i])
+ * Using Newton's Divided Differences method, plot a piecewise
+ * parametric interpolation polynomial of degree 5
+ * through the given data points.
+ *
+ * \param dev device id
+ * \param n number of data points (not the size of buffer \a points)
+ * \param points buffer of \a n data points x1, y1, ... xn, yn
+ *
+ * \ingroup splines
  */
-
-void g2_para_5(int id, int n, double *points)
+void g2_para_5(int dev, int n, double *points)
 {
-   g2_p_spline(id, n, points, nb, g2_c_para_5);
+   g2_p_spline(dev, n, points, nb, g2_c_para_5);
 }
 
-void g2_filled_para_5(int id, int n, double *points)
+/**
+ *
+ * Using Newton's Divided Differences method, plot a filled piecewise
+ * parametric interpolation polynomial of degree 5
+ * through the given data points.
+ *
+ * \param dev device id
+ * \param n number of data points (not the size of buffer \a points)
+ * \param points buffer of \a n data points x1, y1, ... xn, yn
+ *
+ * \ingroup splines
+ */
+void g2_filled_para_5(int dev, int n, double *points)
 {
-   g2_p_filled_spline(id, n, points, nb, g2_c_para_5);
+   g2_p_filled_spline(dev, n, points, nb, g2_c_para_5);
 }
