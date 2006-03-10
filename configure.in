@@ -66,6 +66,7 @@ LIBS="$X_LIBS -L/usr/local/lib"
 DO_PS='#'
 DO_FIG='#'
 DO_X11='#'
+DO_XDBE='#'
 DO_GD='#'
 DO_GIF='#'
 DO_WIN32='#'
@@ -76,6 +77,7 @@ DO_WIN32='#'
 #
 AC_CHECK_LIB(m,main,DO_PS='';DO_FIG='';LIBS="$LIBS -lm";AC_DEFINE(DO_PS) AC_DEFINE(DO_FIG),break)
 AC_CHECK_LIB(X11, main, DO_X11='';LIBS="$LIBS -lX11";AC_DEFINE(DO_X11))
+AC_CHECK_LIB(Xext, main, DO_XDBE='';LIBS="$LIBS -lXext";AC_DEFINE(DO_XDBE))
 AC_CHECK_LIB(gd, main, have_gd=yes, have_gd=no)
 if test "$have_gd" = yes
 then
@@ -106,6 +108,7 @@ fi
 AC_SUBST(DO_PS)
 AC_SUBST(DO_FIG)
 AC_SUBST(DO_X11)
+AC_SUBST(DO_XDBE)
 AC_SUBST(DO_WIN32)
 AC_SUBST(DO_GD)
 AC_SUBST(DO_GIF)
@@ -126,6 +129,7 @@ echo "Supported devices:"
 if test "$DO_PS"    != "#"; then echo "    PostScript"; fi
 if test "$DO_FIG"   != "#"; then echo "    FIG"; fi
 if test "$DO_X11"   != "#"; then echo "    X11"; fi
+if test "$DO_XDBE"  != "#"; then echo "    Xdbe"; fi
 if test "$DO_WIN32" != "#"; then echo "    Win32"; fi
 if test "$DO_GD"    != "#"; then echo "    GD"; fi
 if test "$DO_GIF"    != "#"; then echo "    GD (GIF)"; fi
@@ -135,9 +139,10 @@ echo "Unsupported devices:"
 if test "$DO_PS"     = "#"; then echo "    PostScript"; fi
 if test "$DO_FIG"    = "#"; then echo "    FIG"; fi
 if test "$DO_X11"    = "#"; then echo "    X11"; fi
+if test "$DO_XDBE"   = "#"; then echo "    Xdbe"; fi
 if test "$DO_WIN32"  = "#"; then echo "    Win32"; fi
 if test "$DO_GD"     = "#"; then echo "    GD"; fi
-if test "$DO_GD"     = "#"; then echo "    GD (GIF)"; fi
+if test "$DO_GIF"    = "#"; then echo "    GD (GIF)"; fi
 		   
 echo
 echo "Run 'make depend' to create dependencies."
