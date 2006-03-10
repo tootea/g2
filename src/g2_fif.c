@@ -62,6 +62,36 @@ F_REAL FIF(g2_open_ps)(F_CHAR *text, F_REAL *paper, F_REAL *orientation,
     return (F_REAL)rv;
 }
 
+F_REAL FIF(g2_open_epsf)(F_CHAR *text, F_CHAR_LENGTH length)
+{
+    char *str;
+    int rv;
+
+    str=g2_malloc((length+1)*sizeof(char));
+    strncpy(str, text, length);
+    str[length]='\0';
+    rv=g2_open_EPSF(str);
+    g2_free(str);
+    
+    return (F_REAL)rv;
+}
+
+F_REAL FIF(g2_open_epsf_clip)(F_CHAR *text, F_REAL *width, F_REAL *height,
+		       F_CHAR_LENGTH length)
+{
+    char *str;
+    int rv;
+
+    str=g2_malloc((length+1)*sizeof(char));
+    strncpy(str, text, length);
+    str[length]='\0';
+    rv=g2_open_PS(str, dtoi(*width), dtoi(*height));
+    g2_free(str);
+    
+    return (F_REAL)rv;
+}
+
+
 #endif /* DO_PS */
 
 /**********************************************************/
@@ -75,9 +105,59 @@ F_REAL FIF(g2_open_x11)(F_REAL *width, F_REAL *height)
     return (F_REAL)g2_open_X11(*width, *height);
 }
 
-/* g2_open_x11x is missing */
+F_REAL FIF(g2_open_x11x)( F_REAL *width, F_REAL *height, F_REAL *x, F_REAL *y,
+			  F_CHAR *text1, F_CHAR *text2, F_CHAR *text3,
+			  F_REAL *icon_width, F_REAL *icon_height,
+			  F_CHAR_LENGTH length1, F_CHAR_LENGTH length2, F_CHAR_LENGTH length3)
+{
+    char *str1,*str2,*str3;
+    int rv;
+
+    str1=g2_malloc((length1+1)*sizeof(char));
+    str2=g2_malloc((length2+1)*sizeof(char));
+    str3=g2_malloc((length3+1)*sizeof(char));
+    strncpy(str1, text1, length1);
+    strncpy(str2, text2, length2);
+    strncpy(str3, text3, length3);
+    str1[length1]='\0';
+    str2[length2]='\0';
+    str3[length3]='\0';
+    
+    rv=g2_open_X11X(dtoi(*width), dtoi(*height),
+                 dtoi(*x), dtoi(*y),
+		 str1, str2, str3,
+                 dtoi (*icon_width), dtoi(*icon_height));
+    g2_free(str1);
+    g2_free(str2);
+    g2_free(str3);
+    
+    return (F_REAL)rv;
+}
 
 #endif /* DO_X11 */
+
+/**********************************************************/
+
+#ifdef DO_WIN32
+
+#include "Win32/g2_Win32.h"
+
+F_REAL FIF(g2_open_win32)( F_REAL *width, F_REAL *height, F_CHAR *text, F_REAL *type,
+		       F_CHAR_LENGTH length)
+{
+    char *str;
+    int rv;
+
+    str=g2_malloc((length+1)*sizeof(char));
+    strncpy(str, text, length);
+    str[length]='\0';
+    rv=g2_open_win32(dtoi(*width), dtoi(*height), str, dtoi (*type));
+    g2_free(str);
+    
+    return (F_REAL)rv;
+}
+
+#endif /* DO_WIN32 */
 
 /**********************************************************/
 
@@ -106,6 +186,32 @@ F_REAL FIF(g2_open_gd)(F_CHAR *text, F_REAL *width, F_REAL *height, F_REAL *gd_t
 
 /**********************************************************/
 
+#ifdef DO_FIG
+
+#include "FIG/g2_FIG.h"
+
+F_REAL FIF(g2_open_fig)(F_CHAR *text,
+			F_CHAR_LENGTH length)
+
+
+{
+    char *str;
+    int rv;
+    
+    str=g2_malloc((length+1)*sizeof(char));
+    strncpy(str, text, length);
+    str[length]='\0';
+
+    rv=g2_open_FIG(str);
+    
+    g2_free(str);
+    
+    return (F_REAL)rv;
+}
+
+#endif /* DO_FIG */
+
+/**********************************************************/
 
 F_REAL FIF(g2_open_vd)(void)
 {
