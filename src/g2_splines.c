@@ -199,7 +199,7 @@ void g2_c_spline(int n, const double *points, int m, double *sxy)
  *
  * \param dev device id
  * \param n number of data points (not the size of buffer \a points)
- * \param points buffer of \a n data points x1, y1, ... xn, yn
+ * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  * \param o number of interpolated points per data point
  *
  * \ingroup splines
@@ -217,7 +217,7 @@ void g2_spline(int dev, int n, double *points, int o)
  *
  * \param dev device id
  * \param n number of data points (not the size of buffer \a points)
- * \param points buffer of \a n data points x1, y1, ... xn, yn
+ * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  * \param o number of interpolated points per data point
  *
  * \ingroup splines
@@ -300,7 +300,7 @@ void g2_c_b_spline(int n, const double *points, int m, double *sxy)
  *
  * \param dev device id
  * \param n number of data points (not the size of buffer \a points)
- * \param points buffer of \a n data points x1, y1, ... xn, yn
+ * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  * \param o number of interpolated points per data point
  *
  * \ingroup splines
@@ -318,7 +318,7 @@ void g2_b_spline(int dev, int n, double *points, int o)
  *
  * \param dev device id
  * \param n number of data points (not the size of buffer \a points)
- * \param points buffer of \a n data points x1, y1, ... xn, yn
+ * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  * \param o number of interpolated points per data point
  *
  * \ingroup splines
@@ -457,11 +457,11 @@ void g2_c_raspln(int n, const double *points, double tn, double *sxy)
  * through the given data points.
  * Each Hermite polynomial between two data points is made up of 40 lines.
  * Tension factor \a tn must be between 0.0 (very rounded)
- * and 2.0 (not rounded at all, i.e. essentially a polyline).
+ * and 2.0 (not rounded at all, i.e. essentially a \ref g2_poly_line "polyline").
  *
  * \param dev device id
  * \param n number of data points (not the size of buffer \a points)
- * \param points buffer of \a n data points x1, y1, ... xn, yn
+ * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  * \param tn tension factor in the range [0.0, 2.0]
  *
  * \ingroup splines
@@ -483,11 +483,11 @@ void g2_raspln(int dev, int n, double *points, double tn)
  * through the given data points.
  * Each Hermite polynomial between two data points is made up of 40 lines.
  * Tension factor \a tn must be between 0.0 (very rounded)
- * and 2.0 (not rounded at all, i.e. essentially a polyline).
+ * and 2.0 (not rounded at all, i.e. essentially a \ref g2_poly_line "polyline").
  *
  * \param dev device id
  * \param n number of data points (not the size of buffer \a points)
- * \param points buffer of \a n data points x1, y1, ... xn, yn
+ * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  * \param tn tension factor in the range [0.0, 2.0]
  *
  * \ingroup splines
@@ -710,7 +710,7 @@ void g2_c_para_3(int n, const double *points, int m, double *sxy)
  *
  * \param dev device id
  * \param n number of data points (not the size of buffer \a points)
- * \param points buffer of \a n data points x1, y1, ... xn, yn
+ * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  *
  * \ingroup splines
  */
@@ -727,7 +727,7 @@ void g2_para_3(int dev, int n, double *points)
  *
  * \param dev device id
  * \param n number of data points (not the size of buffer \a points)
- * \param points buffer of \a n data points x1, y1, ... xn, yn
+ * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  *
  * \ingroup splines
  */
@@ -833,7 +833,7 @@ void g2_c_para_5(int n, const double *points, int m, double *sxy)
  *
  * \param dev device id
  * \param n number of data points (not the size of buffer \a points)
- * \param points buffer of \a n data points x1, y1, ... xn, yn
+ * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  *
  * \ingroup splines
  */
@@ -850,7 +850,7 @@ void g2_para_5(int dev, int n, double *points)
  *
  * \param dev device id
  * \param n number of data points (not the size of buffer \a points)
- * \param points buffer of \a n data points x1, y1, ... xn, yn
+ * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  *
  * \ingroup splines
  */
