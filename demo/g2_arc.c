@@ -24,11 +24,8 @@
 
 int main()
 {
-    int i, j;
     int d, dev[maxdev]={-1, -1, -1, -1, -1,-1, -1, -1, -1, -1};
     int ndev=0;
-    char str[256];
-    double y;
 
     printf("\nG2_VERSION %s\n", G2_VERSION);
     
