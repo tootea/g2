@@ -18,6 +18,7 @@
 ******************************************************************************/
 #include <stdio.h>
 #include <g2.h>
+#include <stdlib.h>
 #ifdef DO_X11
 #include <g2_X11.h>
 #endif
