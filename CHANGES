@@ -1,8 +1,10 @@
-0.xx
-====
+0.71 (2006-12-10)
+=================
+- python support
 - GIF support returned (patent has expired)
-- fixed problem with configuration script (LIBS were not handled properly)
+- fixed problem with configuration script (e.g. LIBS were not handled properly)
 - g2_anim demo now supports X11 too (although it does not seem to work well on X11)
+- various fixes
 
 
 0.70

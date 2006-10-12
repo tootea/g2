@@ -21,7 +21,7 @@
 
 
 /* g2 version */
-#define G2_VERSION "0.70"
+#define G2_VERSION "0.71"
 
 
 #if defined(__cplusplus)
