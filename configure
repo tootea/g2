@@ -5610,7 +5610,7 @@ done
 # finally create makefiles using Makefile.in
 #
 echo
-                              ac_config_files="$ac_config_files Makefile demo/Makefile g2_perl/Makefile.PL"
+                              ac_config_files="$ac_config_files Makefile demo/Makefile g2_perl/Makefile.PL g2_python/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -6165,6 +6165,7 @@ do
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   "demo/Makefile" ) CONFIG_FILES="$CONFIG_FILES demo/Makefile" ;;
   "g2_perl/Makefile.PL" ) CONFIG_FILES="$CONFIG_FILES g2_perl/Makefile.PL" ;;
+  "g2_python/Makefile" ) CONFIG_FILES="$CONFIG_FILES g2_python/Makefile" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;

@@ -97,6 +97,9 @@ libg2.a: $(OBJ)
 libg2.@LD_SHARED_EXT@: $(OBJ)
 	@LD_SHARED@ @LD_SHARED_FLAGS@ -o $@ $(OBJ) @LD_SHARED_OPT@
 
+libg2.so: libg2.@LD_SHARED_EXT@
+	ln -f -s libg2.@LD_SHARED_EXT@ $@
+
 install: libg2.a
 	test -d $(LIBDIR) || mkdir -p $(LIBDIR)
 	test -d $(INCDIR) || mkdir -p $(INCDIR)
@@ -117,6 +120,7 @@ doc:
 
 clean:
 	-(cd ./demo ; make clean)
+	-(cd ./g2_python ; make clean)
 	-rm -f $(OBJ)
 	-rm -f libg2.a config.cache config.log Makefile.bak config.status
 	-rm -f ./include/*.h

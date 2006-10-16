@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-# On Unix, as root, install with : ./setup.py install
-#    The result will generally be : /usr/lib/python2.4/site-packages/g2.so
-# On Windows, install with : setup.py install
-#    The result will generally be : C:\Python24\lib\site-packages\g2.pyd
+# Run 'make' or 'make install' to call this script.
+# The result of 'make install' will generally be :
+#    on Linux : /usr/lib/python2.4/site-packages/g2.so
+#    on Windows : C:\Python24\lib\site-packages\g2.pyd
 # Then in Python say : import g2
 
 # For a module based on libg2.so, make sure libg2.so is in the link path
@@ -14,32 +14,27 @@
 from distutils.core import setup, Extension
 
 import sys
+
+error_string = '\n No %s command line argument.' \
+               '\n It should be a string of %s options.' \
+               '\n Specify an empty string (\'\') if there are none.'
+
+# set compile_args and link_args
+for (pos, step) in (('1st', 'compile'), ('2nd', 'link')):
+    try:
+        globals()[step + '_args'] = sys.argv.pop(1).split()
+    except IndexError:
+        print error_string % (pos, step)
+        sys.exit(1)
+
 import platform
 
-build_ext_opts = { 'build_temp' : '.', 'build_lib' : '.' }
+build_ext_opts = {}
 
 # called without arguments, just build the module in directory g2_python
 if len(sys.argv) == 1:
     build_ext_opts['force'] = True
     sys.argv.append('build_ext')
-
-try:
-    f = file('../config.status')
-except IOError:
-    print 'ERROR : cannot read config.status'
-    link_args = []
-    compile_args = []
-else :
-    s = f.read()
-    f.close()
-
-    j = i = s.find('@LDFLAGS@') + 10
-    while s[j] != '%': j += 1
-    link_args = s[i:j].split()
-
-    j = i = s.find('@DEFS@') + 7
-    while s[j] != '%': j += 1
-    compile_args = s[i:j].split()
 
 # on Linux, strip debugging info from lib
 if platform.system() == 'Linux':

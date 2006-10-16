@@ -122,7 +122,7 @@ AC_CHECK_HEADERS(limits.h)
 # finally create makefiles using Makefile.in
 #
 echo
-AC_OUTPUT(Makefile demo/Makefile g2_perl/Makefile.PL)
+AC_OUTPUT(Makefile demo/Makefile g2_perl/Makefile.PL g2_python/Makefile)
 
 echo
 echo "Supported devices:"
