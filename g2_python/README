@@ -1,0 +1,14 @@
+
+To build python module:
+	1. go to parent directory and build g2 library
+	2. type
+		make
+
+To test pythone type:
+
+	make demo
+
+To install python g2 module type (you will need root priviledge):
+
+	make install
+
