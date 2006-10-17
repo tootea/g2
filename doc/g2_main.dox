@@ -161,8 +161,8 @@ If you don't need or like the concept of virtual devices, simply ignore it.
     -# Change to directory g2_python
     -# Type
 	  - <tt>make</tt> to build Python module
-          - <tt>make demo</tt> to test g2 Python
-          - <tt>make install</tt> to install Python (you must be \b root)
+	  - <tt>make demo</tt> to test g2 Python
+	  - <tt>make install</tt> to install Python (you must be \b root)
 	  - on Windows: <tt>setup.py install</tt>
     -# See the \ref python "Python interface" section for more information
 
