@@ -7,7 +7,7 @@ LIBS=@LIBS@
 LDSHARED=@LD_SHARED@
 
 # either ../libg2.so or ../libg2.a must be there
-# ../libg2.so is preferred
+# to make libg2.so the default, uncomment the next line and the three lines below DEPENDENCY=
 #ifeq ("$(LDSHARED)","")
 DEPENDENCY= libg2.a
 #else
@@ -33,5 +33,4 @@ demo:
 clean:
 	-rm -fr build
 	-rm -f g2.so g2.map g2_test{_clip.eps,.{eps,ps,png,jpg,fig}} penguin.pyc
-
 
