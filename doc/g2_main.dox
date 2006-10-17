@@ -157,13 +157,19 @@ If you don't need or like the concept of virtual devices, simply ignore it.
 \subsubsection Python
 
     -# Make sure you have Python installed (note: SWIG is \b not needed)
-    -# Build g2 as described above (see \ref installation Installation)
+    -# Build g2 as described above (see \ref installation)
     -# Change to directory g2_python
     -# Type
-	  - <tt>make</tt> to build Python module
-	  - <tt>make demo</tt> to test g2 Python
-	  - <tt>make install</tt> to install Python (you must be \b root)
-	  - on Windows: <tt>setup.py install</tt>
+	- on Linux:    
+	  - <tt>make</tt> to build g2 Python module
+	  - <tt>make demo</tt> to test g2 Python module
+	  - <tt>make install</tt> to install g2 Python module (you must be \b root)
+	- on Windows (you need Visual Studio when using the standard Python release for Windows):
+	  - <tt>setup.py "compile options" "link options" install</tt>
+    -# If you link your g2 Python module against <tt>libg2.so</tt>, and you are
+       unwilling or unable to do an install, you need to tell the g2 Python module
+       where to look for it, either with <tt>ldconfig</tt>, or with the
+       <tt>LD_LIBRARY_PATH</tt> environment variable
     -# See the \ref python "Python interface" section for more information
 
 \subsubsection VMS
