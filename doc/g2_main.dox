@@ -157,11 +157,13 @@ If you don't need or like the concept of virtual devices, simply ignore it.
 \subsubsection Python
 
     -# Make sure you have Python installed (note: SWIG is \b not needed)
+    -# Build g2 as described above (see \ref installation Installation)
     -# Change to directory g2_python
     -# Type
-          - on Linux: <tt>python setup.py install</tt> (you must be \b root)
+	  - <tt>make</tt> to build Python module
+          - <tt>make demo</tt> to test g2 Python
+          - <tt>make install</tt> to install Python (you must be \b root)
 	  - on Windows: <tt>setup.py install</tt>
-    -# Optionally type <tt>python g2_test.py</tt> to test the build
     -# See the \ref python "Python interface" section for more information
 
 \subsubsection VMS
