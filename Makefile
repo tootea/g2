@@ -4,7 +4,7 @@
 #
 #
 
-G2_VERSION = 0.71a
+G2_VERSION = 0.72
 
 #
 # g2 installation directories
@@ -22,7 +22,7 @@ INCDIR = /usr/local/include
 SHELL = /bin/sh
 
 CC           = gcc
-CFLAGS       = -I./src   -I/usr/local/include -DPACKAGE_NAME=\"\" -DPACKAGE_TARNAME=\"\" -DPACKAGE_VERSION=\"\" -DPACKAGE_STRING=\"\" -DPACKAGE_BUGREPORT=\"\" -DLINUX=1 -DDO_PS=1 -DDO_FIG=1 -DDO_X11=1 -DDO_XDBE=1 -DDO_GD=1 -DDO_GIF=1 -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_LIMITS_H=1 
+CFLAGS       = -I./src -O2  -I/usr/local/include -DPACKAGE_NAME=\"\" -DPACKAGE_TARNAME=\"\" -DPACKAGE_VERSION=\"\" -DPACKAGE_STRING=\"\" -DPACKAGE_BUGREPORT=\"\" -DLINUX=1 -DDO_PS=1 -DDO_FIG=1 -DDO_X11=1 -DDO_XDBE=1 -DDO_GD=1 -DDO_GIF=1 -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_LIMITS_H=1 
 INSTALL      = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 FIND         = find
@@ -97,6 +97,9 @@ libg2.a: $(OBJ)
 libg2.so.0.$(G2_VERSION): $(OBJ)
 	ld -shared -soname libg2.so.0 -o $@ $(OBJ) 
 
+libg2.so: libg2.so.0.$(G2_VERSION)
+	ln -f -s libg2.so.0.$(G2_VERSION) $@
+
 install: libg2.a
 	test -d $(LIBDIR) || mkdir -p $(LIBDIR)
 	test -d $(INCDIR) || mkdir -p $(INCDIR)
@@ -117,6 +120,7 @@ doc:
 
 clean:
 	-(cd ./demo ; make clean)
+	-(cd ./g2_python ; make clean)
 	-rm -f $(OBJ)
 	-rm -f libg2.a config.cache config.log Makefile.bak config.status
 	-rm -f ./include/*.h
