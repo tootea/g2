@@ -23,6 +23,7 @@
  * tijs@users.sourceforge.net
  * 06/16/99 : initial release
  * 19/02/06 : eliminated duplicates by using pointers to functions
+ * 17/02/07 : added cyclic splines
  */
 
 #include <math.h>
@@ -44,27 +45,98 @@ static calc_d g2_c_raspln;
 static calc_f g2_c_para_3;
 static calc_f g2_c_para_5;
 
+static void g2_p_cyclic_spline(int id, int n, const double *points, int o, calc_f *f)
+{
+   const double half_x = .5 * (points[2] - points[0]);
+   const int nn = n+n;
+   const int c = (n+6)*2;
+   double * const cxy = (double *) g2_malloc(c*sizeof(double));
+   const int m = (n+5)*o+1;
+   double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
+   int i;
+   for (i=0; i < nn; i++) cxy[i+6] = points[i]; /* original points in the middle */
+   for (i=0; i < 6; i+=2) {
+      cxy[i]     = points[0]    - (6-i)*half_x;
+      cxy[c-2-i] = points[nn-2] + (6-i)*half_x;
+      cxy[i+1]   = points[nn+i-5]; /* copy the last points before the first */
+      cxy[c+i-5] = points[i+1]; /* and the first points after the last */
+   }
+
+   (*f)(n+6, cxy, m, sxy);
+   g2_free(cxy);
+   g2_poly_line(id, n*o+1, sxy + 3*o + (o<<1));
+   g2_free(sxy);
+}
+
+static void g2_p_cyclic_filled_spline(int id, int n, const double *points, int o, calc_f *f)
+{
+   const double half_x = .5 * (points[2] - points[0]);
+   int nn = n+n;
+   const int c = (n+6)*2;
+   double * const cxy = (double *) g2_malloc(c*sizeof(double));
+   const int m = (n+5)*o+1;
+   double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
+   double * const slice = sxy + 3*o + (o<<1);
+   double base;
+   int i;
+   for (i=0; i < nn; i++) cxy[i+6] = points[i];
+   for (i=0; i < 6; i+=2) {
+      cxy[i]     = points[0]    - (6-i)*half_x;
+      cxy[c-2-i] = points[nn-2] + (6-i)*half_x;
+      cxy[i+1]   = points[nn+i-5]; /* copy the last points before the first */
+      cxy[c+i-5] = points[i+1]; /* and the first points after the last */
+   }
+
+   (*f)(n+6, cxy, m, sxy);
+   g2_free(cxy);
+
+   nn *= o;
+   for (i=3, base = slice[1]; i < nn; i+=2) if (slice[i] < base) base = slice[i]; /* need not check slice[nn+1], it should equal slice[1] */
+   slice[-2] = slice[0];
+   slice[-1] = base;
+   slice[nn+2] = slice[nn];
+   slice[nn+3] = base;
+   g2_filled_polygon(id, n*o+3, slice - 2);
+   g2_free(sxy);
+}
+
 static void g2_p_spline(int id, int n, const double *points, int o, calc_f *f)
 {
-   const int m = (n-1)*o+1;
-   double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
+   if (n < 0) { /* cyclic graph: the last value should lead to the first */
+      if (o % 2) o += 1; /* make sure o is even */
+      g2_p_cyclic_spline(id, -n, points, o, f);
+   } else {
+      const int m = (n-1)*o+1;
+      double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
 
-   (*f)(n, points, m, sxy);
-   g2_poly_line(id, m, sxy);
+      (*f)(n, points, m, sxy);
+      g2_poly_line(id, m, sxy);
 
-   g2_free(sxy);
+      g2_free(sxy);
+   }
 }
 
 static void g2_p_filled_spline(int id, int n, const double *points, int o, calc_f *f)
 {
-   const int m = (n-1)*o+2;
-   double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
+   if (n < 0) { /* cyclic graph: the last value should lead to the first */
+      if (o % 2) o += 1; /* make sure o is even */
+      g2_p_cyclic_filled_spline(id, -n, points, o, f);
+   } else {
+      const int m = (n-1)*o+3;
+      int mm = m+m;
+      double * const sxy = (double *) g2_malloc(mm*sizeof(double));
+      double base;
+      int i;
 
-   (*f)(n, points, m, sxy);
-   sxy[m+m-2] = points[n+n-2];
-   sxy[m+m-1] = points[1];
-   g2_filled_polygon(id, m, sxy);
-   g2_free(sxy);
+      (*f)(n, points, m-2, sxy + 2); /* first and last point are written below */
+      for (i=5, base = sxy[3]; i < mm-2; i+=2) if (sxy[i] < base) base = sxy[i];
+      sxy[0] = sxy[2];
+      sxy[1] = base;
+      sxy[mm-2] = sxy[mm-4];
+      sxy[mm-1] = base;
+      g2_filled_polygon(id, m, sxy);
+      g2_free(sxy);
+   }
 }
 
 static void g2_split(int n, const double *points, double *x, double *y)
@@ -198,10 +270,14 @@ void g2_c_spline(int n, const double *points, int m, double *sxy)
  * So the larger \a o, the more fluent the curve.
  *
  * \param dev device id
- * \param n number of data points (not the size of buffer \a points)
+ * \param n number of data points (not the size of buffer \a points), negative for a cyclic spline
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  * \param o number of interpolated points per data point
  *
+ * With \a n < 0, the spline ends are calculated in such a way that the graph
+ * begins and ends at the same value. This is meant for cyclic data, like
+ * per hour (day cycle), per day (week cycle), or per month (year cycle).
+ * See the fluent line from December to January in sample \c bargraph.py.
  * \ingroup splines
  */
 void g2_spline(int dev, int n, double *points, int o)
@@ -216,7 +292,7 @@ void g2_spline(int dev, int n, double *points, int o)
  * So the larger \a o, the more fluent the curve.
  *
  * \param dev device id
- * \param n number of data points (not the size of buffer \a points)
+ * \param n number of data points (not the size of buffer \a points), negative for a cyclic spline
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  * \param o number of interpolated points per data point
  *
@@ -299,10 +375,14 @@ void g2_c_b_spline(int n, const double *points, int m, double *sxy)
  * For most averaging purposes, this is the right spline.
  *
  * \param dev device id
- * \param n number of data points (not the size of buffer \a points)
+ * \param n number of data points (not the size of buffer \a points), negative for a cyclic spline
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  * \param o number of interpolated points per data point
  *
+ * With \a n < 0, the spline ends are calculated in such a way that they share
+ * the same \e y coordinate. This suits cyclic data, like per hour (day cycle),
+ * per day (week cycle), or per month (year cycle). See the smooth transition
+ * from December to January in sample \c bargraph.py.
  * \ingroup splines
  */
 void g2_b_spline(int dev, int n, double *points, int o)
@@ -317,7 +397,7 @@ void g2_b_spline(int dev, int n, double *points, int o)
  * For most averaging purposes, this is the right spline.
  *
  * \param dev device id
- * \param n number of data points (not the size of buffer \a points)
+ * \param n number of data points (not the size of buffer \a points), negative for a cyclic spline
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  * \param o number of interpolated points per data point
  *
@@ -709,7 +789,7 @@ void g2_c_para_3(int n, const double *points, int m, double *sxy)
  * through the given data points.
  *
  * \param dev device id
- * \param n number of data points (not the size of buffer \a points)
+ * \param n number of data points (not the size of buffer \a points), negative for a cyclic spline
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  *
  * \ingroup splines
@@ -726,7 +806,7 @@ void g2_para_3(int dev, int n, double *points)
  * through the given data points.
  *
  * \param dev device id
- * \param n number of data points (not the size of buffer \a points)
+ * \param n number of data points (not the size of buffer \a points), negative for a cyclic spline
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  *
  * \ingroup splines
@@ -832,7 +912,7 @@ void g2_c_para_5(int n, const double *points, int m, double *sxy)
  * through the given data points.
  *
  * \param dev device id
- * \param n number of data points (not the size of buffer \a points)
+ * \param n number of data points (not the size of buffer \a points), negative for a cyclic spline
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  *
  * \ingroup splines
@@ -849,7 +929,7 @@ void g2_para_5(int dev, int n, double *points)
  * through the given data points.
  *
  * \param dev device id
- * \param n number of data points (not the size of buffer \a points)
+ * \param n number of data points (not the size of buffer \a points), negative for a cyclic spline
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  *
  * \ingroup splines
