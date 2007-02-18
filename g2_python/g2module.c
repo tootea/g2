@@ -544,12 +544,17 @@ PyDoc_STRVAR(doc_g2_close,
              "g2_close()\n"
              "Close and delete a device.\n"
              "Later, garbage collection will delete\n"
-             "the now useless object of class G2.");
+             "the now useless object of class G2.\n\n"
+             "You may call g2_close explicitly, but if you don't,\n"
+             "the G2 destructor will call it for you.");
 
 static PyObject *
 C_g2_close(G2 *self)
 {
-   g2_close(self->dev);
+   if (g2_device_exist(self->dev)) {
+      g2_close(self->dev);
+      self->dev = -1;
+   }
    Py_RETURN_NONE;
 }
 
@@ -1403,9 +1408,16 @@ static PyMemberDef G2_members[] = { /* cf. structmember.h */
    { NULL }
 };
 
+static PyObject *
+G2_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{  /* not called when instantiating an object of class G2 through 'g2_open_..' */
+   return C_g2_open_vd(NULL);
+}
+
 static void
 G2_dealloc(G2 *self)
 {
+   C_g2_close(self);
    self->ob_type->tp_free((PyObject *)self);
 }
 
@@ -1439,7 +1451,17 @@ static PyTypeObject G2_Type = {
    0,                      /* tp_iter */
    0,                      /* tp_iternext */
    G2_methods,             /* tp_methods */
-   G2_members              /* tp_members */
+   G2_members,             /* tp_members */
+   0,                      /* tp_getset */
+   0,                      /* tp_base */
+   0,                      /* tp_dict */
+   0,                      /* tp_descr_get */
+   0,                      /* tp_descr_set */
+   0,                      /* tp_dictoffset */
+   0,                      /* tp_init */
+   0,                      /* tp_alloc */
+   G2_new,                 /* tp_new */
+   PyObject_Del            /* tp_free */
 };
 
 #ifndef PyMODINIT_FUNC     /* DLL import/export declarations */

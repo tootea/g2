@@ -178,4 +178,3 @@ graph.g2_arc(    400, 400, 30, 30, 0, 360)
 graph.g2_flush()
 print '\nDone.\n[Enter]\n'
 sys.stdin.read(1)
-graph.g2_close()
