@@ -38,7 +38,7 @@ if hasattr(g2, 'g2_open_FIG'):
 if hasattr(g2, 'g2_open_X11'):
     print '..X11',
     dev.append(g2_open_X11(775, 575))
-if hasattr(g2, 'g2_open_PS'):
+if hasattr(g2, 'g2_open_gd'):
     print '..GD(png) ..GD(jpeg)',
     dev.append(g2_open_gd('g2_test.png', 775, 575, g2_gd_png))
     dev.append(g2_open_gd('g2_test.jpg', 775, 575, g2_gd_jpeg))
@@ -81,8 +81,8 @@ lines = ((200, 50, 350, 50),
          (200, 46, 200, 75),
          (198, 46, 198, 75),
          (196, 46, 196, 75))
-for x1, y1, x2, y2 in lines:
-    graph.g2_line(x1, y1, x2, y2) # this is why we love Python
+for l in lines:
+    graph.g2_line(*l) # this is why we love Python
 graph.g2_string(200, 50, '012abcABC#())(\\-+~*!$%&')
 
 # graph.g2_pen(1)
