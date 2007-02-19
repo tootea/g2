@@ -1411,7 +1411,12 @@ static PyMemberDef G2_members[] = { /* cf. structmember.h */
 static PyObject *
 G2_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {  /* not called when instantiating an object of class G2 through 'g2_open_..' */
-   return C_g2_open_vd(NULL);
+   G2 * const obj = (G2 *) type->tp_alloc(type, 0);
+   if (obj) {
+      obj->dev = g2_open_vd();
+      return (PyObject *)obj;
+   }
+   return NULL;
 }
 
 static void
@@ -1459,7 +1464,7 @@ static PyTypeObject G2_Type = {
    0,                      /* tp_descr_set */
    0,                      /* tp_dictoffset */
    0,                      /* tp_init */
-   0,                      /* tp_alloc */
+   PyType_GenericAlloc,    /* tp_alloc */
    G2_new,                 /* tp_new */
    PyObject_Del            /* tp_free */
 };
