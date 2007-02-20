@@ -102,9 +102,9 @@ static void g2_p_cyclic_filled_spline(int id, int n, const double *points, int o
 
 static void g2_p_spline(int id, int n, const double *points, int o, calc_f *f)
 {
-   if (n < 0) { /* cyclic graph: the last value should lead to the first */
+   if (o < 0) { /* cyclic graph: the last value should lead to the first */
       if (o % 2) o += 1; /* make sure o is even */
-      g2_p_cyclic_spline(id, -n, points, o, f);
+      g2_p_cyclic_spline(id, n, points, -o, f);
    } else {
       const int m = (n-1)*o+1;
       double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
@@ -118,9 +118,9 @@ static void g2_p_spline(int id, int n, const double *points, int o, calc_f *f)
 
 static void g2_p_filled_spline(int id, int n, const double *points, int o, calc_f *f)
 {
-   if (n < 0) { /* cyclic graph: the last value should lead to the first */
+   if (o < 0) { /* cyclic graph: the last value should lead to the first */
       if (o % 2) o += 1; /* make sure o is even */
-      g2_p_cyclic_filled_spline(id, -n, points, o, f);
+      g2_p_cyclic_filled_spline(id, n, points, -o, f);
    } else {
       const int m = (n-1)*o+3;
       int mm = m+m;
@@ -270,11 +270,11 @@ void g2_c_spline(int n, const double *points, int m, double *sxy)
  * So the larger \a o, the more fluent the curve.
  *
  * \param dev device id
- * \param n number of data points (not the size of buffer \a points), negative for a cyclic spline
+ * \param n number of data points (not the size of buffer \a points)
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
- * \param o number of interpolated points per data point
+ * \param o number of interpolated points per data point, negative for a cyclic spline
  *
- * With \a n < 0, the spline ends are calculated in such a way that the graph
+ * With \a o < 0, the spline ends are calculated in such a way that the graph
  * begins and ends at the same value. This is meant for cyclic data, like
  * per hour (day cycle), per day (week cycle), or per month (year cycle).
  * See the fluent line from December to January in sample \c bargraph.py.
@@ -292,9 +292,9 @@ void g2_spline(int dev, int n, double *points, int o)
  * So the larger \a o, the more fluent the curve.
  *
  * \param dev device id
- * \param n number of data points (not the size of buffer \a points), negative for a cyclic spline
+ * \param n number of data points (not the size of buffer \a points)
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
- * \param o number of interpolated points per data point
+ * \param o number of interpolated points per data point, negative for a cyclic spline
  *
  * \ingroup splines
  */
@@ -375,11 +375,11 @@ void g2_c_b_spline(int n, const double *points, int m, double *sxy)
  * For most averaging purposes, this is the right spline.
  *
  * \param dev device id
- * \param n number of data points (not the size of buffer \a points), negative for a cyclic spline
+ * \param n number of data points (not the size of buffer \a points)
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
- * \param o number of interpolated points per data point
+ * \param o number of interpolated points per data point, negative for a cyclic spline
  *
- * With \a n < 0, the spline ends are calculated in such a way that they share
+ * With \a o < 0, the spline ends are calculated in such a way that they share
  * the same \e y coordinate. This suits cyclic data, like per hour (day cycle),
  * per day (week cycle), or per month (year cycle). See the smooth transition
  * from December to January in sample \c bargraph.py.
@@ -397,9 +397,9 @@ void g2_b_spline(int dev, int n, double *points, int o)
  * For most averaging purposes, this is the right spline.
  *
  * \param dev device id
- * \param n number of data points (not the size of buffer \a points), negative for a cyclic spline
+ * \param n number of data points (not the size of buffer \a points)
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
- * \param o number of interpolated points per data point
+ * \param o number of interpolated points per data point, negative for a cyclic spline
  *
  * \ingroup splines
  */
@@ -789,7 +789,7 @@ void g2_c_para_3(int n, const double *points, int m, double *sxy)
  * through the given data points.
  *
  * \param dev device id
- * \param n number of data points (not the size of buffer \a points), negative for a cyclic spline
+ * \param n number of data points (not the size of buffer \a points)
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  *
  * \ingroup splines
@@ -806,7 +806,7 @@ void g2_para_3(int dev, int n, double *points)
  * through the given data points.
  *
  * \param dev device id
- * \param n number of data points (not the size of buffer \a points), negative for a cyclic spline
+ * \param n number of data points (not the size of buffer \a points)
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  *
  * \ingroup splines
@@ -912,7 +912,7 @@ void g2_c_para_5(int n, const double *points, int m, double *sxy)
  * through the given data points.
  *
  * \param dev device id
- * \param n number of data points (not the size of buffer \a points), negative for a cyclic spline
+ * \param n number of data points (not the size of buffer \a points)
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  *
  * \ingroup splines
@@ -929,7 +929,7 @@ void g2_para_5(int dev, int n, double *points)
  * through the given data points.
  *
  * \param dev device id
- * \param n number of data points (not the size of buffer \a points), negative for a cyclic spline
+ * \param n number of data points (not the size of buffer \a points)
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  *
  * \ingroup splines
