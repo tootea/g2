@@ -24,6 +24,9 @@
  * 06/16/99 : initial release
  * 19/02/06 : eliminated duplicates by using pointers to functions
  * 17/02/07 : added cyclic splines
+ * 17/03/07 : added hermite splines (normal and cyclic), which are like the now
+ *            deprecated raspln splines, except that the formerly fixed number
+ *            of interpolated points per data point is now a function argument
  */
 
 #include <math.h>
@@ -36,12 +39,12 @@
  * \defgroup splines splines
  */
 
-typedef void calc_f( int, const double *, int,    double *);
-typedef void calc_d( int, const double *, double, double *);
+typedef void calc_f( int, const double *, int, double *);
+typedef void calc_d( int, const double *, double, int, double *);
 
 static calc_f g2_c_spline;
 static calc_f g2_c_b_spline;
-static calc_d g2_c_raspln;
+static calc_d g2_c_hermite;
 static calc_f g2_c_para_3;
 static calc_f g2_c_para_5;
 
@@ -103,7 +106,7 @@ static void g2_p_cyclic_filled_spline(int id, int n, const double *points, int o
 static void g2_p_spline(int id, int n, const double *points, int o, calc_f *f)
 {
    if (o < 0) { /* cyclic graph: the last value should lead to the first */
-      if (o % 2) o += 1; /* make sure o is even */
+      if (o % 2) o -= 1; /* make sure o is even */
       g2_p_cyclic_spline(id, n, points, -o, f);
    } else {
       const int m = (n-1)*o+1;
@@ -119,7 +122,7 @@ static void g2_p_spline(int id, int n, const double *points, int o, calc_f *f)
 static void g2_p_filled_spline(int id, int n, const double *points, int o, calc_f *f)
 {
    if (o < 0) { /* cyclic graph: the last value should lead to the first */
-      if (o % 2) o += 1; /* make sure o is even */
+      if (o % 2) o -= 1; /* make sure o is even */
       g2_p_cyclic_filled_spline(id, n, points, -o, f);
    } else {
       const int m = (n-1)*o+3;
@@ -409,7 +412,7 @@ void g2_filled_b_spline(int dev, int n, double *points, int o)
 }
 
 /*
- *	FUNCTION g2_c_raspln
+ *	FUNCTION g2_c_hermite
  *
  *	FUNCTIONAL DESCRIPTION:
  *
@@ -441,6 +444,9 @@ void g2_filled_b_spline(int dev, int n, double *points, int o)
  *		As tn increases the curve is gradually pulled tighter.
  *		When tn = 2.0, the curve is essentially a polyline
  *		through the given data points.
+ *	nb	number of straight connecting lines of which each polynomial
+ *		consists. So between one data point and the next, (nb-1) points
+ *		are placed.
  *	sxy	double array holding the coords of the spline curve
  *
  *	IMPLICIT INPUTS:	NONE
@@ -448,21 +454,19 @@ void g2_filled_b_spline(int dev, int n, double *points, int o)
  *	SIDE EFFECTS:		NONE
  */
 
-#define nb 40
-/*
- * Number of straight connecting lines of which each polynomial consists.
- * So between one data point and the next, (nb-1) points are placed.
- */
-
-void g2_c_raspln(int n, const double *points, double tn, double *sxy)
+void g2_c_hermite(int n, const double *points, double tn, int nb, double *sxy)
 {
    int i, j;
    double bias, tnFactor, tangentL1, tangentL2;
    double D1x, D1y, D2x, D2y, t1x, t1y, t2x, t2y;
-   double h1[nb+1];	/* Values of the Hermite basis functions */
-   double h2[nb+1];	/* at nb+1 evenly spaced points in [0,1] */
-   double h3[nb+1];
-   double h4[nb+1];
+
+   /* Values of the Hermite basis functions */
+   /* at nb+1 evenly spaced points in [0,1] */
+   const int nbp = nb+1;
+   double * const h1 = (double *) g2_malloc(nbp*4*sizeof(double));
+   double * const h2 = h1 + nbp;
+   double * const h3 = h2 + nbp;
+   double * const h4 = h3 + nbp;
 
    double * const x = (double *) g2_malloc(n*2*sizeof(double));
    double * const y = x + n;
@@ -472,7 +476,7 @@ void g2_c_raspln(int n, const double *points, double tn, double *sxy)
  * First, store the values of the Hermite basis functions in a table h[ ]
  * so no time is wasted recalculating them
  */
-   for (i = 0; i < nb+1; i++) {
+   for (i = 0; i < nbp; i++) {
       double t, tt, ttt;
       t = (double) i / nb;
       tt  = t * t;
@@ -488,11 +492,11 @@ void g2_c_raspln(int n, const double *points, double tn, double *sxy)
  */
    if (tn <= 0.) {
       tnFactor = 2.;
-      fputs("g2_c_raspln: Using Tension Factor 0.0: very rounded", stderr);
+      fputs("g2_c_hermite: Using Tension Factor 0.0: very rounded", stderr);
    }
    else if (tn >= 2.) {
       tnFactor = 0.;
-      fputs("g2_c_raspln: Using Tension Factor 2.0: not rounded at all", stderr);
+      fputs("g2_c_hermite: Using Tension Factor 2.0: not rounded at all", stderr);
    }
    else			tnFactor = 2. - tn;
 
@@ -522,13 +526,69 @@ void g2_c_raspln(int n, const double *points, double tn, double *sxy)
  * Do the last subinterval as a special case since no point follows the
  * last point
  */
-   for (i = 0; i < nb+1; i++) {
+   for (i = 0; i < nbp; i++) {
       sxy[2 * nb * (n-2) + i + i] =
 	h1[i] * x[n-2] + h2[i] * x[n-1] + h3[i] * D1x;
       sxy[2 * nb * (n-2) + i + i + 1] =
 	h1[i] * y[n-2] + h2[i] * y[n-1] + h3[i] * D1y;
    }
    g2_free(x);
+   g2_free(h1);
+}
+
+static void g2_p_cyclic_hermite(int id, int n, const double *points, double tn, int o)
+{
+   const double half_x = .5 * (points[2] - points[0]);
+   const int nn = n+n;
+   const int c = (n+6)*2;
+   double * const cxy = (double *) g2_malloc(c*sizeof(double));
+   const int m = (n+5)*o+1;
+   double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
+   int i;
+   for (i=0; i < nn; i++) cxy[i+6] = points[i]; /* original points in the middle */
+   for (i=0; i < 6; i+=2) {
+      cxy[i]     = points[0]    - (6-i)*half_x;
+      cxy[c-2-i] = points[nn-2] + (6-i)*half_x;
+      cxy[i+1]   = points[nn+i-5]; /* copy the last points before the first */
+      cxy[c+i-5] = points[i+1]; /* and the first points after the last */
+   }
+
+   g2_c_hermite(n+6, cxy, tn, o, sxy);
+   g2_free(cxy);
+   g2_poly_line(id, n*o+1, sxy + 3*o + (o<<1));
+   g2_free(sxy);
+}
+
+static void g2_p_cyclic_filled_hermite(int id, int n, const double *points, double tn, int o)
+{
+   const double half_x = .5 * (points[2] - points[0]);
+   int nn = n+n;
+   const int c = (n+6)*2;
+   double * const cxy = (double *) g2_malloc(c*sizeof(double));
+   const int m = (n+5)*o+1;
+   double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
+   double * const slice = sxy + 3*o + (o<<1);
+   double base;
+   int i;
+   for (i=0; i < nn; i++) cxy[i+6] = points[i];
+   for (i=0; i < 6; i+=2) {
+      cxy[i]     = points[0]    - (6-i)*half_x;
+      cxy[c-2-i] = points[nn-2] + (6-i)*half_x;
+      cxy[i+1]   = points[nn+i-5]; /* copy the last points before the first */
+      cxy[c+i-5] = points[i+1]; /* and the first points after the last */
+   }
+
+   g2_c_hermite(n+6, cxy, tn, o, sxy);
+   g2_free(cxy);
+
+   nn *= o;
+   for (i=3, base = slice[1]; i < nn; i+=2) if (slice[i] < base) base = slice[i]; /* need not check slice[nn+1], it should equal slice[1] */
+   slice[-2] = slice[0];
+   slice[-1] = base;
+   slice[nn+2] = slice[nn];
+   slice[nn+3] = base;
+   g2_filled_polygon(id, n*o+3, slice - 2);
+   g2_free(sxy);
 }
 
 /**
@@ -543,18 +603,24 @@ void g2_c_raspln(int n, const double *points, double tn, double *sxy)
  * \param n number of data points (not the size of buffer \a points)
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  * \param tn tension factor in the range [0.0, 2.0]
+ * \param o number of interpolated points per data point, negative for a cyclic spline
  *
  * \ingroup splines
  */
-void g2_raspln(int dev, int n, double *points, double tn)
+void g2_hermite(int dev, int n, double *points, double tn, int o)
 {
-   const int m = (n-1)*nb+1;
-   double * const sxy = (double *) g2_malloc(m*2*sizeof(double)); /* coords of the entire spline curve */
+   if (o < 0) { /* cyclic graph: the last value should lead to the first */
+      if (o % 2) o -= 1; /* make sure o is even */
+      g2_p_cyclic_hermite(dev, n, points, tn, -o);
+   } else {
+      const int m = (n-1)*o+1;
+      double * const sxy = (double *) g2_malloc(m*2*sizeof(double)); /* coords of the entire spline curve */
 
-   g2_c_raspln(n, points, tn, sxy);
-   g2_poly_line(dev, m, sxy);
+      g2_c_hermite(n, points, tn, o, sxy);
+      g2_poly_line(dev, m, sxy);
 
-   g2_free(sxy);
+      g2_free(sxy);
+   }
 }
 
 /**
@@ -569,20 +635,59 @@ void g2_raspln(int dev, int n, double *points, double tn)
  * \param n number of data points (not the size of buffer \a points)
  * \param points buffer of \a n data points x1, y1, ... x\a n, y\a n
  * \param tn tension factor in the range [0.0, 2.0]
+ * \param o number of interpolated points per data point, negative for a cyclic spline
  *
  * \ingroup splines
  */
+void g2_filled_hermite(int dev, int n, double *points, double tn, int o)
+{
+   if (o < 0) { /* cyclic graph: the last value should lead to the first */
+      if (o % 2) o -= 1; /* make sure o is even */
+      g2_p_cyclic_filled_hermite(dev, n, points, tn, -o);
+   } else {
+      const int m = (n-1)*o+3;
+      int mm = m+m;
+      double * const sxy = (double *) g2_malloc(mm*sizeof(double)); /* coords of the entire spline curve */
+      double base;
+      int i;
+
+      g2_c_hermite(n, points, tn, o, sxy + 2); /* first and last point are written below */
+      for (i=5, base = sxy[3]; i < mm-2; i+=2) if (sxy[i] < base) base = sxy[i];
+      sxy[0] = sxy[2];
+      sxy[1] = base;
+      sxy[mm-2] = sxy[mm-4];
+      sxy[mm-1] = base;
+      g2_filled_polygon(dev, m, sxy);
+      g2_free(sxy);
+   }
+}
+
+/* Both functions below are for backward compatibility only */
+
+/**
+ *
+ * For backward compatibility, as \ref g2_hermite, but without argument \c o.
+ * The number of interpolated points per data point is fixed at 40.
+ *
+ * \ingroup splines
+ */
+
+void g2_raspln(int dev, int n, double *points, double tn)
+{
+   g2_hermite(dev, n, points, tn, 40);
+}
+
+/**
+ *
+ * For backward compatibility, as \ref g2_filled_hermite, but without argument \c o.
+ * The number of interpolated points per data point is fixed at 40.
+ *
+ * \ingroup splines
+ */
+
 void g2_filled_raspln(int dev, int n, double *points, double tn)
 {
-   const int m = (n-1)*nb+2;
-   double * const sxy = (double *) g2_malloc(m*2*sizeof(double)); /* coords of the entire spline curve */
-
-   g2_c_raspln(n, points, tn, sxy);
-   sxy[m+m-2] = points[n+n-2];
-   sxy[m+m-1] = points[1];
-   g2_filled_polygon(dev, m, sxy);
-
-   g2_free(sxy);
+   g2_filled_hermite(dev, n, points, tn, 40);
 }
 
 /* ---- And now for a rather different approach ---- */
@@ -698,9 +803,8 @@ static void g2_c_newton(int n, const double *c1, const double *c2,
  *	SIDE EFFECTS:		NONE
  */
 
+#define nb 40
 /*
- * #undef  nb
- * #define nb 40
  * Number of straight connecting lines of which each polynomial consists.
  * So between one data point and the next, (nb-1) points are placed.
  */

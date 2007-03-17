@@ -175,12 +175,14 @@ extern void g2_query_pointer(int dev, double *OUTPUT,double *OUTPUT,unsigned int
 
 G2L void g2_spline(int id, int n, double *points, int o);
 G2L void g2_b_spline(int id, int n, double *points, int o);
-G2L void g2_raspln(int id, int n, double *points, double tn);
+G2L void g2_hermite(int id, int n, double *points, double tn, int o);
+G2L void g2_raspln(int id, int n, double *points, double tn); /* g2_hermite with o = 40 */
 G2L void g2_para_3(int id, int n, double *points);
 G2L void g2_para_5(int id, int n, double *points);
 G2L void g2_filled_spline(int id, int n, double *points, int o);
 G2L void g2_filled_b_spline(int id, int n, double *points, int o);
-G2L void g2_filled_raspln(int id, int n, double *points, double tn);
+G2L void g2_filled_hermite(int id, int n, double *points, double tn, int o);
+G2L void g2_filled_raspln(int id, int n, double *points, double tn); /* g2_filled_hermite with o = 40 */
 G2L void g2_filled_para_3(int id, int n, double *points);
 G2L void g2_filled_para_5(int id, int n, double *points);
 

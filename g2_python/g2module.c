@@ -55,7 +55,7 @@ typedef struct {
 
 typedef void list_f(int, int, double *);
 typedef void list_i_f(int, int, double *, int);
-typedef void list_d_f(int, int, double *, double);
+typedef void list_d_f(int, int, double *, double, int);
 
 static PyTypeObject G2_Type; /* forward declaration */
 
@@ -94,7 +94,7 @@ static PyObject *
 helper_ili(const G2 *self, const PyObject *args, list_i_f *f)
 {
    PyObject *list;
-   int ip; /* number of interpolated points */
+   int ip; /* number of interpolated points per data point */
 
    if (PyArg_ParseTuple((PyObject *)args, "O!i", &PyList_Type, &list, &ip)) {
       int s = PyList_Size(list);
@@ -119,15 +119,23 @@ helper_ild(const G2 *self, const PyObject *args, list_d_f *f)
 {
    PyObject *list;
    double factor;
+   int ip; /* number of interpolated points per data point */
+   int r;
 
-   if (PyArg_ParseTuple((PyObject *)args, "O!d", &PyList_Type, &list, &factor)) {
+   if (PyTuple_Size((PyObject *)args) == 2) { /* called the old way, as g2_raspln */
+      r = PyArg_ParseTuple((PyObject *)args, "O!d", &PyList_Type, &list, &factor);
+      ip = 40;
+   } else { /* called the new way, as g2_hermite */
+      r = PyArg_ParseTuple((PyObject *)args, "O!di", &PyList_Type, &list, &factor, &ip);
+   }
+   if (r) {
       int s = PyList_Size(list);
       if (s > 5) {
          double * const points = malloc(s * sizeof(double));
          if (points) {
             const int np = s >> 1;
             while (s--) points[s] = helper_item_float(PyList_GET_ITEM(list, s));
-            (*f)(self->dev, np, points, factor);
+            (*f)(self->dev, np, points, factor, ip);
             free(points);
             Py_RETURN_NONE;
          }
@@ -1224,6 +1232,7 @@ PyDoc_STRVAR(doc_g2_spline,
              "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
              "              In the list ints and floats can be mixed freely.\n"
              "   'ppdp'   : the number of interpolated points per data point.\n"
+             "              Negative for a cyclic plot.\n"
              "              The higher 'ppdp', the rounder the spline curve.\n"
              "Plot a spline curve through the points in the list\n"
              "using Young's method of successive over-relaxation.\n"
@@ -1250,6 +1259,7 @@ PyDoc_STRVAR(doc_g2_b_spline,
              "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
              "              In the list ints and floats can be mixed freely.\n"
              "   'ppdp'   : the number of interpolated points per data point.\n"
+             "              Negative for a cyclic plot.\n"
              "              The higher 'ppdp', the rounder the spline curve.\n"
              "Plot a b-spline curve through the points in the list.\n"
              "For most averaging purposes, this is the right spline.\n"
@@ -1271,22 +1281,47 @@ C_g2_filled_b_spline(G2 *self, PyObject *args)
    return helper_ili(self, args, g2_filled_b_spline);
 }
 
-PyDoc_STRVAR(doc_g2_raspln,
-             "g2_raspln(list points, float tfact)\n"
+PyDoc_STRVAR(doc_g2_hermite,
+             "g2_hermite(list points, float tfact, int ppdp)\n"
              "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
              "              In the list ints and floats can be mixed freely.\n"
              "   'tfact'  : tension factor between 0 (very rounded) and 2.\n"
              "              With tfact 2, the curve is essentially a polyline\n"
              "              through the given data points.\n"
+             "   'ppdp'   : the number of interpolated points per data point.\n"
+             "              Negative for a cyclic plot.\n"
+             "              The higher 'ppdp', the rounder the spline curve.\n"
              "Plot a cubic polynomial through the points in the list. Each\n"
-             "Hermite polynomial between two data points consists of 40 lines.\n"
+             "Hermite polynomial between two data points consists of ppdp lines.\n"
              "See g2_splines.c for further information.\n"
+             "Note : this three argument form is Python specific.");
+
+static PyObject *
+C_g2_hermite(G2 *self, PyObject *args)
+{
+   return helper_ild(self, args, g2_hermite);
+}
+
+PyDoc_STRVAR(doc_g2_filled_hermite,
+             "g2_filled_hermite(list points, float tfact, int ppdp)\n"
+             "As g2_hermite, but filled.");
+
+static PyObject *
+C_g2_filled_hermite(G2 *self, PyObject *args)
+{
+   return helper_ild(self, args, g2_filled_hermite);
+}
+
+PyDoc_STRVAR(doc_g2_raspln,
+             "g2_raspln(list points, float tfact)\n"
+             "For backward compatibility, as g2_hermite, but without argument three.\n"
+             "The number of interpolated points per data point is fixed at 40.\n"
              "Note : this two argument form is Python specific.");
 
 static PyObject *
 C_g2_raspln(G2 *self, PyObject *args)
 {
-   return helper_ild(self, args, g2_raspln);
+   return helper_ild(self, args, g2_hermite);
 }
 
 PyDoc_STRVAR(doc_g2_filled_raspln,
@@ -1296,7 +1331,7 @@ PyDoc_STRVAR(doc_g2_filled_raspln,
 static PyObject *
 C_g2_filled_raspln(G2 *self, PyObject *args)
 {
-   return helper_ild(self, args, g2_filled_raspln);
+   return helper_ild(self, args, g2_filled_hermite);
 }
 
 PyDoc_STRVAR(doc_g2_para_3,
@@ -1393,6 +1428,8 @@ static PyMethodDef G2_methods[] = {
    { "g2_filled_spline", (PyCFunction)C_g2_filled_spline, METH_VARARGS, doc_g2_filled_spline },
    { "g2_b_spline", (PyCFunction)C_g2_b_spline, METH_VARARGS, doc_g2_b_spline },
    { "g2_filled_b_spline", (PyCFunction)C_g2_filled_b_spline, METH_VARARGS, doc_g2_filled_b_spline },
+   { "g2_hermite", (PyCFunction)C_g2_hermite, METH_VARARGS, doc_g2_hermite },
+   { "g2_filled_hermite", (PyCFunction)C_g2_filled_hermite, METH_VARARGS, doc_g2_filled_hermite },
    { "g2_raspln", (PyCFunction)C_g2_raspln, METH_VARARGS, doc_g2_raspln },
    { "g2_filled_raspln", (PyCFunction)C_g2_filled_raspln, METH_VARARGS, doc_g2_filled_raspln },
    { "g2_para_3", (PyCFunction)C_g2_para_3, METH_VARARGS, doc_g2_para_3 },
