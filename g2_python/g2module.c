@@ -120,17 +120,16 @@ helper_ild(const G2 *self, const PyObject *args, list_d_f *f)
    PyObject *list;
    double factor;
    int ip; /* number of interpolated points per data point */
-   int r;
+   int s;
 
    if (PyTuple_Size((PyObject *)args) == 2) { /* called the old way, as g2_raspln */
-      r = PyArg_ParseTuple((PyObject *)args, "O!d", &PyList_Type, &list, &factor);
+      s = PyArg_ParseTuple((PyObject *)args, "O!d", &PyList_Type, &list, &factor);
       ip = 40;
    } else { /* called the new way, as g2_hermite */
-      r = PyArg_ParseTuple((PyObject *)args, "O!di", &PyList_Type, &list, &factor, &ip);
+      s = PyArg_ParseTuple((PyObject *)args, "O!di", &PyList_Type, &list, &factor, &ip);
    }
-   if (r) {
-      int s = PyList_Size(list);
-      if (s > 5) {
+   if (s) {
+      if ((s = PyList_Size(list)) > 5) {
          double * const points = malloc(s * sizeof(double));
          if (points) {
             const int np = s >> 1;
@@ -1290,7 +1289,7 @@ PyDoc_STRVAR(doc_g2_hermite,
              "              through the given data points.\n"
              "   'ppdp'   : the number of interpolated points per data point.\n"
              "              Negative for a cyclic plot.\n"
-             "              The higher 'ppdp', the rounder the spline curve.\n"
+             "              The higher 'ppdp', the smoother the spline curve.\n"
              "Plot a cubic polynomial through the points in the list. Each\n"
              "Hermite polynomial between two data points consists of ppdp lines.\n"
              "See g2_splines.c for further information.\n"
