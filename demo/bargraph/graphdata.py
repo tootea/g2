@@ -6,15 +6,10 @@
 
 class PerMonth(tuple):
     def __new__(cls, *months):
-        total = 0
-        for m in months:
-            total += m
-        fract = total / 100.00
+        fract = sum(months) / 100.00
         return tuple.__new__(cls, [m /fract for m in months])
     def __init__(self, *months):
-        self.total = 0
-        for m in months:
-            self.total += m
+        self.total = sum(months)
 
 ninetyfour = PerMonth(
     3076,  3296,  4983,
