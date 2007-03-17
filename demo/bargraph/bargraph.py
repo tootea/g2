@@ -33,7 +33,17 @@ def interp():
     graph.g2_spline(mndl, -40) # negative, for a cyclic spline
     graph.g2_line(min_gr_x+2*scale_marker_length, min_gr_y+step_y*12.5,
                   min_gr_x+5*scale_marker_length, min_gr_y+step_y*12.5)
+
+    graph.g2_pen(72)
+    graph.g2_set_dash(graphsettings.LineDashes['ds'])
+    graph.g2_line(min_gr_x+2*scale_marker_length, min_gr_y+step_y*11.5,
+                  min_gr_x+5*scale_marker_length, min_gr_y+step_y*11.5)
+    # as this is a fairly dark line, make it a little less bold,
+    # so it won't stand out too much (not visible on all devices)
+    graph.g2_set_line_width(graphsettings.firm_line)
+    graph.g2_hermite(mndl, .7, -20) # negative, for a cyclic spline
     graph.g2_pen(0)
+    graph.g2_set_solid()
     graph.g2_set_line_width(graphsettings.thin_line)
 
 def x_scale():
@@ -90,6 +100,11 @@ def legend():
     graph.g2_line(min_gr_x+9.4*scale_marker_length, ty,
                  min_gr_x+10.4*scale_marker_length, ty)
     graph.g2_string(min_gr_x+10.6*scale_marker_length, ty, 'spline')
+    ty -= step_y
+    graph.g2_string(min_gr_x+6*scale_marker_length, ty, 'g2')
+    graph.g2_line(min_gr_x+9.4*scale_marker_length, ty,
+                 min_gr_x+10.4*scale_marker_length, ty)
+    graph.g2_string(min_gr_x+10.6*scale_marker_length, ty, 'hermite')
     ty -= step_y
     graph.g2_set_font_size(.75*yfs)
     graph.g2_pen(86)

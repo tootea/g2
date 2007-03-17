@@ -12,13 +12,15 @@ LineThickness = {
  'lxxvii' : 0.88 }
 
 thin_line = LineThickness['il']
+firm_line = 2.0 * thin_line
 bold_line = 2.5 * thin_line
 
 LineDashes = {
  'ps' : [1.5,  7.5],
  'pl' : [1.5,  9.0],
  'kl' : [2.25, 9.0],
- 'sl' : [7.5, 12.5] }
+ 'sl' : [7.5, 12.5],
+ 'ds' : [6.25, 4.5] }
 
 class Colors(list):
     def __init__(self):
