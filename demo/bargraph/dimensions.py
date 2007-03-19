@@ -25,8 +25,8 @@ x11_scale_factor = 1.25
 
 ### compiler-defined dimensions (based on the above)
 
-x_width = x11_scale_factor * total_width
-x_height = x11_scale_factor * total_height
+x_width = int(x11_scale_factor * total_width)
+x_height = int(x11_scale_factor * total_height)
 
 fr_right = total_width - fr_margin
 fr_top = total_height - fr_margin

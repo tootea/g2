@@ -51,10 +51,10 @@ def x_scale():
         'jan', 'feb', 'mar', 'apr',
         'may', 'jun', 'jul', 'aug',
         'sep', 'oct', 'nov', 'dec')
-    if output == 'f':
-        graph.g2_set_font_size(x_font_size)
-    else:
+    if output == 'w':
         graph.g2_set_font_size(x_font_size*x11_scale_factor)
+    else:
+        graph.g2_set_font_size(x_font_size)
     for i, mname in enumerate(mnames):
         graph.g2_string(min_gr_x+step_x*i, min_y, mname)
         graph.g2_line(min_gr_x+step_x*i, min_gr_y-scale_marker_length*fr_pr,
@@ -84,7 +84,7 @@ def y_scale():
 def legend():
     yfs = y_font_size * .7
     graph.g2_set_line_width(.7*graphsettings.thin_line)
-    if output != 'f': yfs *= x11_scale_factor
+    if output == 'w': yfs *= x11_scale_factor
     ty = min_gr_y-(yfs/4.)+step_y*13.5
     graph.g2_set_solid()
     graph.g2_set_font_size(yfs)
@@ -161,9 +161,9 @@ while sys.argv:
 
 if graph is None: # no device was specified on the command line, or the device specified could not be opened
     if hasattr(globals(), 'g2_open_win32'):
-        graph = g2_open_win32(int(x_width), int(x_height), 'g2_test', g2_win32)
+        graph = g2_open_win32(x_width, x_height, 'g2_test', g2_win32)
     else:
-        graph = g2_open_X11(int(x_width), int(x_height))
+        graph = g2_open_X11(x_width, x_height)
     if graph is None:
         print '\n Could not open any device.\n'
         sys.exit(0)
@@ -174,6 +174,7 @@ if output != 'a':
     graph.g2_clear_palette()
     for r, g, b in colors:
         graph.g2_ink(r, g, b)
+    graph.g2_set_background(graphsettings.white_)
 
 print '\n Plotting year 19%d' % year
 
