@@ -75,47 +75,6 @@ BOOL WINAPI DllMain( HANDLE hModule, DWORD fdwreason,  LPVOID lpReserved )
 #endif
 
 
-g2_win32_SetPen(int pid, void *pdp)
-	{
-	HGDIOBJ oldpen;
-    LOGBRUSH    logBrush ;
-	logBrush.lbStyle = PS_SOLID;
-	logBrush.lbColor = PDP->Inks[PDP->Pen];
-    logBrush.lbHatch = 0 ;
-
-	oldpen = PDP->hPen;
-	PDP->hPen = ExtCreatePen (logBrush.lbStyle | PS_GEOMETRIC | 
-                         PS_ENDCAP_FLAT | PS_JOIN_BEVEL | (PDP->PenStyle > 0)*PS_USERSTYLE,
-                         PDP->PenWidth, &logBrush,
-                         PDP->PenStyle , PDP->PenDash) ;
-	if (PDP->hPen != NULL) 
-		{
-		SelectObject(PDP->hMemDC,PDP->hPen);
-/*		if (PDP->type == g2_win32)*/
-		DeleteObject(oldpen);
-		}
-	else
-		{
-		errhandler("Pen",NULL);
-		PDP->hPen = oldpen;
-		}
-
-	oldpen = PDP->hNullPen;
-	PDP->hNullPen = CreatePen(PS_SOLID,1,PDP->Inks[PDP->Pen]);
-	if (PDP->hNullPen != NULL) 
-		{
-/*		if (PDP->type == g2_win32)*/
-		DeleteObject(oldpen);
-		}
-	else
-		{
-		errhandler("Pen",NULL);
-		PDP->hNullPen = oldpen;
-		}
-
-	return 0;
-	}
-
 
 int g2_win32_Cleanup(int pid, void *pdp)
 	{
@@ -129,6 +88,7 @@ int g2_win32_Cleanup(int pid, void *pdp)
 	if (PDP->hFont != NULL) DeleteObject(PDP->hFont);
 	if (PDP->hBitmap != NULL) DeleteObject(PDP->hBitmap);
 	if (PDP->hMemDC != NULL) DeleteDC(PDP->hMemDC);
+	if (PDP->hMutex != NULL) DeleteMutex(PDP->hMutex);
 	if (PDP->PenDash != NULL) free(PDP->PenDash);
 	free(thispdp);
 	return 0;
@@ -171,10 +131,59 @@ int g2_win32_Flush(int pid, void *pdp)
 	return 0;
     }
 
+g2_win32_SetPen(int pid, void *pdp)
+	{
+	HGDIOBJ oldpen;
+	HGDIOBJ oldbrush;
+        LOGBRUSH    logBrush ;
+        logBrush.lbStyle = BS_SOLID;
+        logBrush.lbColor = PDP->PenColor;
+        logBrush.lbHatch = 0 ;
+
+	oldpen = PDP->hPen;
+	PDP->hPen = ExtCreatePen (logBrush.lbStyle | PS_GEOMETRIC | 
+                         PS_ENDCAP_FLAT | PS_JOIN_BEVEL | (PDP->PenStyle > 0)*PS_USERSTYLE,
+                         PDP->PenWidth, &logBrush,
+                         PDP->PenStyle , PDP->PenDash) ;
+	if (PDP->hPen != NULL) 
+		{
+		SelectObject(PDP->hMemDC,PDP->hPen);
+		DeleteObject(oldpen);
+		}
+	else
+		{
+		errhandler("Pen",NULL);
+		PDP->hPen = oldpen;
+		}
+
+	oldpen = PDP->hNullPen;
+	PDP->hNullPen = CreatePen(PS_SOLID,1,PDP->Inks[PDP->Pen]);
+	if (PDP->hNullPen != NULL) 
+		{
+		DeleteObject(oldpen);
+		}
+	else
+		{
+		errhandler("Pen",NULL);
+		PDP->hNullPen = oldpen;
+		}
+
+	oldbrush = PDP->hBrush;
+	PDP->hBrush = CreateBrushIndirect(&logBrush);
+	if (PDP->hBrush == NULL) 
+		{
+		errhandler("Pen (CreateBrush)",NULL);
+		PDP->hBrush = oldbrush;
+		}
+	else
+		DeleteObject(oldbrush);
+
+	return 0;
+	}
+
 int g2_win32_Pen(int pid, void *pdp, int color)
 	{
 	struct tagLOGBRUSH logbrush;
-	HGDIOBJ oldbrush;
 	
 	if(color>=PDP->NoOfInks || color<0)
 		{
@@ -186,20 +195,25 @@ int g2_win32_Pen(int pid, void *pdp, int color)
 	PDP->PenColor = PDP->Inks[color];
 	g2_win32_SetPen(pid,pdp);
 
-	logbrush.lbStyle = BS_SOLID;
-	logbrush.lbColor = PDP->PenColor;
-	oldbrush = PDP->hBrush;
-	PDP->hBrush = CreateBrushIndirect(&logbrush);
-	if (PDP->hBrush == NULL) 
-		{
-		errhandler("Pen (CreateBrush)",NULL);
-		PDP->hBrush = oldbrush;
-		}
-	else
-/*		if (PDP->type == g2_win32)*/
-		DeleteObject(oldbrush);
-	return 0;
+	return 0;	
     }
+
+int g2_win32_Pen_RGB(int pid, void *pdp, double red, double green, double blue)
+    {
+	struct tagLOGBRUSH logbrush;
+	HGDIOBJ oldbrush;
+
+	BYTE rc,gc,bc;
+
+	rc = (BYTE)((int)(red*255));
+	gc = (BYTE)((int)(green*255));
+	bc = (BYTE)((int)(blue*255));
+
+	PDP->PenColor = RGB(rc,gc,bc);
+	g2_win32_SetPen(pid,pdp);
+
+	return 0;
+    }  
 
 int g2_win32_Ink(int pid, void *pdp, double red, double green, double blue)
 	{
@@ -240,7 +254,9 @@ int g2_win32_ClearPalette(int pid, void *pdp)
 int g2_win32_SetBackground(int pid, void *pdp, int color)
 	{
 	PDP->BkColor = color;
+	WaitForSingleObject( PDP->hMutex, INFINITE );
 	SetBkColor(PDP->hMemDC,PDP->BkColor);
+	ReleaseMutex( PDP->hMutex );
 	return 0;
     }
 
@@ -285,7 +301,9 @@ int g2_win32_SetFontSize(int pid, void *pdp, int size)
 		}
 	else
 		{
+		WaitForSingleObject( PDP->hMutex, INFINITE );
 		SelectObject(PDP->hMemDC,PDP->hFont);
+		ReleaseMutex( PDP->hMutex );
 		if (oldfont != NULL)// && PDP->type == g2_win32)
 			DeleteObject(oldfont);
 		}
@@ -294,16 +312,21 @@ int g2_win32_SetFontSize(int pid, void *pdp, int size)
 
 int g2_win32_Plot(int pid, void *pdp, int x, int y)
 	{
-	return SetPixel(PDP->hMemDC,x,y,PDP->PenColor);
+	WaitForSingleObject( PDP->hMutex, INFINITE );
+	SetPixel(PDP->hMemDC,x,y,PDP->PenColor);
+	ReleaseMutex( PDP->hMutex );
+	return 0;
     }
 
 int g2_win32_Line(int pid, void *pdp, int x1, int y1, int x2, int y2)
 	{
+	WaitForSingleObject( PDP->hMutex, INFINITE );
 	MoveToEx(PDP->hMemDC,x1,y1,NULL);
 	LineTo(PDP->hMemDC,x2,y2);
 	SetPixel(PDP->hMemDC,x1,y1,PDP->PenColor);
 	SetPixel(PDP->hMemDC,x2,y2,PDP->PenColor);
 	// specifically draw end points since windows does not include one endpoint
+	ReleaseMutex( PDP->hMutex );
 	return 0;
     }
 
@@ -323,7 +346,9 @@ int g2_win32_PolyLine(int pid, void *pdp, int N, int *points)
 		PointList[i].x = points[2*i];
 		PointList[i].y = points[2*i+1];
 		}
+	WaitForSingleObject( PDP->hMutex, INFINITE );
 	Polyline(PDP->hMemDC,PointList,N);
+	ReleaseMutex( PDP->hMutex );
 	free(PointList);
 	return 0;
     }
@@ -332,17 +357,21 @@ int g2_win32_PolyLine(int pid, void *pdp, int N, int *points)
 
 int g2_win32_Rectangle(int pid, void *pdp, int x, int y, int x2, int y2)
 	{
+	WaitForSingleObject( PDP->hMutex, INFINITE );
 	SelectObject(PDP->hMemDC,GetStockObject(NULL_BRUSH));
 	Rectangle(PDP->hMemDC,x,y,x2+1,y2+1); // add one since windows excludes lower right point
+	ReleaseMutex( PDP->hMutex );
 	return 0;
     }
 
 int g2_win32_FilledRectangle(int pid, void *pdp, int x1, int y1, int x2, int y2)
 	{
+	WaitForSingleObject( PDP->hMutex, INFINITE );
 	SelectObject(PDP->hMemDC,PDP->hBrush);
 	SelectObject(PDP->hMemDC,PDP->hNullPen);
 	return Rectangle(PDP->hMemDC,x1,y1,x2+1,y2+1); // add one since windows excludes lower right point
 	SelectObject(PDP->hMemDC,PDP->hPen);
+	ReleaseMutex( PDP->hMutex );
 	return 0;
 	}
 
@@ -361,8 +390,10 @@ int g2_win32_Polygon(int pid, void *pdp, int N, int *points)
 		PointList[i].x = points[2*i];
 		PointList[i].y = points[2*i+1];
 		}
+	WaitForSingleObject( PDP->hMutex, INFINITE );
 	SelectObject(PDP->hMemDC,GetStockObject(NULL_BRUSH));
 	Polygon(PDP->hMemDC,PointList,N);
+	ReleaseMutex( PDP->hMutex );
 	free(PointList);
 	return 0;
     }
@@ -382,26 +413,33 @@ int g2_win32_FilledPolygon(int pid, void *pdp, int N, int *points)
 		PointList[i].x = points[2*i];
 		PointList[i].y = points[2*i+1];
 		}
+	WaitForSingleObject( PDP->hMutex, INFINITE );
 	SelectObject(PDP->hMemDC,PDP->hBrush);
 	SelectObject(PDP->hMemDC,PDP->hNullPen);
 	Polygon(PDP->hMemDC,PointList,N);
 	SelectObject(PDP->hMemDC,PDP->hPen);
+	ReleaseMutex( PDP->hMutex );
 	free(PointList);
 	return 0;
     }
 
 int g2_win32_Ellipse(int pid, void *pdp, int x, int y, int r1, int r2)
 	{
+	WaitForSingleObject( PDP->hMutex, INFINITE );
 	SelectObject(PDP->hMemDC,GetStockObject(NULL_BRUSH));
-	return Ellipse(PDP->hMemDC,x-r1,y-r2,x+r1+1,y+r2+1); // add one since windows is end exclusive
+	Ellipse(PDP->hMemDC,x-r1,y-r2,x+r1+1,y+r2+1); // add one since windows is end exclusive
+	ReleaseMutex( PDP->hMutex );
+	return 0;
     }
 
 int g2_win32_FilledEllipse(int pid, void *pdp, int x, int y, int r1, int r2)
 	{
+	WaitForSingleObject( PDP->hMutex, INFINITE );
 	SelectObject(PDP->hMemDC,PDP->hBrush);
 	SelectObject(PDP->hMemDC,PDP->hNullPen);
-	return Ellipse(PDP->hMemDC,x-r1,y-r2,x+r1+1,y+r2+1); // add one since windows is end exclusive
+	Ellipse(PDP->hMemDC,x-r1,y-r2,x+r1+1,y+r2+1); // add one since windows is end exclusive
 	SelectObject(PDP->hMemDC,PDP->hPen);
+	ReleaseMutex( PDP->hMutex );
 	return 0;
     }
 
@@ -409,17 +447,21 @@ int g2_win32_Arc(int pid, void *pdp, int x, int y, int r1, int r2, double a1, do
 	{
 	a1 *= PI/180.;
 	a2 *= PI/180.;
+	WaitForSingleObject( PDP->hMutex, INFINITE );
 	SelectObject(PDP->hMemDC,GetStockObject(NULL_BRUSH));
 	if (PDP->type == g2_win32)
-		return Arc(PDP->hMemDC,x-r1,y-r2,x+r1,y+r2,dtoi(x+r1*cos(a1)),dtoi(y-r2*sin(a1)),dtoi(x+r1*cos(a2)),dtoi(y-r2*sin(a2)));
+		Arc(PDP->hMemDC,x-r1,y-r2,x+r1,y+r2,dtoi(x+r1*cos(a1)),dtoi(y-r2*sin(a1)),dtoi(x+r1*cos(a2)),dtoi(y-r2*sin(a2)));
 	else
-		return Arc(PDP->hMemDC,x-r1,y-r2,x+r1,y+r2,dtoi(x+r1*cos(a2)),dtoi(y-r2*sin(a2)),dtoi(x+r1*cos(a1)),dtoi(y-r2*sin(a1)));
+		Arc(PDP->hMemDC,x-r1,y-r2,x+r1,y+r2,dtoi(x+r1*cos(a2)),dtoi(y-r2*sin(a2)),dtoi(x+r1*cos(a1)),dtoi(y-r2*sin(a1)));
+	ReleaseMutex( PDP->hMutex );
+	return 0;
     }
 
 int g2_win32_FilledArc(int pid, void *pdp, int x, int y, int r1, int r2, double a1, double a2)
 	{
 	a1 *= PI/180.;
 	a2 *= PI/180.;
+	WaitForSingleObject( PDP->hMutex, INFINITE );
 	SelectObject(PDP->hMemDC,PDP->hBrush);
 	SelectObject(PDP->hMemDC,PDP->hNullPen);
 	if (PDP->type == g2_win32)
@@ -427,6 +469,7 @@ int g2_win32_FilledArc(int pid, void *pdp, int x, int y, int r1, int r2, double 
 	else
 		Pie(PDP->hMemDC,x-r1,y-r2,x+r1,y+r2,dtoi(x+r1*cos(a2)),dtoi(y-r2*sin(a2)),dtoi(x+r1*cos(a1)),dtoi(y-r2*sin(a1)));
 	SelectObject(PDP->hMemDC,PDP->hPen);
+	ReleaseMutex( PDP->hMutex );
 	return 0;
     }
 
@@ -567,6 +610,7 @@ int  g2_open_win32(int width, int height, const char *title, int type)
 	PDP->nHeight = height;
 	PDP->messageloop = 0;
 	PDP->hFont = NULL;
+	PDP->hMutex = CreateMutex(NULL, FALSE, NULL);
 	
 	switch(type) {
 		case g2_win32:
@@ -588,8 +632,8 @@ int  g2_open_win32(int width, int height, const char *title, int type)
 
 			if (PDP->hThread == NULL) 
 				fprintf(stderr,"g2_win32: Thread could not be started\n");
-
-		    SetThreadPriority(PDP->hThread,THREAD_PRIORITY_ABOVE_NORMAL);
+ 
+			SetThreadPriority(PDP->hThread,THREAD_PRIORITY_ABOVE_NORMAL);
 			//Wait till window is created by Thread
 			while( PDP->messageloop == 0)
 				Sleep(10);
@@ -606,7 +650,7 @@ int  g2_open_win32(int width, int height, const char *title, int type)
 			float   PixelsX, PixelsY, MMX, MMY;
 			
 			dwInchesX = PDP->nWidth/72;
-            dwInchesY = PDP->nHeight/72;
+			dwInchesY = PDP->nHeight/72;
 			// dwInchesX x dwInchesY in .01mm units
 			SetRect( &Rect, 0, 0,dwInchesX*2540, dwInchesY*2540 );
  
