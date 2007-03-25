@@ -51,6 +51,7 @@ typedef struct g2_win32_STRUCT {
 	char *title;
 	int type;
 	int messageloop;
+        HANDLE hMutex;
 	} g2_win32_STRUCT;
 
 
@@ -75,6 +76,8 @@ int g2_win32_ClearPalette(int pid, void *pdp);
 int g2_win32_ResetPalette(int pid, void *pdp);
 int g2_win32_SetBackground(int pid, void *pdp, int color);
 int g2_win32_Pen(int pid, void *pdp, int color);
+int g2_win32_Pen_RGB(int pid, void *pdp,
+	       double red, double green, double blue);
 int g2_win32_Paper(int pid, void *pdp, int color);
 int g2_win32_SetLineWidth(int pid, void *pdp, int w);
 int g2_win32_SetDash(int pid, void *pdp, int n, int *data);

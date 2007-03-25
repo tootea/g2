@@ -58,6 +58,7 @@ LRESULT CALLBACK g2_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 		case WM_PAINT:
 			if (pdp == NULL) break;
+			WaitForSingleObject( pdp->hMutex, INFINITE );
 			if (pdp->hBitmap == NULL) break;
 
 //			printf("Received WM_PAINT\n");
@@ -67,6 +68,7 @@ LRESULT CALLBACK g2_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			BitBlt( hDC, Rect.left, Rect.top, Rect.right - Rect.left, 
 			Rect.bottom - Rect.top, pdp->hMemDC, 0, 0, SRCCOPY );
 			EndPaint (hWnd, &ps);
+			ReleaseMutex( pdp->hMutex );
 			return 0L;
 
 		case WM_DESTROY:
