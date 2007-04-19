@@ -88,7 +88,7 @@ int g2_win32_Cleanup(int pid, void *pdp)
 	if (PDP->hFont != NULL) DeleteObject(PDP->hFont);
 	if (PDP->hBitmap != NULL) DeleteObject(PDP->hBitmap);
 	if (PDP->hMemDC != NULL) DeleteDC(PDP->hMemDC);
-	if (PDP->hMutex != NULL) DeleteMutex(PDP->hMutex);
+	if (PDP->hMutex != NULL) CloseHandle(PDP->hMutex);
 	if (PDP->PenDash != NULL) free(PDP->PenDash);
 	free(thispdp);
 	return 0;
@@ -369,7 +369,7 @@ int g2_win32_FilledRectangle(int pid, void *pdp, int x1, int y1, int x2, int y2)
 	WaitForSingleObject( PDP->hMutex, INFINITE );
 	SelectObject(PDP->hMemDC,PDP->hBrush);
 	SelectObject(PDP->hMemDC,PDP->hNullPen);
-	return Rectangle(PDP->hMemDC,x1,y1,x2+1,y2+1); // add one since windows excludes lower right point
+	Rectangle(PDP->hMemDC,x1,y1,x2+1,y2+1); // add one since windows excludes lower right point
 	SelectObject(PDP->hMemDC,PDP->hPen);
 	ReleaseMutex( PDP->hMutex );
 	return 0;
