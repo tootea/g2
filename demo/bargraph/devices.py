@@ -37,7 +37,7 @@ class PhysicalDevices(dict):
         print
 
         # delete devices that could not be opened (returned NULL), if any
-        for d in [k for k, v in self.iteritems() if v is None]:
+        for d in (k for k, v in self.iteritems() if v is None):
             del self[d]
 
         # give each physical device my very own palette

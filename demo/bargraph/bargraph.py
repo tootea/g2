@@ -63,7 +63,7 @@ def x_scale():
     graph.g2_line(min_gr_x, min_gr_y, max_x, min_gr_y)
 
 def y_scale():
-    for i in range(2, 10, 2):
+    for i in xrange(2, 10, 2):
         graph.g2_string(min_x, min_gr_y-(y_font_size/4.)+step_y*i, '1%d%%' % i)
         graph.g2_line(min_gr_x-scale_marker_length, min_gr_y+step_y*i,
                                           min_gr_x, min_gr_y+step_y*i)
@@ -71,13 +71,13 @@ def y_scale():
     graph.g2_filled_rectangle(min_x, min_gr_y-(y_font_size/3.)+step_y*2,
                           min_x+12, min_gr_y-(y_font_size/1.5)+step_y*9)
     graph.g2_pen(0)
-    for i in range(10, int(months.max_interpol_val)+1, 2):
+    for i in xrange(10, int(months.max_interpol_val)+1, 2):
         graph.g2_string(min_x, min_gr_y-(y_font_size/4.)+step_y*i, '%d%%' % i)
         graph.g2_line(min_gr_x-scale_marker_length, min_gr_y+step_y*i,
                                           min_gr_x, min_gr_y+step_y*i)
     graph.g2_line(min_gr_x, min_gr_y, min_gr_x, max_y)
     graph.g2_set_dash(graphsettings.LineDashes['kl'])
-    for i in range(1, int(months.max_interpol_val)+1):
+    for i in xrange(1, int(months.max_interpol_val)+1):
         graph.g2_line(min_gr_x, min_gr_y+step_y*i,
                          max_x, min_gr_y+step_y*i)
 

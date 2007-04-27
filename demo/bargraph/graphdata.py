@@ -7,7 +7,7 @@
 class PerMonth(tuple):
     def __new__(cls, *months):
         fract = sum(months) / 100.00
-        return tuple.__new__(cls, [m /fract for m in months])
+        return tuple.__new__(cls, (m / fract for m in months))
     def __init__(self, *months):
         self.total = sum(months)
 
