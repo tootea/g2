@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # Run 'make' or 'make install' to call this script.
 # The result of 'make install' will generally be :
-#    on Linux : /usr/lib/python2.4/site-packages/g2.so
-#    on Windows : C:\Python24\lib\site-packages\g2.pyd
+#    on Linux : /usr/lib/python2.5/site-packages/g2.so
+#    on Windows : C:\Python25\lib\site-packages\g2.pyd
 # Then in Python say : import g2
 
 # For a module based on libg2.so, make sure libg2.so is in the link path
-# (you may have to add a link like libg2.so -> libg2.so.0.0.70).
+# (you may have to add a link like libg2.so -> libg2.so.0.0.72).
 # For a stand alone module (not recommended), make sure libg2.a is in
 # the link path (very likely, given -L../), and libg2.so is not.
 # Alternatively, add '-static' to link_args below.
@@ -20,7 +20,7 @@ error_string = '\n No %s command line argument.' \
                '\n Specify an empty string (\'\') if there are none.'
 
 # set compile_args and link_args
-for (pos, step) in (('1st', 'compile'), ('2nd', 'link')):
+for pos, step in (('1st', 'compile'), ('2nd', 'link')):
     try:
         globals()[step + '_args'] = sys.argv.pop(1).split()
     except IndexError:
@@ -40,7 +40,7 @@ if len(sys.argv) == 1:
 if platform.system() == 'Linux':
     link_args += ['-s']
 
-if platform.python_compiler()[0:3] == 'GCC' and 'sparc' in platform.machine():
+if platform.python_compiler()[:3] == 'GCC' and 'sparc' in platform.machine():
     link_args += ['-fPIC', '-Wl,-O2', '-Wl,-Map=g2.map']
 
 g2base = Extension( 'g2',

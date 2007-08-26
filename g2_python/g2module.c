@@ -1,5 +1,5 @@
 /*****************************************************************************
-**  Copyright (C) 2006  Tijs Michels
+**  Copyright (C) 2006-2007  Tijs Michels
 **  This file is part of the g2 library
 **
 **  This library is free software; you can redistribute it and/or
@@ -73,7 +73,7 @@ helper_il(const G2 *self, const PyObject *args, list_f *f)
    PyObject *list;
 
    if (PyArg_ParseTuple((PyObject *)args, "O!", &PyList_Type, &list)) { /* cf. <listobject.h> */
-      int s = PyList_Size(list);
+      int s = (int) PyList_Size(list);
       if (s) {
          double * const points = malloc(s * sizeof(double)); /* in one case the buffer holds dashes, not points */
          if (points) {
@@ -97,7 +97,7 @@ helper_ili(const G2 *self, const PyObject *args, list_i_f *f)
    int ip; /* number of interpolated points per data point */
 
    if (PyArg_ParseTuple((PyObject *)args, "O!i", &PyList_Type, &list, &ip)) {
-      int s = PyList_Size(list);
+      int s = (int) PyList_Size(list);
       if (s > 5) {
          double * const points = malloc(s * sizeof(double));
          if (points) {
@@ -122,14 +122,14 @@ helper_ild(const G2 *self, const PyObject *args, list_d_f *f)
    int ip; /* number of interpolated points per data point */
    int s;
 
-   if (PyTuple_Size((PyObject *)args) == 2) { /* called the old way, as g2_raspln */
+   if ((int) PyTuple_Size((PyObject *)args) == 2) { /* called the old way, as g2_raspln */
       s = PyArg_ParseTuple((PyObject *)args, "O!d", &PyList_Type, &list, &factor);
       ip = 40;
    } else { /* called the new way, as g2_hermite */
       s = PyArg_ParseTuple((PyObject *)args, "O!di", &PyList_Type, &list, &factor, &ip);
    }
    if (s) {
-      if ((s = PyList_Size(list)) > 5) {
+      if ((s = (int) PyList_Size(list)) > 5) {
          double * const points = malloc(s * sizeof(double));
          if (points) {
             const int np = s >> 1;
@@ -1117,7 +1117,7 @@ C_g2_image(G2 *self, PyObject *args)
    PyObject *list; /* a list of lists, to be unpacked as a two-dimensional array */
 
    if (PyArg_ParseTuple(args, "ddO!", &x, &y, &PyList_Type, &list)) {
-      int h = PyList_Size(list); /* the nr of lines, i.e. the height */
+      int h = (int) PyList_Size(list); /* the nr of lines, i.e. the height */
       if (h) {
          int i = 0;
          int j = 0;
@@ -1135,7 +1135,7 @@ C_g2_image(G2 *self, PyObject *args)
             PyObject * const * l = e;
             int w = 0;
             do { /* set width to the longest list */
-               if ((i = PyList_Size(*--l)) > w) w = i;
+               if ((i = (int) PyList_Size(*--l)) > w) w = i;
             } while (l > lines);
             if (w) { /* at least one line had a width > 0 */
                int * const pens = PyMem_New(int, w * h * sizeof(int));
@@ -1147,7 +1147,7 @@ C_g2_image(G2 *self, PyObject *args)
                do {
                   PyObject * const pl = *l;
                   i = 0;
-                  j = PyList_Size(pl);
+                  j = (int) PyList_Size(pl);
                   while (i < j) {
                      po = PyList_GET_ITEM(pl, i);
                      pen[i++] = PyInt_Check(po) ? PyInt_AsLong(po) : 0;
