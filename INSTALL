@@ -12,22 +12,24 @@ UNIX
 
 1. Extract package with gzip -dc g2-xxxx.tar.gz | tar xvf - 
 
-2. Run './configure'
+2. Optionally run 'autoconf'
 
-3. Run 'make depend'
+3. Run './configure'
 
-4. Optionally edit src/g2_config.h to fine-tune g2 behavior (only if
+4. Optionally run 'make depend'
+
+5. Optionally edit src/g2_config.h to fine-tune g2 behavior (only if
    you know what are you doing)
 
-5. Run 'make' 
+6. Run 'make' 
 
-6. Run 'make install' or copy libg2.a and g2.h, g2_X11.h, g2_gd.h, and
+7. Run 'make install' or copy libg2.a and g2.h, g2_X11.h, g2_gd.h, and
    g2_PS.h to the default locations for library and include files. 
 
-7. cd to demo directory and  run 'make demo' to compile demo
+8. cd to demo directory and  run 'make demo' to compile demo
    applications
 
-8. To rebuild documentation run 'make doc' (html, PS and pdf manual
+9. To rebuild documentation run 'make doc' (html, PS and pdf manual
    should be already included into documentation).
 
 
