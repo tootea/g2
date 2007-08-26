@@ -110,6 +110,7 @@ install: libg2.a
 	for IFILE in $(INS); do \
 		$(INSTALL_DATA) $$IFILE  $(INCDIR); \
 	done
+	@PYTHON_INSTALL@
 
 release: clean doc
 	cp ./doc/latex/refman.ps  ./doc/g2_refman.ps
