@@ -85,6 +85,7 @@ then
 	AC_CHECK_FUNC(gdImagePng, DO_GD='';AC_DEFINE(DO_GD))
 	AC_CHECK_FUNC(gdImageGif, DO_GIF='';AC_DEFINE(DO_GIF))
 fi
+AC_CHECK_PROG(PYTHON, python, g2_python/g2module.$OBJEXT)
 
 #
 # handling cygwin environment (and gd for cygwin == bgd)
@@ -112,6 +113,7 @@ AC_SUBST(DO_XDBE)
 AC_SUBST(DO_WIN32)
 AC_SUBST(DO_GD)
 AC_SUBST(DO_GIF)
+AC_SUBST(PYTHON)
 
 AC_HEADER_STDC
 AC_CHECK_HEADERS(limits.h)

@@ -29,7 +29,9 @@ for pos, step in (('1st', 'compile'), ('2nd', 'link')):
 
 import platform
 
-build_ext_opts = {}
+# always build g2module.@OBJEXT@ in the same directory, irrespective of the
+# Python version, as it doubles as a make target
+build_ext_opts = {'build_temp' : '.'}
 
 # called without arguments, just build the module in directory g2_python
 if len(sys.argv) == 1:

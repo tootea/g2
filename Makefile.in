@@ -82,9 +82,12 @@ INS =  $(BASE_INS) $(PS_INS) $(FIG_INS) $(X11_INS) $(WIN32_INS) $(GD_INS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 
-all: libg2.a
+all: libg2.a @PYTHON@
 	test -d ./include || mkdir ./include
 	cp $(INS) ./include/
+
+g2_python/g2module.@OBJEXT@:
+	make -C g2_python
 
 shared: libg2.@LD_SHARED_EXT@
 	@echo
