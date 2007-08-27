@@ -25,7 +25,7 @@ typedef struct _g2_virtual_device {
 } g2_virtual_device;
 
 
-g2_virtual_device *g2_create_virtual_device();
+g2_virtual_device *g2_create_virtual_device(void);
 void g2_destroy_virtual_device(g2_virtual_device *vd);
 int g2_is_attached(int vd, int dev);
 

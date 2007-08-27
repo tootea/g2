@@ -111,7 +111,7 @@ G2L void g2_save(int dev);
 G2L void g2_set_coordinate_system(int dev, double x_origin, double y_origin,
 			      double x_mul,    double y_mul);
 
-G2L int  g2_ld();
+G2L int  g2_ld(void);
 G2L void g2_set_ld(int dev);
 
 G2L int  g2_ink(int pd_dev, double red, double green, double blue);

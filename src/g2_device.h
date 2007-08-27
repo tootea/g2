@@ -54,7 +54,7 @@ int g2_register_physical_device(int pid,
 				const g2_funix_fun *ff,
 				double a11, double a22,
 				double b1,  double b2);
-int g2_register_virtual_device();
+int g2_register_virtual_device(void);
 
 g2_device *g2_get_device_pointer(int dix);
 g2_device_type g2_get_device_type(int dix);
