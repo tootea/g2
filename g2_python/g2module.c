@@ -1218,8 +1218,8 @@ C_g2_query_pointer(G2 *self)
 {
    double x, y;
    unsigned int button;
-   g2_query_pointer(self->dev, &x, &y, &button);
    PyObject * const r = PyTuple_New(3);
+   g2_query_pointer(self->dev, &x, &y, &button);
    PyTuple_SET_ITEM(r, 0, Py_BuildValue("d", x));
    PyTuple_SET_ITEM(r, 1, Py_BuildValue("d", y));
    PyTuple_SET_ITEM(r, 2, Py_BuildValue("I", button)); /* capital, for unsigned */
