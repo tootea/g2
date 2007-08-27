@@ -85,7 +85,6 @@ then
 	AC_CHECK_FUNC(gdImagePng, DO_GD='';AC_DEFINE(DO_GD))
 	AC_CHECK_FUNC(gdImageGif, DO_GIF='';AC_DEFINE(DO_GIF))
 fi
-AC_CHECK_PROG(PYTHON, python, g2_python/g2module.$OBJEXT)
 
 #
 # handling cygwin environment (and gd for cygwin == bgd)
@@ -101,6 +100,8 @@ then
 #		LIBS="$LIBS -lbgd"
 #		AC_CHECK_FUNC(gdImagePng, DO_GD='';AC_DEFINE(DO_GD))
 #	fi
+else
+	AC_CHECK_PROG(PYTHON, python, g2_python/g2module.$OBJEXT)
 fi
    
 #
