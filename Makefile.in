@@ -115,7 +115,7 @@ install: libg2.a
 release: clean doc
 	cp ./doc/latex/refman.ps  ./doc/g2_refman.ps
 	cp ./doc/latex/refman.pdf ./doc/g2_refman.pdf
-	rm -r ./doc/latex
+	-rm -r ./doc/latex
 
 doc:
 	(cd ./doc ; doxygen Doxyfile)
