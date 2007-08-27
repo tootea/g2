@@ -36,6 +36,13 @@ case "$host" in
 		AC_DEFINE(UNIX);;
 esac
 
+if test $host_os = cygwin
+then
+	CYGWIN=yes
+else
+	CYGWIN=no
+fi
+
 AC_SUBST(LD_SHARED)
 AC_SUBST(LD_SHARED_FLAGS)
 AC_SUBST(LD_SHARED_OPT)
@@ -89,7 +96,6 @@ fi
 #
 # handling cygwin environment (and gd for cygwin == bgd)
 #
-AC_CYGWIN
 if test "$CYGWIN" = yes
 then
 	LIBS="$LIBS -L/lib/w32api"
