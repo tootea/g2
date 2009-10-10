@@ -64,6 +64,7 @@ BASE_INS = $(BASE_DIR)/g2.h
 @DO_GD@GD_SRC = $(GD_DIR)/g2_gd.c
 @DO_GD@GD_INS = $(GD_DIR)/g2_gd.h
 
+LIBS=@LIBS@
 
 SRC = $(BASE_SRC) $(PS_SRC) $(FIG_SRC) $(X11_SRC) $(WIN32_SRC) $(GD_SRC)
 OBJ = $(SRC:.c=.o)
@@ -98,7 +99,7 @@ libg2.a: $(OBJ)
 	test ! -n "$(RANLIB)" || $(RANLIB) $@
 
 libg2.@LD_SHARED_EXT@: $(OBJ)
-	@LD_SHARED@ @LD_SHARED_FLAGS@ -o $@ $(OBJ) @LD_SHARED_OPT@
+	@LD_SHARED@ @LD_SHARED_FLAGS@ -o $@ $(OBJ) $(LIBS) @LD_SHARED_OPT@
 
 libg2.so: libg2.@LD_SHARED_EXT@
 	ln -f -s libg2.@LD_SHARED_EXT@ $@
@@ -107,6 +108,8 @@ install: libg2.a
 	test -d $(LIBDIR) || mkdir -p $(LIBDIR)
 	test -d $(INCDIR) || mkdir -p $(INCDIR)
 	$(INSTALL_DATA) libg2.a $(LIBDIR)
+	$(shell test -f libg2.@LD_SHARED_EXT@ && $(INSTALL_DATA) libg2.@LD_SHARED_EXT@ $(LIBDIR))
+	$(shell test -f libg2.so && $(INSTALL_DATA) libg2.so $(LIBDIR))
 	for IFILE in $(INS); do \
 		$(INSTALL_DATA) $$IFILE  $(INCDIR); \
 	done
