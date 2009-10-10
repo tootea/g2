@@ -62,5 +62,5 @@ graph.g2_flush()
 
 if output != 'f':
     print '\n Done.' \
-          '\n Hit any key to continue.\n'
+          '\n Hit [Enter] to continue.\n'
     sys.stdin.read(1)

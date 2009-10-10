@@ -176,7 +176,7 @@ if output != 'a':
         graph.g2_ink(r, g, b)
     graph.g2_set_background(graphsettings.white_)
 
-print '\n Plotting year 19%d' % year
+print '\n Plotting year 19%d.' % year
 
 graph.g2_set_auto_flush(False)
 draw()
@@ -184,5 +184,5 @@ graph.g2_flush()
 
 if output != 'f':
     print '\n Done.' \
-          '\n Hit any key to continue.\n'
+          '\n Hit [Enter] to continue.\n'
     sys.stdin.read(1)
