@@ -2,6 +2,8 @@
 ##  Copyright (C) 2007  Dr. Tijs Michels
 ##  This file is part of the g2 library
 
+##  Based on graph 2.17 on page 29 of my dissertation (ISBN 90-9018145-8)
+
 from g2 import *
 import sys
 import graphdata
@@ -19,25 +21,25 @@ def interp():
     mndl = []
 
     for i, month in enumerate(months):
-        mndl.append(min_gr_x+st_h_x+step_x*i)
-        mndl.append(min_gr_y+step_y*month)
+        mndl.append(xStep(i)+st_h_x)
+        mndl.append(yStep(month))
 
     graph.g2_set_line_width(graphsettings.bold_line)
 
     graph.g2_pen(162) # 168
     graph.g2_b_spline(mndl, -40) # negative, for a cyclic spline
-    graph.g2_line(min_gr_x+2*scale_marker_length, min_gr_y+step_y*13.5,
-                  min_gr_x+5*scale_marker_length, min_gr_y+step_y*13.5)
+    graph.g2_line(xOff(2), yStep(12.5),
+                  xOff(5), yStep(12.5))
 
     graph.g2_pen(186)
     graph.g2_spline(mndl, -40) # negative, for a cyclic spline
-    graph.g2_line(min_gr_x+2*scale_marker_length, min_gr_y+step_y*12.5,
-                  min_gr_x+5*scale_marker_length, min_gr_y+step_y*12.5)
+    graph.g2_line(xOff(2), yStep(13.5),
+                  xOff(5), yStep(13.5))
 
     graph.g2_pen(72)
     graph.g2_set_dash(graphsettings.LineDashes['ds'])
-    graph.g2_line(min_gr_x+2*scale_marker_length, min_gr_y+step_y*11.5,
-                  min_gr_x+5*scale_marker_length, min_gr_y+step_y*11.5)
+    graph.g2_line(xOff(2), yStep(11.5),
+                  xOff(5), yStep(11.5))
     # as this is a fairly dark line, make it a little less bold,
     # so it won't stand out too much (not visible on all devices)
     graph.g2_set_line_width(graphsettings.firm_line)
@@ -56,59 +58,68 @@ def x_scale():
     else:
         graph.g2_set_font_size(x_font_size)
     for i, mname in enumerate(mnames):
-        graph.g2_string(min_gr_x+step_x*i, min_y, mname)
-        graph.g2_line(min_gr_x+step_x*i, min_gr_y-scale_marker_length*fr_pr,
-                      min_gr_x+step_x*i, min_gr_y)
+        graph.g2_string(xStep(i), min_y, mname)
+        graph.g2_line(xStep(i), min_gr_y-scale_marker_length*fr_pr,
+                      xStep(i), min_gr_y)
     graph.g2_line(max_x, min_gr_y-scale_marker_length*fr_pr, max_x, min_gr_y)
     graph.g2_line(min_gr_x, min_gr_y, max_x, min_gr_y)
 
 def y_scale():
     for i in xrange(2, 10, 2):
-        graph.g2_string(min_x, min_gr_y-(y_font_size/4.)+step_y*i, '1%d%%' % i)
-        graph.g2_line(min_gr_x-scale_marker_length, min_gr_y+step_y*i,
-                                          min_gr_x, min_gr_y+step_y*i)
+        graph.g2_string(min_x, yStep(i)-(y_font_size/4.), '1%d%%' % i)
+        graph.g2_line(min_gr_x-scale_marker_length, yStep(i),
+                                          min_gr_x, yStep(i))
     graph.g2_pen(graphsettings.white_)
-    graph.g2_filled_rectangle(min_x, min_gr_y-(y_font_size/3.)+step_y*2,
-                          min_x+12, min_gr_y-(y_font_size/1.5)+step_y*9)
+    graph.g2_filled_rectangle(min_x, yStep(2)-(y_font_size/3.),
+                           min_x+12, yStep(9)-(y_font_size/1.5))
     graph.g2_pen(0)
     for i in xrange(10, int(months.max_interpol_val)+1, 2):
-        graph.g2_string(min_x, min_gr_y-(y_font_size/4.)+step_y*i, '%d%%' % i)
-        graph.g2_line(min_gr_x-scale_marker_length, min_gr_y+step_y*i,
-                                          min_gr_x, min_gr_y+step_y*i)
+        graph.g2_string(min_x, yStep(i)-(y_font_size/4.), '%d%%' % i)
+        graph.g2_line(min_gr_x-scale_marker_length, yStep(i),
+                                          min_gr_x, yStep(i))
     graph.g2_line(min_gr_x, min_gr_y, min_gr_x, max_y)
     graph.g2_set_dash(graphsettings.LineDashes['kl'])
     for i in xrange(1, int(months.max_interpol_val)+1):
-        graph.g2_line(min_gr_x, min_gr_y+step_y*i,
-                         max_x, min_gr_y+step_y*i)
+        graph.g2_line(min_gr_x, yStep(i),
+                         max_x, yStep(i))
 
-def legend():
+def legend(g2):
     yfs = y_font_size * .7
     graph.g2_set_line_width(.7*graphsettings.thin_line)
     if output == 'w': yfs *= x11_scale_factor
-    ty = min_gr_y-(yfs/4.)+step_y*13.5
+    ty = yStep(13.5)-(yfs/4.)
     graph.g2_set_solid()
     graph.g2_set_font_size(yfs)
-    graph.g2_string(min_gr_x+6*scale_marker_length, ty, 'g2')
-    graph.g2_line(min_gr_x+9.4*scale_marker_length, ty,
-                 min_gr_x+10.4*scale_marker_length, ty)
-    graph.g2_string(min_gr_x+10.5*scale_marker_length, ty, 'b')
-    graph.g2_line(min_gr_x+12.3*scale_marker_length, ty,
-                  min_gr_x+13.3*scale_marker_length, ty)
-    graph.g2_string(min_gr_x+13.5*scale_marker_length, ty, 'spline')
+    if g2:
+        graph.g2_string(xOff(6), ty, 'g2')
+        graph.g2_line(xOff(9.4), ty,
+                     xOff(10.4), ty)
+        graph.g2_string(xOff(10.6), ty, 'spline')
+    else:
+        graph.g2_string(xOff(6), ty, 'successive over-relaxation')
     ty -= step_y
-    graph.g2_string(min_gr_x+6*scale_marker_length, ty, 'g2')
-    graph.g2_line(min_gr_x+9.4*scale_marker_length, ty,
-                 min_gr_x+10.4*scale_marker_length, ty)
-    graph.g2_string(min_gr_x+10.6*scale_marker_length, ty, 'spline')
+    if g2:
+        graph.g2_string(xOff(6), ty, 'g2')
+        graph.g2_line(xOff(9.4), ty,
+                     xOff(10.4), ty)
+        graph.g2_string(xOff(10.5), ty, 'b')
+        graph.g2_line(xOff(12.3), ty,
+                      xOff(13.3), ty)
+        graph.g2_string(xOff(13.5), ty, 'spline')
+    else:
+        graph.g2_string(xOff(6), ty, 'cubic B-spline')
     ty -= step_y
-    graph.g2_string(min_gr_x+6*scale_marker_length, ty, 'g2')
-    graph.g2_line(min_gr_x+9.4*scale_marker_length, ty,
-                 min_gr_x+10.4*scale_marker_length, ty)
-    graph.g2_string(min_gr_x+10.6*scale_marker_length, ty, 'hermite')
+    if g2:
+        graph.g2_string(xOff(6), ty, 'g2')
+        graph.g2_line(xOff(9.4), ty,
+                     xOff(10.4), ty)
+        graph.g2_string(xOff(10.6), ty, 'hermite')
+    else:
+        graph.g2_string(xOff(6), ty, 'cubic Hermite')
     ty -= step_y
     graph.g2_set_font_size(.75*yfs)
     graph.g2_pen(86)
-    graph.g2_string(min_gr_x+6*scale_marker_length, ty, 'tijs@users.sourceforge.net')
+    graph.g2_string(xOff(6), ty, 'tijs@users.sourceforge.net')
 
 def draw():
     graph.g2_set_line_width(graphsettings.thin_line)
@@ -120,7 +131,11 @@ def draw():
     interp()
     x_scale()
     y_scale()
-    legend()
+    legend(True)
+
+xOff = lambda factor: min_gr_x + factor * scale_marker_length
+xStep = lambda factor: min_gr_x + factor * step_x
+yStep = lambda factor: min_gr_y + factor * step_y
 
 output = 'w' # by default, output to window only
 graph = None
@@ -170,10 +185,9 @@ if graph is None: # no device was specified on the command line, or the device s
     graph.g2_set_coordinate_system(0, 0, x11_scale_factor, x11_scale_factor)
 
 if output != 'a':
-    colors = graphsettings.Colors()
     graph.g2_clear_palette()
-    for r, g, b in colors:
-        graph.g2_ink(r, g, b)
+    for c in graphsettings.Colors():
+        graph.g2_ink(*c)
     graph.g2_set_background(graphsettings.white_)
 
 print '\n Plotting year 19%d.' % year
