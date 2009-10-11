@@ -30,27 +30,17 @@ def frange(from_, to_, n):
 class ColorSteps(tuple):
     def __new__(cls):
         import math
-        return tuple.__new__(cls, (math.log(a) for a in frange(1,math.e,7)))
+        return tuple.__new__(cls, (math.log(a) for a in frange(1,math.e,13)))
 
 class Colors(list):
-    def __init__(self): # b_, c_, d_, e_, f_ = ColorSteps()[2:7]
-        a_ = 0.0000
-        b_ = 0.4528
-        c_ = 0.6201
-        d_ = 0.7634
-        e_ = 0.8887
-        f_ = 1.0000
+    def __init__(self):
+        steps = ColorSteps()
 
-        p_ = 0.1338
-        q_ = 0.3574
-        r_ = 0.5400
+        c1 = (0.,) + steps[4:12:2] + (1.,)
+        c2 = steps[1:7:2]
 
-        u_ = 0.9459
-        v_ = 0.8280
-        w_ = 1.0000
+        u_, v_, w_, = steps[11], steps[9], 1.
 
-        c1 = (a_, b_, c_, d_, e_, f_)
-        c2 = (p_, q_, r_)
         c3 = (((u_, v_, v_), (u_, v_, w_), (u_, w_, w_)),
               ((v_, u_, v_), (v_, u_, w_), (w_, u_, w_)),
               ((v_, v_, u_), (v_, w_, u_), (w_, w_, u_)))
