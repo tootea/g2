@@ -24,7 +24,7 @@
  * 06/16/99 : initial release
  * 19/02/06 : eliminated duplicates by using pointers to functions
  * 17/02/07 : added cyclic splines
- * 17/03/07 : added hermite splines (normal and cyclic), which are like the now
+ * 17/03/07 : added Hermite splines (normal and cyclic), which are like the now
  *            deprecated raspln splines, except that the formerly fixed number
  *            of interpolated points per data point is now a function argument
  */
@@ -373,7 +373,7 @@ void g2_c_b_spline(int n, const double *points, int m, double *sxy)
 
 /**
  *
- * Plot a b-spline curve with \a o interpolated points per data point.
+ * Plot a uniform cubic B-spline curve with \a o interpolated points per data point.
  * So the larger \a o, the more fluent the curve.
  * For most averaging purposes, this is the right spline.
  *
@@ -395,7 +395,7 @@ void g2_b_spline(int dev, int n, double *points, int o)
 
 /**
  *
- * Plot a filled b-spline curve with \a o interpolated points per data point.
+ * Plot a filled uniform cubic B-spline curve with \a o interpolated points per data point.
  * So the larger \a o, the more fluent the curve.
  * For most averaging purposes, this is the right spline.
  *
