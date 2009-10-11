@@ -22,8 +22,18 @@ LineDashes = {
  'sl' : [7.5, 12.5],
  'ds' : [6.25, 4.5] }
 
+def frange(from_, to_, n):
+    m = n - 1
+    q = 1.0 / m
+    return (q * (from_ * (m - i) + to_ * i) for i in range(n)) # generator
+
+class ColorSteps(tuple):
+    def __new__(cls):
+        import math
+        return tuple.__new__(cls, (math.log(a) for a in frange(1,math.e,7)))
+
 class Colors(list):
-    def __init__(self):
+    def __init__(self): # b_, c_, d_, e_, f_ = ColorSteps()[2:7]
         a_ = 0.0000
         b_ = 0.4528
         c_ = 0.6201
