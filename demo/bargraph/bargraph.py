@@ -119,13 +119,16 @@ def legend(g2):
     ty -= step_y
     graph.g2_set_font_size(.75*yfs)
     graph.g2_pen(86)
-    graph.g2_string(xOff(6), ty, 'tijs@users.sourceforge.net')
+    if g2:
+        graph.g2_string(xOff(6), ty, 'tijs@users.sourceforge.net')
+    else:
+        graph.g2_string(xOff(6), ty, '(c) Tijs Michels')
 
 def draw():
     graph.g2_set_line_width(graphsettings.thin_line)
     graph.g2_rectangle(fr_margin, fr_margin, fr_right, fr_top)
     global months, step_y
-    months = graphdata.data[year]
+    months = graphdata.__dict__[dataset + str(year)]
     step_y = max_gr_h / months.max_interpol_val
     bars()
     interp()
@@ -139,6 +142,7 @@ yStep = lambda factor: min_gr_y + factor * step_y
 
 output = 'w' # by default, output to window only
 graph = None
+dataset = 'nl' # use option -d to plot a different data set
 year = 97 # use option -y to plot a different year
 sys.argv.pop(0)
 while sys.argv:
@@ -150,7 +154,13 @@ while sys.argv:
         output = 'a'
         import devices
         graph = devices.AllAtOnce()
-    elif arg == '-y': # a year has been specified
+    elif arg == '-d': # followed by a data set ('nl' or 'tilburg')
+        try:
+            dataset = sys.argv.pop(0)
+        except IndexError:
+            print '\n Error : no data set specified\n'
+            sys.exit(0)
+    elif arg == '-y': # followed by a year
         try:
             year = int(sys.argv.pop(0))
         except IndexError:
@@ -165,13 +175,14 @@ while sys.argv:
     else:
         if arg != '-h':
             print "\n Argument '%s' is invalid." % arg
-        print '\n bargraph.py <[-f | -a]> <-y 9x> <-h>\n\n' \
+        print '\n bargraph.py <[-f | -a]> <-d nl|tilburg> <-y 9x> <-h>\n\n' \
               '   -f : output to file\n' \
               '   -a : output to all available devices\n' \
+              '   -d : select a data set: nl (default) or tilburg\n' \
               '   -y : show the year 9x (default is 97)\n' \
               '   -h : show this help\n\n' \
-              ' If no (valid) output device is specified, the screen is chosen.\n' \
-              ' If no (valid) year is specified, 1997 is shown.\n\n'
+              ' If no output device is specified, the screen is chosen.\n' \
+              ' If no year is specified, 1997 is shown.\n\n'
         sys.exit(0)
 
 if graph is None: # no device was specified on the command line, or the device specified could not be opened
