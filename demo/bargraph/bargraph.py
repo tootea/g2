@@ -82,15 +82,16 @@ def y_scale():
     for i in xrange(1, int(months.max_interpol_val)+1):
         graph.g2_line(min_gr_x, yStep(i),
                          max_x, yStep(i))
+    graph.g2_set_solid()
 
-def legend(g2):
+def legend():
     yfs = y_font_size * .7
     graph.g2_set_line_width(.7*graphsettings.thin_line)
     if output == 'w': yfs *= x11_scale_factor
     ty = yStep(13.5)-(yfs/4.)
     graph.g2_set_solid()
     graph.g2_set_font_size(yfs)
-    if g2:
+    if g2legend:
         graph.g2_string(xOff(6), ty, 'g2')
         graph.g2_line(xOff(9.4), ty,
                      xOff(10.4), ty)
@@ -98,7 +99,7 @@ def legend(g2):
     else:
         graph.g2_string(xOff(6), ty, 'successive over-relaxation')
     ty -= step_y
-    if g2:
+    if g2legend:
         graph.g2_string(xOff(6), ty, 'g2')
         graph.g2_line(xOff(9.4), ty,
                      xOff(10.4), ty)
@@ -109,7 +110,7 @@ def legend(g2):
     else:
         graph.g2_string(xOff(6), ty, 'cubic B-spline')
     ty -= step_y
-    if g2:
+    if g2legend:
         graph.g2_string(xOff(6), ty, 'g2')
         graph.g2_line(xOff(9.4), ty,
                      xOff(10.4), ty)
@@ -119,7 +120,7 @@ def legend(g2):
     ty -= step_y
     graph.g2_set_font_size(.75*yfs)
     graph.g2_pen(86)
-    if g2:
+    if g2legend:
         graph.g2_string(xOff(6), ty, 'tijs@users.sourceforge.net')
     else:
         graph.g2_string(xOff(6), ty, '(c) Tijs Michels')
@@ -131,10 +132,10 @@ def draw():
     months = graphdata.__dict__[dataset + str(year)]
     step_y = max_gr_h / months.max_interpol_val
     bars()
-    interp()
     x_scale()
     y_scale()
-    legend(True)
+    interp()
+    legend()
 
 xOff = lambda factor: min_gr_x + factor * scale_marker_length
 xStep = lambda factor: min_gr_x + factor * step_x
@@ -142,12 +143,13 @@ yStep = lambda factor: min_gr_y + factor * step_y
 
 output = 'w' # by default, output to window only
 graph = None
+g2legend = True
 dataset = 'nl' # use option -d to plot a different data set
 year = 97 # use option -y to plot a different year
 sys.argv.pop(0)
 while sys.argv:
     arg = sys.argv.pop(0)
-    if   arg == '-f': # output to file
+    if   arg == '-f': # output to EPS file
         output = 'f'
         graph = g2_open_EPSF('bargraph.eps')
     elif arg == '-a': # output to all available devices
@@ -172,17 +174,20 @@ while sys.argv:
                 continue # perfect
             print '\n Error : year must be between 94 and 98.\n'
         sys.exit(0)
+    elif arg == '-m': # print math legend
+        g2legend = False
     else:
         if arg != '-h':
             print "\n Argument '%s' is invalid." % arg
-        print '\n bargraph.py <[-f | -a]> <-d nl|tilburg> <-y 9x> <-h>\n\n' \
-              '   -f : output to file\n' \
+        print '\n bargraph.py <[-f | -a]> <-d nl|tilburg> <-y 9x> <-m> <-h>\n\n' \
+              '   -f : output to EPS file\n' \
               '   -a : output to all available devices\n' \
               '   -d : select a data set: nl (default) or tilburg\n' \
-              '   -y : show the year 9x (default is 97)\n' \
+              '   -y : plot the year 9x (default is 97)\n' \
+              '   -m : print alternative math legend\n' \
               '   -h : show this help\n\n' \
               ' If no output device is specified, the screen is chosen.\n' \
-              ' If no year is specified, 1997 is shown.\n\n'
+              ' If no year is specified, 1997 is plotted.\n\n'
         sys.exit(0)
 
 if graph is None: # no device was specified on the command line, or the device specified could not be opened
