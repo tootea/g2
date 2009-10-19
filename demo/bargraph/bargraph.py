@@ -11,11 +11,11 @@ import graphsettings
 from dimensions import *
 
 def bars():
+    graph.g2_set_line_width(0) # add no width, depth and height to the bars
     for i, month in enumerate(months):
         graph.g2_pen(4+step_c*i)
         graph.g2_filled_rectangle(min_gr_x+step_x*i, min_gr_y,
                            step_x+min_gr_x+step_x*i, min_gr_y+month*step_y)
-    graph.g2_pen(0)
 
 def interp():
     mndl = []
@@ -26,20 +26,23 @@ def interp():
 
     graph.g2_set_line_width(graphsettings.bold_line)
 
+    ty = yStep(legendTopLine - 1)
     graph.g2_pen(162) # 168
     graph.g2_b_spline(mndl, -40) # negative, for a cyclic spline
-    graph.g2_line(xOff(2), yStep(12.5),
-                  xOff(5), yStep(12.5))
+    graph.g2_line(xOff(2), ty,
+                  xOff(5), ty)
 
+    ty += step_y
     graph.g2_pen(186)
     graph.g2_spline(mndl, -40) # negative, for a cyclic spline
-    graph.g2_line(xOff(2), yStep(13.5),
-                  xOff(5), yStep(13.5))
+    graph.g2_line(xOff(2), ty,
+                  xOff(5), ty)
 
+    ty -= step_y * 2
     graph.g2_pen(72)
     graph.g2_set_dash(graphsettings.LineDashes['ds'])
-    graph.g2_line(xOff(2), yStep(11.5),
-                  xOff(5), yStep(11.5))
+    graph.g2_line(xOff(2), ty,
+                  xOff(5), ty)
     # as this is a fairly dark line, make it a little less bold,
     # so it won't stand out too much (not visible on all devices)
     graph.g2_set_line_width(graphsettings.firm_line)
@@ -86,16 +89,18 @@ def y_scale():
 
 def legend():
     yfs = y_font_size * .7
-    graph.g2_set_line_width(.7*graphsettings.thin_line)
+    if g2legend: graph.g2_set_line_width(.7*graphsettings.thin_line)
     if output == 'w': yfs *= x11_scale_factor
-    ty = yStep(13.5)-(yfs/4.)
-    graph.g2_set_solid()
+    ty = yStep(legendTopLine)-(yfs/4.)
     graph.g2_set_font_size(yfs)
     if g2legend:
         graph.g2_string(xOff(6), ty, 'g2')
         graph.g2_line(xOff(9.4), ty,
                      xOff(10.4), ty)
         graph.g2_string(xOff(10.6), ty, 'spline')
+    elif dataset == 'nl':
+        graph.g2_string(xOff(6), ty+0.175*step_y, 'successive')
+        graph.g2_string(xOff(10.35), ty-0.225*step_y, 'over-relaxation')
     else:
         graph.g2_string(xOff(6), ty, 'successive over-relaxation')
     ty -= step_y
@@ -123,15 +128,16 @@ def legend():
     if g2legend:
         graph.g2_string(xOff(6), ty, 'tijs@users.sourceforge.net')
     else:
-        graph.g2_string(xOff(6), ty, '(c) Tijs Michels')
+        graph.g2_string(xStep(10.225), yStep(0.225), '(c) Tijs Michels')
 
 def draw():
-    graph.g2_set_line_width(graphsettings.thin_line)
-    graph.g2_rectangle(fr_margin, fr_margin, fr_right, fr_top)
     global months, step_y
     months = graphdata.__dict__[dataset + str(year)]
     step_y = max_gr_h / months.max_interpol_val
     bars()
+    graph.g2_pen(0)
+    graph.g2_set_line_width(graphsettings.thin_line)
+    graph.g2_rectangle(fr_margin, fr_margin, fr_right, fr_top)
     x_scale()
     y_scale()
     interp()
@@ -200,17 +206,22 @@ if graph is None: # no device was specified on the command line, or the device s
         sys.exit(0)
     graph.g2_set_coordinate_system(0, 0, x11_scale_factor, x11_scale_factor)
 
+if g2legend or dataset == 'nl':
+    legendTopLine = 13.5
+else:
+    legendTopLine = 14.375
+
 if output != 'a':
     graph.g2_clear_palette()
     for c in graphsettings.Colors():
         graph.g2_ink(*c)
     graph.g2_set_background(graphsettings.white_)
 
-print '\n Plotting year 19%d.' % year
-
 graph.g2_set_auto_flush(False)
 draw()
 graph.g2_flush()
+
+print '\n Total for 19%d : %d.' % (year, months.total)
 
 if output != 'f':
     print '\n Done.' \
