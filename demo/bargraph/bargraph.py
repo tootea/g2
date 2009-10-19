@@ -14,8 +14,7 @@ def bars():
     graph.g2_set_line_width(0) # add no width, depth and height to the bars
     for i, month in enumerate(months):
         graph.g2_pen(4+step_c*i)
-        graph.g2_filled_rectangle(min_gr_x+step_x*i, min_gr_y,
-                           step_x+min_gr_x+step_x*i, min_gr_y+month*step_y)
+        graph.g2_filled_rectangle(xStep(i), min_gr_y, xStep(i+1), yStep(month))
 
 def interp():
     mndl = []
@@ -62,9 +61,10 @@ def x_scale():
         graph.g2_set_font_size(x_font_size)
     for i, mname in enumerate(mnames):
         graph.g2_string(xStep(i), min_y, mname)
-        graph.g2_line(xStep(i), min_gr_y-scale_marker_length*fr_pr,
+        graph.g2_line(xStep(i), min_gr_y-x_scale_marker_length,
                       xStep(i), min_gr_y)
-    graph.g2_line(max_x, min_gr_y-scale_marker_length*fr_pr, max_x, min_gr_y)
+    end_x = max_x-graphsettings.thin_line*.5;
+    graph.g2_line(end_x, min_gr_y-x_scale_marker_length, end_x, min_gr_y)
     graph.g2_line(min_gr_x, min_gr_y, max_x, min_gr_y)
 
 def y_scale():

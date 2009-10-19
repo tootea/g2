@@ -47,6 +47,7 @@ min_gr_y = min_y + x_axis_text_height
 max_gr_w = max_x - min_gr_x
 max_gr_h = max_y - min_gr_y
 
+x_scale_marker_length = scale_marker_length * fr_pr
 max_x_val_d = max_x_val + max_x_val
 step_x = max_gr_w / max_x_val
 st_h_x = max_gr_w / max_x_val_d
