@@ -8,7 +8,7 @@
 
 total_width = 815.0
 total_height = 565.0
-fr_margin = 5.0
+fr_margin = 7.5
 step_c = 18
 x_inner_margin = 28
 scale_marker_length = 6
@@ -30,17 +30,12 @@ x_height = int(x11_scale_factor * total_height)
 
 fr_right = total_width - fr_margin
 fr_top = total_height - fr_margin
-
-fr_w = fr_right - fr_margin
-fr_h = fr_top - fr_margin
-fr_h_i = fr_h * x_inner_margin
-fr_pr = fr_h / fr_w
-y_inner_margin = fr_h_i / fr_w
+fr_pr = (fr_top - fr_margin) / (fr_right - fr_margin) # proportion (here 16:11)
 
 min_x = fr_margin + x_inner_margin
-min_y = fr_margin + y_inner_margin
+min_y = fr_margin + x_inner_margin * fr_pr
 max_x = fr_right - x_inner_margin
-max_y = fr_top - y_inner_margin
+max_y = fr_top - x_inner_margin * fr_pr
 
 min_gr_x = min_x + y_axis_text_width
 min_gr_y = min_y + x_axis_text_height
@@ -48,6 +43,4 @@ max_gr_w = max_x - min_gr_x
 max_gr_h = max_y - min_gr_y
 
 x_scale_marker_length = scale_marker_length * fr_pr
-max_x_val_d = max_x_val + max_x_val
 step_x = max_gr_w / max_x_val
-st_h_x = max_gr_w / max_x_val_d

@@ -20,7 +20,7 @@ def interp():
     mndl = []
 
     for i, month in enumerate(months):
-        mndl.append(xStep(i)+st_h_x)
+        mndl.append(xStep(i+.5))
         mndl.append(yStep(month))
 
     graph.g2_set_line_width(graphsettings.bold_line)

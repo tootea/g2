@@ -12,7 +12,6 @@ height = int(dimensions.total_height)
 
 class PhysicalDevices(dict):
     def __init__(self):
-        colors = graphsettings.Colors()
         print
         print '',
         if hasattr(g2, 'g2_open_PS'):
@@ -41,6 +40,7 @@ class PhysicalDevices(dict):
             del self[d]
 
         # give each physical device my very own palette
+        colors = graphsettings.Colors()
         for d in self.values():
             d.g2_clear_palette()
             for c in colors:
