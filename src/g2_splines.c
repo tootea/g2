@@ -48,15 +48,16 @@ static calc_d g2_c_hermite;
 static calc_f g2_c_para_3;
 static calc_f g2_c_para_5;
 
-static void g2_p_cyclic_spline(int id, int n, const double *points, int o, calc_f *f)
+static void g2_p_cyclic_spline(int id, int n, const double *points, int o, calc_f *f, int filled)
 {
    const double half_x = .5 * (points[2] - points[0]);
-   const int nn = n+n;
    const int c = (n+6)*2;
    double * const cxy = (double *) g2_malloc(c*sizeof(double));
    const int m = (n+5)*o+1;
    double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
+   double * const slice = sxy + 3*o + (o<<1);
    int i;
+   int nn = n+n;
    for (i=0; i < nn; i++) cxy[i+6] = points[i]; /* original points in the middle */
    for (i=0; i < 6; i+=2) {
       cxy[i]     = points[0]    - (6-i)*half_x;
@@ -67,39 +68,18 @@ static void g2_p_cyclic_spline(int id, int n, const double *points, int o, calc_
 
    (*f)(n+6, cxy, m, sxy);
    g2_free(cxy);
-   g2_poly_line(id, n*o+1, sxy + 3*o + (o<<1));
-   g2_free(sxy);
-}
 
-static void g2_p_cyclic_filled_spline(int id, int n, const double *points, int o, calc_f *f)
-{
-   const double half_x = .5 * (points[2] - points[0]);
-   int nn = n+n;
-   const int c = (n+6)*2;
-   double * const cxy = (double *) g2_malloc(c*sizeof(double));
-   const int m = (n+5)*o+1;
-   double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
-   double * const slice = sxy + 3*o + (o<<1);
-   double base;
-   int i;
-   for (i=0; i < nn; i++) cxy[i+6] = points[i];
-   for (i=0; i < 6; i+=2) {
-      cxy[i]     = points[0]    - (6-i)*half_x;
-      cxy[c-2-i] = points[nn-2] + (6-i)*half_x;
-      cxy[i+1]   = points[nn+i-5]; /* copy the last points before the first */
-      cxy[c+i-5] = points[i+1]; /* and the first points after the last */
+   if (filled) {
+      double base;
+      for (i=3, nn *= o, base = slice[1]; i < nn; i+=2) if (slice[i] < base) base = slice[i]; /* need not check slice[nn+1], it should equal slice[1] */
+      slice[-2] = slice[0];
+      slice[-1] = base;
+      slice[nn+2] = slice[nn];
+      slice[nn+3] = base;
+      g2_filled_polygon(id, n*o+3, slice - 2);
+   } else {
+      g2_poly_line(id, n*o+1, slice);
    }
-
-   (*f)(n+6, cxy, m, sxy);
-   g2_free(cxy);
-
-   nn *= o;
-   for (i=3, base = slice[1]; i < nn; i+=2) if (slice[i] < base) base = slice[i]; /* need not check slice[nn+1], it should equal slice[1] */
-   slice[-2] = slice[0];
-   slice[-1] = base;
-   slice[nn+2] = slice[nn];
-   slice[nn+3] = base;
-   g2_filled_polygon(id, n*o+3, slice - 2);
    g2_free(sxy);
 }
 
@@ -107,7 +87,7 @@ static void g2_p_spline(int id, int n, const double *points, int o, calc_f *f)
 {
    if (o < 0) { /* cyclic graph: the last value should lead to the first */
       if (o % 2) o -= 1; /* make sure o is even */
-      g2_p_cyclic_spline(id, n, points, -o, f);
+      g2_p_cyclic_spline(id, n, points, -o, f, 0);
    } else {
       const int m = (n-1)*o+1;
       double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
@@ -123,7 +103,7 @@ static void g2_p_filled_spline(int id, int n, const double *points, int o, calc_
 {
    if (o < 0) { /* cyclic graph: the last value should lead to the first */
       if (o % 2) o -= 1; /* make sure o is even */
-      g2_p_cyclic_filled_spline(id, n, points, -o, f);
+      g2_p_cyclic_spline(id, n, points, -o, f, 1);
    } else {
       const int m = (n-1)*o+3;
       int mm = m+m;
@@ -536,15 +516,16 @@ void g2_c_hermite(int n, const double *points, double tn, int nb, double *sxy)
    g2_free(h1);
 }
 
-static void g2_p_cyclic_hermite(int id, int n, const double *points, double tn, int o)
+static void g2_p_cyclic_hermite(int id, int n, const double *points, double tn, int o, int filled)
 {
    const double half_x = .5 * (points[2] - points[0]);
-   const int nn = n+n;
    const int c = (n+6)*2;
    double * const cxy = (double *) g2_malloc(c*sizeof(double));
    const int m = (n+5)*o+1;
    double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
+   double * const slice = sxy + 3*o + (o<<1);
    int i;
+   int nn = n+n;
    for (i=0; i < nn; i++) cxy[i+6] = points[i]; /* original points in the middle */
    for (i=0; i < 6; i+=2) {
       cxy[i]     = points[0]    - (6-i)*half_x;
@@ -555,39 +536,18 @@ static void g2_p_cyclic_hermite(int id, int n, const double *points, double tn, 
 
    g2_c_hermite(n+6, cxy, tn, o, sxy);
    g2_free(cxy);
-   g2_poly_line(id, n*o+1, sxy + 3*o + (o<<1));
-   g2_free(sxy);
-}
 
-static void g2_p_cyclic_filled_hermite(int id, int n, const double *points, double tn, int o)
-{
-   const double half_x = .5 * (points[2] - points[0]);
-   int nn = n+n;
-   const int c = (n+6)*2;
-   double * const cxy = (double *) g2_malloc(c*sizeof(double));
-   const int m = (n+5)*o+1;
-   double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
-   double * const slice = sxy + 3*o + (o<<1);
-   double base;
-   int i;
-   for (i=0; i < nn; i++) cxy[i+6] = points[i];
-   for (i=0; i < 6; i+=2) {
-      cxy[i]     = points[0]    - (6-i)*half_x;
-      cxy[c-2-i] = points[nn-2] + (6-i)*half_x;
-      cxy[i+1]   = points[nn+i-5]; /* copy the last points before the first */
-      cxy[c+i-5] = points[i+1]; /* and the first points after the last */
+   if (filled) {
+      double base;
+      for (i=3, nn *= o, base = slice[1]; i < nn; i+=2) if (slice[i] < base) base = slice[i]; /* need not check slice[nn+1], it should equal slice[1] */
+      slice[-2] = slice[0];
+      slice[-1] = base;
+      slice[nn+2] = slice[nn];
+      slice[nn+3] = base;
+      g2_filled_polygon(id, n*o+3, slice - 2);
+   } else {
+      g2_poly_line(id, n*o+1, slice);
    }
-
-   g2_c_hermite(n+6, cxy, tn, o, sxy);
-   g2_free(cxy);
-
-   nn *= o;
-   for (i=3, base = slice[1]; i < nn; i+=2) if (slice[i] < base) base = slice[i]; /* need not check slice[nn+1], it should equal slice[1] */
-   slice[-2] = slice[0];
-   slice[-1] = base;
-   slice[nn+2] = slice[nn];
-   slice[nn+3] = base;
-   g2_filled_polygon(id, n*o+3, slice - 2);
    g2_free(sxy);
 }
 
@@ -611,7 +571,7 @@ void g2_hermite(int dev, int n, double *points, double tn, int o)
 {
    if (o < 0) { /* cyclic graph: the last value should lead to the first */
       if (o % 2) o -= 1; /* make sure o is even */
-      g2_p_cyclic_hermite(dev, n, points, tn, -o);
+      g2_p_cyclic_hermite(dev, n, points, tn, -o, 0);
    } else {
       const int m = (n-1)*o+1;
       double * const sxy = (double *) g2_malloc(m*2*sizeof(double)); /* coords of the entire spline curve */
@@ -643,7 +603,7 @@ void g2_filled_hermite(int dev, int n, double *points, double tn, int o)
 {
    if (o < 0) { /* cyclic graph: the last value should lead to the first */
       if (o % 2) o -= 1; /* make sure o is even */
-      g2_p_cyclic_filled_hermite(dev, n, points, tn, -o);
+      g2_p_cyclic_hermite(dev, n, points, tn, -o, 1);
    } else {
       const int m = (n-1)*o+3;
       int mm = m+m;

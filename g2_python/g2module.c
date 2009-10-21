@@ -1260,7 +1260,7 @@ PyDoc_STRVAR(doc_g2_b_spline,
              "   'ppdp'   : the number of interpolated points per data point.\n"
              "              Negative for a cyclic plot.\n"
              "              The higher 'ppdp', the rounder the spline curve.\n"
-             "Plot a b-spline curve through the points in the list.\n"
+             "Plot a uniform cubic B-spline curve through the points in the list.\n"
              "For most averaging purposes, this is the right spline.\n"
              "Note : this two argument form is Python specific.");
 
