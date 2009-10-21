@@ -55,9 +55,9 @@ class AllAtOnce(G2):
 
         # g2_set_background doesn't work with GD,
         # so simply draw a white rectangle over the entire background
-        d.g2_pen(graphsettings.white_)
         for k, d in self.physicalDevices.iteritems():
             if k in ('png', 'jpeg'):
+                d.g2_pen(graphsettings.white_)
                 d.g2_filled_rectangle(0, 0, width, height)
             elif k is 'ps':
                 d.g2_set_coordinate_system((842 - width ) / 2,
