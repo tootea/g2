@@ -228,14 +228,10 @@ void g2_c_spline(int n, const double *points, int m, double *sxy)
 	 */
    } while (u > k);
 
-   m += m, i = 1, j = 0;
+   m += m, i = 0, j = 0;
    do {
       u = sxy[j++]; /* x-coordinate */
-
-      while (x[i] < u)	i++;
-
-      if (--i > n)	i = n;
-
+      if (u > x[i+1]) i++;
       k = (u - x[i]) / (x[i+1] - x[i]); /* calculate outside loop */
       sxy[j++] = y[i] +
 	(y[i+1] - y[i]) * k +
