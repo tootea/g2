@@ -48,6 +48,21 @@ static calc_d g2_c_hermite;
 static calc_f g2_c_para_3;
 static calc_f g2_c_para_5;
 
+static int not_continuously_ascending(int n, const double *x_coord)
+{
+   const double * const end = x_coord + n + n;
+   double prv = *x_coord;
+   while((x_coord += 2) < end) {
+      double cur = *x_coord;
+      if(cur <= prv) {
+         fputs("\nERROR: points should have continuously ascending x-coordinates\n", stderr);
+         return 1;
+      }
+      prv = cur;
+   }
+   return 0;
+}
+
 static void g2_p_cyclic_spline(int id, int n, const double *points, int o, calc_f *f, int filled)
 {
    const double half_x = .5 * (points[2] - points[0]);
@@ -85,6 +100,7 @@ static void g2_p_cyclic_spline(int id, int n, const double *points, int o, calc_
 
 static void g2_p_spline(int id, int n, const double *points, int o, calc_f *f)
 {
+   if (not_continuously_ascending(n, points)) return;
    if (o < 0) { /* cyclic graph: the last value should lead to the first */
       if (o % 2) o -= 1; /* make sure o is even */
       g2_p_cyclic_spline(id, n, points, -o, f, 0);
@@ -101,6 +117,7 @@ static void g2_p_spline(int id, int n, const double *points, int o, calc_f *f)
 
 static void g2_p_filled_spline(int id, int n, const double *points, int o, calc_f *f)
 {
+   if (not_continuously_ascending(n, points)) return;
    if (o < 0) { /* cyclic graph: the last value should lead to the first */
       if (o % 2) o -= 1; /* make sure o is even */
       g2_p_cyclic_spline(id, n, points, -o, f, 1);
@@ -565,6 +582,7 @@ static void g2_p_cyclic_hermite(int id, int n, const double *points, double tn, 
  */
 void g2_hermite(int dev, int n, double *points, double tn, int o)
 {
+   if (not_continuously_ascending(n, points)) return;
    if (o < 0) { /* cyclic graph: the last value should lead to the first */
       if (o % 2) o -= 1; /* make sure o is even */
       g2_p_cyclic_hermite(dev, n, points, tn, -o, 0);
@@ -597,6 +615,7 @@ void g2_hermite(int dev, int n, double *points, double tn, int o)
  */
 void g2_filled_hermite(int dev, int n, double *points, double tn, int o)
 {
+   if (not_continuously_ascending(n, points)) return;
    if (o < 0) { /* cyclic graph: the last value should lead to the first */
       if (o % 2) o -= 1; /* make sure o is even */
       g2_p_cyclic_hermite(dev, n, points, tn, -o, 1);
