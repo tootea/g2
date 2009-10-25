@@ -218,12 +218,14 @@ void g2_c_spline(int n, const double *points, int m, double *sxy)
    u = (x[n] - k) / (m - 1); /* calculate step outside loop */
    for (j = 0; j < m; j++)	sxy[j+j] = j * u + k; /* x-coordinates */
 
+   g[0] = 0.;
    for (i = 1; i < n; i++) {
       g[i] = 2. * ((y[i+1] - y[i]) / (x[i+1] - x[i]) -
 		   (y[i] - y[i-1]) / (x[i] - x[i-1]))
 	/ (x[i+1] - x[i-1]); /* whereas g[i] will later be changed repeatedly */
       h[i] = 1.5 * g[i];     /* copy h[i] of g[i] will remain constant */
    }
+   g[n] = 0.;
 
    k = 0.;
 
@@ -248,7 +250,7 @@ void g2_c_spline(int n, const double *points, int m, double *sxy)
    m += m, i = 0, j = 0;
    do {
       u = sxy[j++]; /* x-coordinate */
-      if (u > x[i+1]) i++;
+      if (u > x[i+1] && i < n-1) i++; /* i should end on n-1 */
       k = (u - x[i]) / (x[i+1] - x[i]); /* calculate outside loop */
       sxy[j++] = y[i] +
 	(y[i+1] - y[i]) * k +
