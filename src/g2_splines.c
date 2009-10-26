@@ -70,7 +70,7 @@ static void g2_p_cyclic_spline(int id, int n, const double *points, int o, calc_
    double * const cxy = (double *) g2_malloc(c*sizeof(double));
    const int m = (n+5)*o+1;
    double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
-   double * const slice = sxy + 3*o + (o<<1);
+   double * const slice = sxy + 5*o;
    int i;
    int nn = n+n;
    for (i=0; i < nn; i++) cxy[i+6] = points[i]; /* original points in the middle */
@@ -201,7 +201,7 @@ void g2_c_spline(int n, const double *points, int m, double *sxy)
 	    "number of data points input should be at least three\n", stderr);
       return;
    }
-   if ((m-1)%(n-1)) {
+   if ((m-1)%(n-1)) { /* (m-1)/(n-1) = number of points per x-step */
       fputs("\nWARNING from function \"g2_c_spline\":\n"
 	    "number of curve points output for every data point input "
 	    "is not an integer\n", stderr);
@@ -312,7 +312,7 @@ void g2_c_b_spline(int n, const double *points, int m, double *sxy)
    int i, j;
    double *x, *y;
    double t, bl1, bl2, bl3, bl4;
-   double interval, xi_3, yi_3, xi, yi;
+   double interval, xi_m1, yi_m1, xi_p2, yi_p2;
 
    if (n < 3) {
       fputs("\nERROR calling function \"g2_c_b_spline\":\n"
@@ -327,20 +327,20 @@ void g2_c_b_spline(int n, const double *points, int m, double *sxy)
    n--; /* last value index */
    interval = (double)n / m;
 
-   for (m += m, i = 2, j = 0; i <= n+1; i++) {
-      if (i == 2) {
-	 xi_3 = 2 * x[0] - x[1];
-	 yi_3 = 2 * y[0] - y[1];
+   for (m += m, i = 0, j = 0; i < n; i++) {
+      if (i == 0) {
+	 xi_m1 = 2 * x[0] - x[1];
+	 yi_m1 = 2 * y[0] - y[1];
       } else {
-	 xi_3 = x[i-3];
-	 yi_3 = y[i-3];
+	 xi_m1 = x[i-1];
+	 yi_m1 = y[i-1];
       }
-      if (i == n+1) {
-	 xi = 2 * x[n] - x[n-1];
-	 yi = 2 * y[n] - y[n-1];
+      if (i == n-1) {
+	 xi_p2 = 2 * x[n] - x[n-1];
+	 yi_p2 = 2 * y[n] - y[n-1];
       } else {
-	 xi = x[i];
-	 yi = y[i];
+	 xi_p2 = x[i+2];
+	 yi_p2 = y[i+2];
       }
 
       t = fmod(j * interval, 1.);
@@ -355,8 +355,8 @@ void g2_c_b_spline(int n, const double *points, int m, double *sxy)
 	 bl2 = 3. * (bl3 - bl2) + 4.;
 	 bl3 = 3. * (  t - bl3) + 1.;
 
-	 sxy[j++] = (bl1 * xi_3 + bl2 * x[i-2] + bl3 * x[i-1] + bl4 * xi) / 6.; /* x-coordinate */
-	 sxy[j++] = (bl1 * yi_3 + bl2 * y[i-2] + bl3 * y[i-1] + bl4 * yi) / 6.; /* y-coordinate */
+	 sxy[j++] = (bl1 * xi_m1 + bl2 * x[i] + bl3 * x[i+1] + bl4 * xi_p2) / 6.; /* x-coordinate */
+	 sxy[j++] = (bl1 * yi_m1 + bl2 * y[i] + bl3 * y[i+1] + bl4 * yi_p2) / 6.; /* y-coordinate */
 
 	 t += interval;
       }
@@ -538,7 +538,7 @@ static void g2_p_cyclic_hermite(int id, int n, const double *points, double tn, 
    double * const cxy = (double *) g2_malloc(c*sizeof(double));
    const int m = (n+5)*o+1;
    double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
-   double * const slice = sxy + 3*o + (o<<1);
+   double * const slice = sxy + 5*o;
    int i;
    int nn = n+n;
    for (i=0; i < nn; i++) cxy[i+6] = points[i]; /* original points in the middle */
