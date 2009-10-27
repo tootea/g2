@@ -27,13 +27,13 @@ def interp():
 
     ty = yStep(legendTopLine - 1)
     graph.g2_pen(162) # 168
-    graph.g2_b_spline(mndl, -40) # negative, for a cyclic spline
+    graph.g2_b_spline(mndl, -44) # negative, for a cyclic spline
     graph.g2_line(xOff(2), ty,
                   xOff(5), ty)
 
     ty += step_y
     graph.g2_pen(186)
-    graph.g2_spline(mndl, -40) # negative, for a cyclic spline
+    graph.g2_spline(mndl, -44) # negative, for a cyclic spline
     graph.g2_line(xOff(2), ty,
                   xOff(5), ty)
 
@@ -45,7 +45,7 @@ def interp():
     # as this is a fairly dark line, make it a little less bold,
     # so it won't stand out too much (not visible on all devices)
     graph.g2_set_line_width(graphsettings.firm_line)
-    graph.g2_hermite(mndl, .7, -20) # negative, for a cyclic spline
+    graph.g2_hermite(mndl, .7, -44) # negative, for a cyclic spline
     graph.g2_pen(0)
     graph.g2_set_solid()
     graph.g2_set_line_width(graphsettings.thin_line)
