@@ -21,12 +21,13 @@
  * g2_splines.c
  * Tijs Michels
  * tijs@users.sourceforge.net
- * 06/16/99 : initial release
+ * 16/06/99 : initial release
  * 19/02/06 : eliminated duplicates by using pointers to functions
  * 17/02/07 : added cyclic splines
  * 17/03/07 : added Hermite splines (normal and cyclic), which are like the now
  *            deprecated raspln splines, except that the formerly fixed number
  *            of interpolated points per data point is now a function argument
+ * 27/10/09 : fixed two array-out-of-bounds bugs and refactored a bit
  */
 
 #include <math.h>
@@ -211,7 +212,7 @@ void g2_c_spline(int n, const double *points, int m, double *sxy)
 	    "number of data points input should be at least three\n", stderr);
       return;
    }
-   if ((m-1)%(n-1)) { /* (m-1)/(n-1) = number of points per x-step */
+   if ((m-1)%(n-1)) { /* (m-1)/(n-1) = number of curve points per x-step */
       fputs("\nWARNING from function \"g2_c_spline\":\n"
 	    "number of curve points output for every data point input "
 	    "is not an integer\n", stderr);
@@ -319,25 +320,32 @@ void g2_c_b_spline(int n, const double *points, int m, double *sxy)
  */
 
 {
-   int i, j;
+   int i, j, k;
    double *x, *y;
    double t, bl1, bl2, bl3, bl4;
    double interval, xi_m1, yi_m1, xi_p2, yi_p2;
+   const int o = 2 * (m-1)/(n-1);
 
    if (n < 3) {
       fputs("\nERROR calling function \"g2_c_b_spline\":\n"
 	    "number of data points input should be at least three\n", stderr);
       return;
    }
+   if ((m-1)%(n-1)) { /* (m-1)/(n-1) = number of curve points per x-step */
+      fputs("\nWARNING from function \"g2_c_b_spline\":\n"
+	    "number of curve points output for every data point input "
+	    "is not an integer\n", stderr);
+   }
+
    x = (double *) g2_malloc(n*2*sizeof(double));
    y = x + n;
    g2_split(n, points, x, y);
 
-   m--; /* last value index */
-   n--; /* last value index */
+   m--;
+   n--;
    interval = (double)n / m;
 
-   for (m += m, i = 0, j = 0; i < n; i++) {
+   for (m += m, i = 0, j = 0, k = o; i < n; i++, k+=o) {
       if (i == 0) {
 	 xi_m1 = 2 * x[0] - x[1];
 	 yi_m1 = 2 * y[0] - y[1];
@@ -355,7 +363,7 @@ void g2_c_b_spline(int n, const double *points, int m, double *sxy)
 
       t = fmod(j * interval, 1.);
 
-      while (t < 1. && j < m) {
+      while (t < 1. && j < k) {
 	 bl1 = (1. - t);
 	 bl2 = t * t;	/* t^2 */
 	 bl4 = t * bl2;	/* t^3 */
