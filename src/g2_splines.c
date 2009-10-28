@@ -111,6 +111,11 @@ static void g2_p_cyclic_spline(int id, int n, const double *points, int o, calc_
 
 static void g2_p_spline(int id, int n, const double *points, int o, calc_f *f)
 {
+   if (n < 3) {
+      fputs("\nERROR : number of data points input should be at least three\n", stderr);
+      return;
+   }
+
    if (not_continuously_ascending(n, points)) return;
    if (o < 0) { /* cyclic graph: the last value should lead to the first */
       if (o % 2) o -= 1; /* make sure o is even */
@@ -128,13 +133,18 @@ static void g2_p_spline(int id, int n, const double *points, int o, calc_f *f)
 
 static void g2_p_filled_spline(int id, int n, const double *points, int o, calc_f *f)
 {
+   if (n < 3) {
+      fputs("\nERROR : number of data points input should be at least three\n", stderr);
+      return;
+   }
+
    if (not_continuously_ascending(n, points)) return;
    if (o < 0) { /* cyclic graph: the last value should lead to the first */
       if (o % 2) o -= 1; /* make sure o is even */
       g2_p_cyclic_spline(id, n, points, -o, f, 1);
    } else {
       const int m = (n-1)*o+3;
-      int mm = m+m;
+      const int mm = m+m;
       double * const sxy = (double *) g2_malloc(mm*sizeof(double));
       double base;
       int i;
@@ -161,7 +171,7 @@ static void g2_split(int n, const double *points, double *x, double *y)
 
 #define eps 1.e-12
 
-void g2_c_spline(int n, const double *points, int m, double *sxy)
+static void g2_c_spline(int n, const double *points, int m, double *sxy)
 
 /*
  *	FUNCTIONAL DESCRIPTION:
@@ -204,24 +214,12 @@ void g2_c_spline(int n, const double *points, int m, double *sxy)
 
 {
    int i, j;
-   double *x, *y, *g, *h;
+   double * const x = (double *) g2_malloc(n*4*sizeof(double));
+   double * const y = x + n;
+   double * const g = y + n;
+   double * const h = g + n; /* for the constant copy of g */
    double k, u, delta_g;
 
-   if (n < 3) {
-      fputs("\nERROR calling function \"g2_c_spline\":\n"
-	    "number of data points input should be at least three\n", stderr);
-      return;
-   }
-   if ((m-1)%(n-1)) { /* (m-1)/(n-1) = number of curve points per x-step */
-      fputs("\nWARNING from function \"g2_c_spline\":\n"
-	    "number of curve points output for every data point input "
-	    "is not an integer\n", stderr);
-   }
-
-   x = (double *) g2_malloc(n*4*sizeof(double));
-   y = x + n;
-   g = y + n;
-   h = g + n; /* for the constant copy of g */
    g2_split(n, points, x, y);
 
    n--; /* last value index */
@@ -312,7 +310,7 @@ void g2_filled_spline(int dev, int n, double *points, int o)
    g2_p_filled_spline(dev, n, points, o, g2_c_spline);
 }
 
-void g2_c_b_spline(int n, const double *points, int m, double *sxy)
+static void g2_c_b_spline(int n, const double *points, int m, double *sxy)
 
 /*
  * g2_c_b_spline takes n input points. It uses parameter t
@@ -321,24 +319,12 @@ void g2_c_b_spline(int n, const double *points, int m, double *sxy)
 
 {
    int i, j, k;
-   double *x, *y;
+   double * const x = (double *) g2_malloc(n*2*sizeof(double));
+   double * const y = x + n;
    double t, bl1, bl2, bl3, bl4;
    double interval, xi_m1, yi_m1, xi_p2, yi_p2;
-   const int o = 2 * (m-1)/(n-1);
+   const int o = 2 * (m-1)/(n-1); /* (m-1)/(n-1) = number of curve points per x-step */
 
-   if (n < 3) {
-      fputs("\nERROR calling function \"g2_c_b_spline\":\n"
-	    "number of data points input should be at least three\n", stderr);
-      return;
-   }
-   if ((m-1)%(n-1)) { /* (m-1)/(n-1) = number of curve points per x-step */
-      fputs("\nWARNING from function \"g2_c_b_spline\":\n"
-	    "number of curve points output for every data point input "
-	    "is not an integer\n", stderr);
-   }
-
-   x = (double *) g2_malloc(n*2*sizeof(double));
-   y = x + n;
    g2_split(n, points, x, y);
 
    m--;
@@ -467,7 +453,7 @@ void g2_filled_b_spline(int dev, int n, double *points, int o)
  *	SIDE EFFECTS:		NONE
  */
 
-void g2_c_hermite(int n, const double *points, double tn, int nb, double *sxy)
+static void g2_c_hermite(int n, const double *points, double tn, int nb, double *sxy)
 {
    int i, j;
    double bias, tnFactor, tangentL1, tangentL2;
@@ -627,7 +613,7 @@ void g2_filled_hermite(int dev, int n, double *points, double tn, int o)
       g2_p_cyclic_hermite(dev, n, points, tn, -o, 1);
    } else {
       const int m = (n-1)*o+3;
-      int mm = m+m;
+      const int mm = m+m;
       double * const sxy = (double *) g2_malloc(mm*sizeof(double)); /* coords of the entire spline curve */
       double base;
       int i;
@@ -790,7 +776,7 @@ static void g2_c_newton(int n, const double *c1, const double *c2,
  * So between one data point and the next, (nb-1) points are placed.
  */
 
-void g2_c_para_3(int n, const double *points, int m, double *sxy)
+static void g2_c_para_3(int n, const double *points, int m, double *sxy)
 {
 #define dgr	(3+1)
 #define nb2	(nb*2)
@@ -912,7 +898,7 @@ void g2_filled_para_3(int dev, int n, double *points)
  * So between one data point and the next, (nb-1) points are placed.
  */
 
-void g2_c_para_5(int n, const double *points, int m, double *sxy)
+static void g2_c_para_5(int n, const double *points, int m, double *sxy)
 {
 #undef	dgr
 #define dgr	(5+1)
