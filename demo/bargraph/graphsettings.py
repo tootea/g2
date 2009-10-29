@@ -18,9 +18,9 @@ bold_line = 2.5 * thin_line
 LineDashes = {
  'ps' : [1.5,  7.5],
  'pl' : [1.5,  9.0],
- 'kl' : [2.25, 9.0],
+ 'kl' : [2.4, 9.12],
  'sl' : [7.5, 12.5],
- 'ds' : [6.25, 4.5] }
+ 'ds' : [6.12, 4.76] }
 
 def frange(from_, to_, n):
     m = n - 1
