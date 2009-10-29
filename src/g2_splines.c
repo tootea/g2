@@ -461,11 +461,10 @@ static void g2_c_hermite(int n, const double *points, double tn, int nb, double 
 
    /* Values of the Hermite basis functions */
    /* at nb+1 evenly spaced points in [0,1] */
-   const int nbp = nb+1;
-   double * const h1 = (double *) g2_malloc(nbp*4*sizeof(double));
-   double * const h2 = h1 + nbp;
-   double * const h3 = h2 + nbp;
-   double * const h4 = h3 + nbp;
+   double * const h1 = (double *) g2_malloc(nb*4*sizeof(double));
+   double * const h2 = h1 + nb;
+   double * const h3 = h2 + nb;
+   double * const h4 = h3 + nb;
 
    double * const x = (double *) g2_malloc(n*2*sizeof(double));
    double * const y = x + n;
@@ -475,7 +474,7 @@ static void g2_c_hermite(int n, const double *points, double tn, int nb, double 
  * First, store the values of the Hermite basis functions in a table h[ ]
  * so no time is wasted recalculating them
  */
-   for (i = 0; i < nbp; i++) {
+   for (i = 0; i < nb; i++) {
       double t, tt, ttt;
       t = (double) i / nb;
       tt  = t * t;
@@ -525,12 +524,15 @@ static void g2_c_hermite(int n, const double *points, double tn, int nb, double 
  * Do the last subinterval as a special case since no point follows the
  * last point
  */
-   for (i = 0; i < nbp; i++) {
+   for (i = 0; i < nb; i++) {
       sxy[2 * nb * (n-2) + i + i] =
 	h1[i] * x[n-2] + h2[i] * x[n-1] + h3[i] * D1x;
       sxy[2 * nb * (n-2) + i + i + 1] =
 	h1[i] * y[n-2] + h2[i] * y[n-1] + h3[i] * D1y;
    }
+   i = 2 * nb * (n-1);
+   sxy[i]=x[n-1];
+   sxy[i+1]=y[n-1];
    g2_free(x);
    g2_free(h1);
 }
