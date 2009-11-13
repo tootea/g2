@@ -32,6 +32,7 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "g2.h"
 #include "g2_util.h"
 
@@ -88,6 +89,37 @@ static void extend_to_base(int nn, int o, double *slice) {
    slice[nn+3] = base;
 }
 
+static void g2_print_spline_statistics(int m, int o, const double *sxy)
+{
+   int i;
+   double y, x_min_y, x_max_y, min_y_val, max_y_val, mean, stddev;
+
+   if(getenv("G2_SPLINES_VERBOSE") == NULL) return;
+
+   x_min_y = x_max_y = stddev = 0;
+   min_y_val = max_y_val = mean = sxy[1];
+
+   for (i = 1; i < m; i++) {
+      y = sxy[i+i+1];
+      if (y > max_y_val) { max_y_val = y; x_max_y = i; }
+      if (y < min_y_val) { min_y_val = y; x_min_y = i; }
+      mean += y;
+   }
+   mean /= m;
+   for (i = 1; i < m+m; i += 2) {
+      y = sxy[i] - mean;
+      stddev += (y * y);
+   }
+   printf("\n Min: %.2f at %.2f"
+          "\n Max: %.2f at %.2f"
+          "\n Range: %.2f"
+          "\n Mean: %.3f"
+          "\n Standard deviation: %.3f\n",
+          min_y_val, x_min_y / o,
+          max_y_val, x_max_y / o,
+          max_y_val - min_y_val, mean, sqrt(stddev / m));
+}
+
 static void g2_p_cyclic_spline(int id, int n, const double *points, int o, calc_f *f, int filled)
 {
    const int c = (n+6)*2;
@@ -99,6 +131,7 @@ static void g2_p_cyclic_spline(int id, int n, const double *points, int o, calc_
 
    (*f)(n+6, cxy, m, sxy);
    g2_free(cxy);
+   g2_print_spline_statistics(m, o, sxy);
 
    if (filled) {
       extend_to_base(n+n, o, slice);
@@ -125,6 +158,7 @@ static void g2_p_spline(int id, int n, const double *points, int o, calc_f *f)
       double * const sxy = (double *) g2_malloc(m*2*sizeof(double));
 
       (*f)(n, points, m, sxy);
+      g2_print_spline_statistics(m, o, sxy);
       g2_poly_line(id, m, sxy);
 
       g2_free(sxy);
@@ -150,6 +184,7 @@ static void g2_p_filled_spline(int id, int n, const double *points, int o, calc_
       int i;
 
       (*f)(n, points, m-2, sxy + 2); /* first and last point are written below */
+      g2_print_spline_statistics(m-2, o, sxy+2);
       for (i=5, base = sxy[3]; i < mm-2; i+=2) if (sxy[i] < base) base = sxy[i];
       sxy[0] = sxy[2];
       sxy[1] = base;
@@ -548,6 +583,7 @@ static void g2_p_cyclic_hermite(int id, int n, const double *points, double tn, 
 
    g2_c_hermite(n+6, cxy, tn, o, sxy);
    g2_free(cxy);
+   g2_print_spline_statistics(m, o, sxy);
 
    if (filled) {
       extend_to_base(n+n, o, slice);
@@ -585,6 +621,7 @@ void g2_hermite(int dev, int n, double *points, double tn, int o)
       double * const sxy = (double *) g2_malloc(m*2*sizeof(double)); /* coords of the entire spline curve */
 
       g2_c_hermite(n, points, tn, o, sxy);
+      g2_print_spline_statistics(m, o, sxy);
       g2_poly_line(dev, m, sxy);
 
       g2_free(sxy);
@@ -621,6 +658,7 @@ void g2_filled_hermite(int dev, int n, double *points, double tn, int o)
       int i;
 
       g2_c_hermite(n, points, tn, o, sxy + 2); /* first and last point are written below */
+      g2_print_spline_statistics(m-2, o, sxy+2);
       for (i=5, base = sxy[3]; i < mm-2; i+=2) if (sxy[i] < base) base = sxy[i];
       sxy[0] = sxy[2];
       sxy[1] = base;
