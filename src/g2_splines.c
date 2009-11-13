@@ -93,8 +93,10 @@ static void g2_print_spline_statistics(int m, int o, const double *sxy)
 {
    int i;
    double y, x_min_y, x_max_y, min_y_val, max_y_val, mean, stddev;
+   float base, step_y;
 
-   if(getenv("G2_SPLINES_VERBOSE") == NULL) return;
+   const char * const base_step_y = getenv("G2_SPLINES_VERBOSE");
+   if (base_step_y == NULL) return;
 
    x_min_y = x_max_y = stddev = 0;
    min_y_val = max_y_val = mean = sxy[1];
@@ -110,6 +112,15 @@ static void g2_print_spline_statistics(int m, int o, const double *sxy)
       y = sxy[i] - mean;
       stddev += (y * y);
    }
+   stddev = sqrt(stddev / m);
+
+   if (sscanf(base_step_y, "%f %f", &base, &step_y) == 2 && step_y != 0) {
+      min_y_val = (min_y_val - base) / step_y;
+      max_y_val = (max_y_val - base) / step_y;
+      mean = (mean - base) / step_y;
+      stddev /= step_y;
+   }
+
    printf("\n Min: %.2f at %.2f"
           "\n Max: %.2f at %.2f"
           "\n Range: %.2f"
@@ -117,7 +128,7 @@ static void g2_print_spline_statistics(int m, int o, const double *sxy)
           "\n Standard deviation: %.3f\n",
           min_y_val, x_min_y / o,
           max_y_val, x_max_y / o,
-          max_y_val - min_y_val, mean, sqrt(stddev / m));
+          max_y_val - min_y_val, mean, stddev);
 }
 
 static void g2_p_cyclic_spline(int id, int n, const double *points, int o, calc_f *f, int filled)
@@ -131,7 +142,7 @@ static void g2_p_cyclic_spline(int id, int n, const double *points, int o, calc_
 
    (*f)(n+6, cxy, m, sxy);
    g2_free(cxy);
-   g2_print_spline_statistics(m, o, sxy);
+   g2_print_spline_statistics(m-5*o, o, sxy+5*o);
 
    if (filled) {
       extend_to_base(n+n, o, slice);
@@ -583,7 +594,7 @@ static void g2_p_cyclic_hermite(int id, int n, const double *points, double tn, 
 
    g2_c_hermite(n+6, cxy, tn, o, sxy);
    g2_free(cxy);
-   g2_print_spline_statistics(m, o, sxy);
+   g2_print_spline_statistics(m-5*o, o, sxy+5*o);
 
    if (filled) {
       extend_to_base(n+n, o, slice);

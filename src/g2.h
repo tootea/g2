@@ -173,7 +173,7 @@ extern void g2_query_pointer(int dev, double *OUTPUT,double *OUTPUT,unsigned int
  /* Tijs Michels */
  /* 06/16/99	 */
 
-G2L void g2_spline(int id, int n, double *points, int o);
+G2L void g2_spline(int id, int n, double *points, int o); /* actually 'const double *points' for all twelve spline functions */
 G2L void g2_b_spline(int id, int n, double *points, int o);
 G2L void g2_hermite(int id, int n, double *points, double tn, int o);
 G2L void g2_raspln(int id, int n, double *points, double tn); /* g2_hermite with o = 40 */
