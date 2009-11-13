@@ -5,6 +5,7 @@
 ##  Based on graph 2.17 on page 29 of my dissertation (ISBN 90-9018145-8)
 
 from g2 import *
+import os
 import sys
 import graphdata
 import graphsettings
@@ -134,6 +135,7 @@ def draw():
     global months, step_y
     months = graphdata.__dict__[dataset + str(year)]
     step_y = max_gr_h / months.max_interpol_val
+    os.putenv("G2_SPLINES_VERBOSE", "%g %g" % (min_gr_y, step_y)) # comment this out to have no statistics printed to stdout
     bars()
     graph.g2_pen(0)
     graph.g2_set_line_width(graphsettings.thin_line)
@@ -176,20 +178,20 @@ while sys.argv:
         except ValueError:
             print '\n Error : year must be an integer\n'
         else:
-            if 94 <= year <= 98:
+            if 64 <= year <= 68 or 94 <= year <= 98:
                 continue # perfect
-            print '\n Error : year must be between 94 and 98.\n'
+            print '\n Error : year must be between 64 and 68 or 94 and 98.\n'
         sys.exit(0)
     elif arg == '-m': # print math legend
         g2legend = False
     else:
         if arg != '-h':
             print "\n Argument '%s' is invalid." % arg
-        print '\n bargraph.py <[-f | -a]> <-d nl|tilburg> <-y 9x> <-m> <-h>\n\n' \
+        print '\n bargraph.py <[-f | -a]> <-d nl|tilburg> <-y xx> <-m> <-h>\n\n' \
               '   -f : output to EPS file\n' \
               '   -a : output to all available devices\n' \
               '   -d : select a data set: nl (default) or tilburg\n' \
-              '   -y : plot the year 9x (default is 97)\n' \
+              '   -y : plot the year xx (default is 97)\n' \
               '   -m : print alternative math legend\n' \
               '   -h : show this help\n\n' \
               ' If no output device is specified, the screen is chosen.\n' \
