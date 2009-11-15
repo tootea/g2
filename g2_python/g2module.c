@@ -1,5 +1,5 @@
 /*****************************************************************************
-**  Copyright (C) 2006-2007  Tijs Michels
+**  Copyright (C) 2006-2009  Tijs Michels
 **  This file is part of the g2 library
 **
 **  This library is free software; you can redistribute it and/or
@@ -16,6 +16,15 @@
 **  License along with this library; if not, write to the Free Software
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ******************************************************************************/
+/*
+ * g2module.c
+ * Tijs Michels
+ * tijs@users.sourceforge.net
+ * 26/02/06 : initial release
+ * 18/02/07 : added a dtor to class G2, which will close the device if it was not closed before explicitly
+ * 19/02/07 : now G2 can be a base class for other Python classes
+ * 15/11/09 : now arguments that used to be just lists can also be tuples
+ */
 
 #include "Python.h"
 #include "structmember.h"
@@ -53,9 +62,9 @@ typedef struct {
 
 /* a few helper functions, inaccessible from Python */
 
-typedef void list_f(int, int, double *);
-typedef void list_i_f(int, int, double *, int);
-typedef void list_d_f(int, int, double *, double, int);
+typedef void sequence_f(int, int, double *);
+typedef void sequence_i_f(int, int, double *, int);
+typedef void sequence_d_f(int, int, double *, double, int);
 
 static PyTypeObject G2_Type; /* forward declaration */
 
@@ -64,83 +73,119 @@ helper_item_float(PyObject *item)
 {
    if PyFloat_Check(item) return PyFloat_AsDouble(item);
    if PyInt_Check(item) return (double) PyInt_AsLong(item);
-   return 0; /* list is assumed to contain floats and/or integers */
+   return 0; /* sequence is assumed to contain floats and/or integers */
 }
 
 static PyObject *
-helper_il(const G2 *self, const PyObject *args, list_f *f)
+helper_il(const G2 *self, const PyObject *args, sequence_f *f)
 {
-   PyObject *list;
+   PyObject *sequence;
 
-   if (PyArg_ParseTuple((PyObject *)args, "O!", &PyList_Type, &list)) { /* cf. <listobject.h> */
-      int s = (int) PyList_Size(list);
+   if (PyArg_ParseTuple((PyObject *)args, "O", &sequence)) { /* cf. <listobject.h> */
+      int s;
+      if (PyList_Check(sequence)) {
+         s = (int) PyList_Size(sequence);
+      } else if (PyTuple_Check(sequence)) {
+         s = (int) PyTuple_Size(sequence);
+      } else {
+         PyErr_SetString(PyExc_ValueError, "argument must be a list or tuple");
+         return NULL;
+      }
       if (s) {
          double * const points = malloc(s * sizeof(double)); /* in one case the buffer holds dashes, not points */
          if (points) {
             const int np = (f == g2_set_dash) ? s : s >> 1; /* two co-ordinates per point */
-            while (s--) points[s] = helper_item_float(PyList_GET_ITEM(list, s));
+            if (PyList_Check(sequence)) {
+               while (s--) points[s] = helper_item_float(PyList_GET_ITEM(sequence, s));
+            } else {
+               while (s--) points[s] = helper_item_float(PyTuple_GET_ITEM(sequence, s));
+            }
             (*f)(self->dev, np, points);
             free(points);
             Py_RETURN_NONE;
          }
          return PyErr_NoMemory();
       }
-      PyErr_SetString(PyExc_ValueError, "empty list");
+      PyErr_SetString(PyExc_ValueError, "empty sequence");
    }
    return NULL;
 }
 
 static PyObject *
-helper_ili(const G2 *self, const PyObject *args, list_i_f *f)
+helper_ili(const G2 *self, const PyObject *args, sequence_i_f *f)
 {
-   PyObject *list;
+   PyObject *sequence;
    int ip; /* number of interpolated points per data point */
 
-   if (PyArg_ParseTuple((PyObject *)args, "O!i", &PyList_Type, &list, &ip)) {
-      int s = (int) PyList_Size(list);
+   if (PyArg_ParseTuple((PyObject *)args, "Oi", &sequence, &ip)) {
+      int s;
+      if (PyList_Check(sequence)) {
+         s = (int) PyList_Size(sequence);
+      } else if (PyTuple_Check(sequence)) {
+         s = (int) PyTuple_Size(sequence);
+      } else {
+         PyErr_SetString(PyExc_ValueError, "argument must be a list or tuple");
+         return NULL;
+      }
       if (s > 5) {
          double * const points = malloc(s * sizeof(double));
          if (points) {
             const int np = s >> 1;
-            while (s--) points[s] = helper_item_float(PyList_GET_ITEM(list, s));
+            if (PyList_Check(sequence)) {
+               while (s--) points[s] = helper_item_float(PyList_GET_ITEM(sequence, s));
+            } else {
+               while (s--) points[s] = helper_item_float(PyTuple_GET_ITEM(sequence, s));
+            }
             (*f)(self->dev, np, points, ip);
             free(points);
             Py_RETURN_NONE;
          }
          return PyErr_NoMemory();
       }
-      PyErr_SetString(PyExc_ValueError, "list must hold at least three points");
+      PyErr_SetString(PyExc_ValueError, "sequence must hold at least three points");
    }
    return NULL;
 }
 
 static PyObject *
-helper_ild(const G2 *self, const PyObject *args, list_d_f *f)
+helper_ild(const G2 *self, const PyObject *args, sequence_d_f *f)
 {
-   PyObject *list;
+   PyObject *sequence;
    double factor;
    int ip; /* number of interpolated points per data point */
    int s;
 
    if ((int) PyTuple_Size((PyObject *)args) == 2) { /* called the old way, as g2_raspln */
-      s = PyArg_ParseTuple((PyObject *)args, "O!d", &PyList_Type, &list, &factor);
+      s = PyArg_ParseTuple((PyObject *)args, "Od", &sequence, &factor);
       ip = 40;
    } else { /* called the new way, as g2_hermite */
-      s = PyArg_ParseTuple((PyObject *)args, "O!di", &PyList_Type, &list, &factor, &ip);
+      s = PyArg_ParseTuple((PyObject *)args, "Odi", &sequence, &factor, &ip);
    }
    if (s) {
-      if ((s = (int) PyList_Size(list)) > 5) {
+      if (PyList_Check(sequence)) {
+         s = (int) PyList_Size(sequence);
+      } else if (PyTuple_Check(sequence)) {
+         s = (int) PyTuple_Size(sequence);
+      } else {
+         PyErr_SetString(PyExc_ValueError, "argument must be a list or tuple");
+         return NULL;
+      }
+      if (s > 5) {
          double * const points = malloc(s * sizeof(double));
          if (points) {
             const int np = s >> 1;
-            while (s--) points[s] = helper_item_float(PyList_GET_ITEM(list, s));
+            if (PyList_Check(sequence)) {
+               while (s--) points[s] = helper_item_float(PyList_GET_ITEM(sequence, s));
+            } else {
+               while (s--) points[s] = helper_item_float(PyTuple_GET_ITEM(sequence, s));
+            }
             (*f)(self->dev, np, points, factor, ip);
             free(points);
             Py_RETURN_NONE;
          }
          return PyErr_NoMemory();
       }
-      PyErr_SetString(PyExc_ValueError, "list must hold at least three points");
+      PyErr_SetString(PyExc_ValueError, "sequence must hold at least three points");
    }
    return NULL;
 }
@@ -639,9 +684,9 @@ C_g2_pen(G2 *self, PyObject *args)
 }
 
 PyDoc_STRVAR(doc_g2_set_dash,
-             "g2_set_dash(list pattern)\n"
+             "g2_set_dash(list/tuple pattern)\n"
              "   'pattern' : [length, ... length]\n"
-             "               In the list ints and floats can be mixed freely.\n"
+             "               In the list/tuple ints and floats can be mixed freely.\n"
              "Set line dash. See also g2_set_solid.\n"
              "e.g. : g2_set_dash([4, 2])\n"
              "       for lines with dashes twice as long\n"
@@ -654,7 +699,7 @@ C_g2_set_dash(G2 *self, PyObject *args)
    return helper_il(self, args, g2_set_dash);
 }
 
-/* python specific function : more explicit than passing an empty list */
+/* python specific function : more explicit than passing an empty list/tuple */
 
 PyDoc_STRVAR(doc_g2_set_solid,
              "g2_set_solid()\n"
@@ -876,10 +921,10 @@ C_g2_line_to(G2 *self, PyObject *args)
 }
 
 PyDoc_STRVAR(doc_g2_poly_line,
-             "g2_poly_line(list points)\n"
+             "g2_poly_line(list/tuple points)\n"
              "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
-             "              In the list ints and floats can be mixed freely.\n"
-             "Plot a line through the points in the list.\n"
+             "              In the list/tuple ints and floats can be mixed freely.\n"
+             "Plot a line through the points in the list/tuple.\n"
              "e.g. : graph.g2_poly_line([2, 4, 2.5, 6.25, 3, 9, 3.5, 12.25])\n"
              "Note : this one argument form is Python specific.");
 
@@ -956,10 +1001,10 @@ C_g2_filled_rectangle(G2 *self, PyObject *args)
 }
 
 PyDoc_STRVAR(doc_g2_polygon,
-             "g2_polygon(list points)\n"
+             "g2_polygon(list/tuple points)\n"
              "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
-             "              In the list ints and floats can be mixed freely.\n"
-             "Plot a polygon through the points in the list.\n"
+             "              In the list/tuple ints and floats can be mixed freely.\n"
+             "Plot a polygon through the points in the list/tuple.\n"
              "e.g. : graph.g2_polygon([3, 1, 1, 3, 3, 5, 5, 3])\n"
              "Note : this one argument form is Python specific.");
 
@@ -970,10 +1015,10 @@ C_g2_polygon(G2 *self, PyObject *args)
 }
 
 PyDoc_STRVAR(doc_g2_filled_polygon,
-             "g2_filled_polygon(list points)\n"
+             "g2_filled_polygon(list/tuple points)\n"
              "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
-             "              In the list ints and floats can be mixed freely.\n"
-             "Fill a polygon through the points in the list.\n"
+             "              In the list/tuple ints and floats can be mixed freely.\n"
+             "Fill a polygon through the points in the list/tuple.\n"
              "Note : this one argument form is Python specific.");
 
 static PyObject *
@@ -1209,7 +1254,7 @@ C_g2_plot_QP(G2 *self, PyObject *args)
 PyDoc_STRVAR(doc_g2_query_pointer,
              "[float x, float y, int button] g2_query_pointer()\n"
              "Query pointer position and button state (e.g. mouse for X11).\n"
-             "The results are returned in a list of two floats and one int.\n"
+             "The results are returned in a tuple of two floats and one int.\n"
              "e.g. : x, y, button = g2_query_pointer()\n"
              "Note : this no argument form is Python specific.");
 
@@ -1227,13 +1272,13 @@ C_g2_query_pointer(G2 *self)
 }
 
 PyDoc_STRVAR(doc_g2_spline,
-             "g2_spline(list points, int ppdp)\n"
+             "g2_spline(list/tuple points, int ppdp)\n"
              "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
-             "              In the list ints and floats can be mixed freely.\n"
+             "              In the list/tuple ints and floats can be mixed freely.\n"
              "   'ppdp'   : the number of interpolated points per data point.\n"
              "              Negative for a cyclic plot.\n"
              "              The higher 'ppdp', the rounder the spline curve.\n"
-             "Plot a spline curve through the points in the list\n"
+             "Plot a spline curve through the points in the list/tuple\n"
              "using Young's method of successive over-relaxation.\n"
              "Note : this two argument form is Python specific.");
 
@@ -1244,7 +1289,7 @@ C_g2_spline(G2 *self, PyObject *args)
 }
 
 PyDoc_STRVAR(doc_g2_filled_spline,
-             "g2_filled_spline(list points, int ppdp)\n"
+             "g2_filled_spline(list/tuple points, int ppdp)\n"
              "As g2_spline, but filled.");
 
 static PyObject *
@@ -1254,13 +1299,13 @@ C_g2_filled_spline(G2 *self, PyObject *args)
 }
 
 PyDoc_STRVAR(doc_g2_b_spline,
-             "g2_b_spline(list points, int ppdp)\n"
+             "g2_b_spline(list/tuple points, int ppdp)\n"
              "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
-             "              In the list ints and floats can be mixed freely.\n"
+             "              In the list/tuple ints and floats can be mixed freely.\n"
              "   'ppdp'   : the number of interpolated points per data point.\n"
              "              Negative for a cyclic plot.\n"
              "              The higher 'ppdp', the rounder the spline curve.\n"
-             "Plot a uniform cubic B-spline curve through the points in the list.\n"
+             "Plot a uniform cubic B-spline curve around the points in the list/tuple.\n"
              "For most averaging purposes, this is the right spline.\n"
              "Note : this two argument form is Python specific.");
 
@@ -1271,7 +1316,7 @@ C_g2_b_spline(G2 *self, PyObject *args)
 }
 
 PyDoc_STRVAR(doc_g2_filled_b_spline,
-             "g2_filled_b_spline(list points, int ppdp)\n"
+             "g2_filled_b_spline(list/tuple points, int ppdp)\n"
              "As g2_b_spline, but filled.");
 
 static PyObject *
@@ -1281,16 +1326,16 @@ C_g2_filled_b_spline(G2 *self, PyObject *args)
 }
 
 PyDoc_STRVAR(doc_g2_hermite,
-             "g2_hermite(list points, float tfact, int ppdp)\n"
+             "g2_hermite(list/tuple points, float tfact, int ppdp)\n"
              "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
-             "              In the list ints and floats can be mixed freely.\n"
+             "              In the list/tuple ints and floats can be mixed freely.\n"
              "   'tfact'  : tension factor between 0 (very rounded) and 2.\n"
              "              With tfact 2, the curve is essentially a polyline\n"
              "              through the given data points.\n"
              "   'ppdp'   : the number of interpolated points per data point.\n"
              "              Negative for a cyclic plot.\n"
              "              The higher 'ppdp', the smoother the spline curve.\n"
-             "Plot a cubic polynomial through the points in the list. Each\n"
+             "Plot a cubic polynomial through the points in the list/tuple. Each\n"
              "Hermite polynomial between two data points consists of ppdp lines.\n"
              "See g2_splines.c for further information.\n"
              "Note : this three argument form is Python specific.");
@@ -1302,7 +1347,7 @@ C_g2_hermite(G2 *self, PyObject *args)
 }
 
 PyDoc_STRVAR(doc_g2_filled_hermite,
-             "g2_filled_hermite(list points, float tfact, int ppdp)\n"
+             "g2_filled_hermite(list/tuple points, float tfact, int ppdp)\n"
              "As g2_hermite, but filled.");
 
 static PyObject *
@@ -1312,7 +1357,7 @@ C_g2_filled_hermite(G2 *self, PyObject *args)
 }
 
 PyDoc_STRVAR(doc_g2_raspln,
-             "g2_raspln(list points, float tfact)\n"
+             "g2_raspln(list/tuple points, float tfact)\n"
              "For backward compatibility, as g2_hermite, but without argument three.\n"
              "The number of interpolated points per data point is fixed at 40.\n"
              "Note : this two argument form is Python specific.");
@@ -1324,7 +1369,7 @@ C_g2_raspln(G2 *self, PyObject *args)
 }
 
 PyDoc_STRVAR(doc_g2_filled_raspln,
-             "g2_filled_raspln(list points, float tfact)\n"
+             "g2_filled_raspln(list/tuple points, float tfact)\n"
              "As g2_raspln, but filled.");
 
 static PyObject *
@@ -1334,9 +1379,9 @@ C_g2_filled_raspln(G2 *self, PyObject *args)
 }
 
 PyDoc_STRVAR(doc_g2_para_3,
-             "g2_para_3(list points)\n"
+             "g2_para_3(list/tuple points)\n"
              "   'points' : [x1, y1, x2, y2, ... xn, yn]\n"
-             "              In the list ints and floats can be mixed freely.\n"
+             "              In the list/tuple ints and floats can be mixed freely.\n"
              "Plot a piecewise parametric interpolation polynomial of degree 3\n"
              "through the given points, using Newton's Divided Differences method.\n"
              "Note : this one argument form is Python specific.");
@@ -1348,7 +1393,7 @@ C_g2_para_3(G2 *self, PyObject *args)
 }
 
 PyDoc_STRVAR(doc_g2_filled_para_3,
-             "g2_filled_para_3(list points)\n"
+             "g2_filled_para_3(list/tuple points)\n"
              "As g2_para_3, but filled.");
 
 static PyObject *
@@ -1358,7 +1403,7 @@ C_g2_filled_para_3(G2 *self, PyObject *args)
 }
 
 PyDoc_STRVAR(doc_g2_para_5,
-             "g2_para_5(list points)\n"
+             "g2_para_5(list/tuple points)\n"
              "As g2_para_3, but with degree 5 instead of 3.");
 
 static PyObject *
@@ -1368,7 +1413,7 @@ C_g2_para_5(G2 *self, PyObject *args)
 }
 
 PyDoc_STRVAR(doc_g2_filled_para_5,
-             "g2_filled_para_5(list points)\n"
+             "g2_filled_para_5(list/tuple points)\n"
              "As g2_para_5, but filled.");
 
 static PyObject *
