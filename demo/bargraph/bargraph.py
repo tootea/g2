@@ -12,7 +12,7 @@ import graphsettings
 from dimensions import *
 
 def bars():
-    graph.g2_set_line_width(0) # add no width, depth and height to the bars
+    graph.g2_set_line_width(0) # add no width, depth or height to the bars
     for i, month in enumerate(months):
         graph.g2_pen(4+step_c*i)
         graph.g2_filled_rectangle(xStep(i), min_gr_y, xStep(i+1), yStep(month))
@@ -49,7 +49,6 @@ def interp():
     graph.g2_hermite(mndl, .7, -44) # negative, for a cyclic spline
     graph.g2_pen(0)
     graph.g2_set_solid()
-    graph.g2_set_line_width(graphsettings.thin_line)
 
 def x_scale():
     mnames = (
@@ -69,18 +68,14 @@ def x_scale():
     graph.g2_line(min_gr_x, min_gr_y, max_x, min_gr_y)
 
 def y_scale():
-    for i in xrange(2, 10, 2):
-        graph.g2_string(min_x, yStep(i)-(y_font_size/4.), '1%d%%' % i)
+    for i in xrange(2, int(months.max_interpol_val)+1, 2):
+        graph.g2_string(min_x, yStep(i)-(y_font_size/4.), '1%d%%' % (i % 10))
         graph.g2_line(min_gr_x-scale_marker_length, yStep(i),
                                           min_gr_x, yStep(i))
     graph.g2_pen(graphsettings.white_)
     graph.g2_filled_rectangle(min_x, yStep(2)-(y_font_size/3.),
-                           min_x+12, yStep(9)-(y_font_size/1.5))
+                           12+min_x, yStep(9)-(y_font_size/1.5))
     graph.g2_pen(0)
-    for i in xrange(10, int(months.max_interpol_val)+1, 2):
-        graph.g2_string(min_x, yStep(i)-(y_font_size/4.), '%d%%' % i)
-        graph.g2_line(min_gr_x-scale_marker_length, yStep(i),
-                                          min_gr_x, yStep(i))
     graph.g2_line(min_gr_x, min_gr_y, min_gr_x, max_y)
     graph.g2_set_dash(graphsettings.LineDashes['kl'])
     for i in xrange(1, int(months.max_interpol_val)+1):
@@ -90,7 +85,7 @@ def y_scale():
 
 def legend():
     yfs = y_font_size * .7
-    if g2legend: graph.g2_set_line_width(.7*graphsettings.thin_line)
+    if g2legend: graph.g2_set_line_width(graphsettings.LineThickness['lxix'])
     if output == 'w': yfs *= x11_scale_factor
     ty = yStep(legendTopLine)-(yfs/4.)
     graph.g2_set_font_size(yfs)
