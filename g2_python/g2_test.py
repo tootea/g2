@@ -105,7 +105,7 @@ graph.g2_circle(450, y+25, 25)
 graph.g2_ellipse(550, y+25, 45, 25)
 graph.g2_arc(650, y+25, 25, 45, 90, 360)
 
-graph.g2_set_dash([4, 4]) # Python specific
+graph.g2_set_dash((4, 4)) # Python specific
 graph.g2_line(120+5, y, 170+5, y+50)
 graph.g2_triangle(150+10, y+4, 250-10, y+4, 200, y+50-5)
 graph.g2_rectangle(305, y+5, 395, y+50-5)
@@ -122,29 +122,29 @@ graph.g2_filled_ellipse(550, y+25, 45, 25)
 graph.g2_filled_arc(650, y+25, 25, 45, 90, 360)
 
 y = 300
-pts = [150, y,
+pts = (150, y,
        175, y+100,
        200, y,
        225, y+100,
-       250, y]
+       250, y)
 graph.g2_poly_line(pts) # Python specific
 
 graph.g2_pen(19)
 graph.g2_b_spline(pts, 20) # Python specific
 graph.g2_pen(1)
 
-pts = [300, y,
+pts = (300, y,
        350, y,
        375, y+50,
        325, y+90,
-       275, y+50]
+       275, y+50)
 graph.g2_polygon(pts) # Python specific
 
-pts = [450, y,
+pts = (450, y,
        500, y,
        525, y+50,
        475, y+90,
-       425, y+50]
+       425, y+50)
 graph.g2_filled_polygon(pts) # Python specific
 
 graph.g2_image(55.,  50., penguin) # Python specific
@@ -161,7 +161,7 @@ graph.g2_pen(1)
 
 graph.g2_set_line_width(5)
 for i in range(1,10):
-    graph.g2_set_dash([i, i*2, i*3]) # Python specific
+    graph.g2_set_dash((i, i*2, i*3)) # Python specific
     graph.g2_line(550, 300+i*8, 750, 350+i*8)
 
 graph.g2_set_solid() # Python only
