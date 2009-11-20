@@ -28,6 +28,7 @@
  *            deprecated raspln splines, except that the formerly fixed number
  *            of interpolated points per data point is now a function argument
  * 27/10/09 : fixed two array-out-of-bounds bugs and refactored a bit
+ * 20/11/09 : added g2_splines_set_points_per_cycle
  */
 
 #include <math.h>
@@ -50,6 +51,8 @@ static calc_d g2_c_hermite;
 static calc_f g2_c_para_3;
 static calc_f g2_c_para_5;
 
+static int points_per_cycle = -1;
+
 static int not_continuously_ascending(int n, const double *x_coord)
 {
    const double * const end = x_coord + n + n;
@@ -67,6 +70,7 @@ static int not_continuously_ascending(int n, const double *x_coord)
 
 static void surround_points(int nn, const double *points, double *cxy) {
    const double x_step = points[2] - points[0];
+   const int ppc = 2 * points_per_cycle;
    int i;
    for (i=0; i < nn; i++) cxy[i+6] = points[i]; /* original points in the middle */
    for (i=0; i < 6; i++) {
@@ -74,8 +78,13 @@ static void surround_points(int nn, const double *points, double *cxy) {
       cxy[i]       = points[0]    - x_offset;
       cxy[nn+10-i] = points[nn-2] + x_offset;
       i++; /* y-coordinates */
-      cxy[i]       = points[nn-6+i]; /* copy the last points before the first */
-      cxy[nn+6+i]  = points[i]; /* and the first points after the last */
+      if (points_per_cycle == -1) {
+         cxy[i]      = points[nn-6+i]; /* copy the last points before the first */
+         cxy[nn+6+i] = points[i]; /* and the first points after the last */
+      } else {
+         cxy[i]      = points[ppc-6+i]; /* copy the last points of the first cycle before the first */
+         cxy[nn+6+i] = points[nn-ppc+i]; /* and the first points of the last cycle after the last */
+      }
    }
 }
 
@@ -129,6 +138,34 @@ static void g2_print_spline_statistics(int m, int o, const double *sxy)
           min_y_val, x_min_y / o,
           max_y_val, x_max_y / o,
           max_y_val - min_y_val, mean, stddev);
+}
+
+/**
+ *
+ * Set (globally, not per device) the cycle length for cyclic splines.
+ * This applies to \e cyclic splines only,
+ * and only when they contain \e multiple cycles.
+ *
+ * Example: for a graph with monthly values spanning multiple years (like
+ * \c demo/bargraph/fiveyears.py), set this to 12 (for twelve months), so
+ * that the last month of the last year 'connects', not to the first month
+ * of the first year (which is likely to be way off), but to the first month
+ * of the last year, and the first month of the first year to the last month
+ * of the first year, rather than to the last month of the last year.
+ *
+ * \param n number of points constituting one cycle
+ *
+ * With \c -1 (the default) the last point of the graph leads
+ * to the first, as with graphs that contain just one cycle.
+ *
+ * \note In g2, splines become cyclic by making parameter \c n
+ * (number of data points) negative.
+ *
+ * \ingroup splines
+ */
+
+void g2_splines_set_points_per_cycle(int n) {
+   points_per_cycle = n;
 }
 
 static void g2_p_cyclic_spline(int id, int n, const double *points, int o, calc_f *f, int filled)
@@ -330,6 +367,7 @@ static void g2_c_spline(int n, const double *points, int m, double *sxy)
  * begins and ends at the same value. This is meant for cyclic data, like
  * per hour (day cycle), per day (week cycle), or per month (year cycle).
  * See the fluent line from December to January in sample \c bargraph.py.
+ *
  * \ingroup splines
  */
 void g2_spline(int dev, int n, double *points, int o)
@@ -430,6 +468,7 @@ static void g2_c_b_spline(int n, const double *points, int m, double *sxy)
  * the same \e y coordinate. This suits cyclic data, like per hour (day cycle),
  * per day (week cycle), or per month (year cycle). See the smooth transition
  * from December to January in sample \c bargraph.py.
+ *
  * \ingroup splines
  */
 void g2_b_spline(int dev, int n, double *points, int o)

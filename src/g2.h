@@ -185,6 +185,7 @@ G2L void g2_filled_hermite(int id, int n, double *points, double tn, int o);
 G2L void g2_filled_raspln(int id, int n, double *points, double tn); /* g2_filled_hermite with o = 40 */
 G2L void g2_filled_para_3(int id, int n, double *points);
 G2L void g2_filled_para_5(int id, int n, double *points);
+G2L void g2_splines_set_points_per_cycle(int n);
 
 
 /** Actualy private function, but... **/

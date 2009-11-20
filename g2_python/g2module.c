@@ -195,7 +195,7 @@ helper_ild(const G2 *self, const PyObject *args, sequence_d_f *f)
  * functions from g2.h
  */
 
-/* three unbound functions */
+/* four unbound functions */
 
 PyDoc_STRVAR(doc_g2_ld,
              "int g2_ld()\n"
@@ -235,6 +235,25 @@ C_g2_device_exist(PyObject *self, PyObject *args)
 
    if (PyArg_ParseTuple(args, "i", &dix))
       return Py_BuildValue("i", g2_device_exist(dix));
+   return NULL;
+}
+
+PyDoc_STRVAR(doc_g2_splines_set_points_per_cycle,
+             "g2_splines_set_points_per_cycle(int n)\n"
+             "Set the number of points per cycle.\n"
+             "Only for cyclic splines that span multiple cycles.\n"
+             "Default -1 makes last point lead to first point,\n"
+             "as with graphs that contain just one cycle.");
+
+static PyObject *
+C_g2_splines_set_points_per_cycle(PyObject *self, PyObject *args)
+{
+   int n;
+
+   if (PyArg_ParseTuple(args, "i", &n)) {
+      g2_splines_set_points_per_cycle(n);
+      Py_RETURN_NONE;
+   }
    return NULL;
 }
 
@@ -450,6 +469,7 @@ static PyMethodDef module_functions[] = {
    { "g2_ld", (PyCFunction)C_g2_ld, METH_NOARGS, doc_g2_ld },
    { "g2_set_ld", C_g2_set_ld, METH_VARARGS, doc_g2_set_ld },
    { "g2_device_exist", C_g2_device_exist, METH_VARARGS, doc_g2_device_exist },
+   { "g2_splines_set_points_per_cycle", C_g2_splines_set_points_per_cycle, METH_VARARGS, doc_g2_splines_set_points_per_cycle },
    /* nine functions that construct an instance of class G2 */
    { "g2_open_vd", (PyCFunction)C_g2_open_vd, METH_NOARGS, doc_g2_open_vd },
 #ifdef _G2_X11_H

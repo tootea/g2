@@ -18,11 +18,11 @@ all: build
 
 build: g2module.@OBJEXT@
 
-g2module.@OBJEXT@: ../$(DEPENDENCY)
+g2module.@OBJEXT@: ../$(DEPENDENCY) g2module.c
 	python setup.py "$(DEFS)" "$(LIBS)" build_ext
 
 ../$(DEPENDENCY):
-	cd ..; make $(DEPENDENCY)
+	make -C .. $(DEPENDENCY)
 
 # must be root
 install: build
