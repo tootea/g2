@@ -1,5 +1,5 @@
 ##############################################################################
-##  Copyright (C) 2007  Dr. Tijs Michels
+##  Copyright (C) 2007-2009  Dr. Tijs Michels
 ##  This file is part of the g2 library
 
 ##  Note that these are just my personal preferences

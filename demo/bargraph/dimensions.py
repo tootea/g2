@@ -1,5 +1,5 @@
 ##############################################################################
-##  Copyright (C) 2007  Dr. Tijs Michels
+##  Copyright (C) 2007-2009  Dr. Tijs Michels
 ##  This file is part of the g2 library
 
 ##  Note that these are just my personal preferences
@@ -31,6 +31,7 @@ x_height = int(x11_scale_factor * total_height)
 fr_right = total_width - fr_margin
 fr_top = total_height - fr_margin
 fr_pr = (fr_top - fr_margin) / (fr_right - fr_margin) # proportion (here 16:11)
+frame = fr_margin, fr_margin, fr_right, fr_top
 
 min_x = fr_margin + x_inner_margin
 min_y = fr_margin + x_inner_margin * fr_pr

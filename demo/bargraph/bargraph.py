@@ -1,5 +1,5 @@
 ##############################################################################
-##  Copyright (C) 2007  Dr. Tijs Michels
+##  Copyright (C) 2007-2009  Dr. Tijs Michels
 ##  This file is part of the g2 library
 
 ##  Based on graph 2.17 on page 29 of my dissertation (ISBN 90-9018145-8)
@@ -134,7 +134,7 @@ def draw():
     bars()
     graph.g2_pen(0)
     graph.g2_set_line_width(graphsettings.thin_line)
-    graph.g2_rectangle(fr_margin, fr_margin, fr_right, fr_top)
+    graph.g2_rectangle(*frame)
     x_scale()
     y_scale()
     interp()

@@ -1,5 +1,5 @@
 ##############################################################################
-##  Copyright (C) 2004-2007  Dr. Tijs Michels
+##  Copyright (C) 2004-2009  Dr. Tijs Michels
 ##  This file is part of the g2 library
 
 ##  Originally published on page 29 (the Netherlands) and page 139 (Tilburg)
