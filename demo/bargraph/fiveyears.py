@@ -65,7 +65,6 @@ graph.g2_filled_rectangle(min_x, yStep(1.6),
                        12+min_x, yStep(9.6))
 graph.g2_pen(0)
 graph.g2_set_dash(graphsettings.LineDashes['kl'])
-graph.g2_set_line_width(graphsettings.LineThickness['lix'])
 for i in xrange(1, int(max_y)+1):
     graph.g2_line(min_gr_x, yStep(i),
                      max_x, yStep(i))
