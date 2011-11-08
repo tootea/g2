@@ -5,13 +5,11 @@
 import g2
 from g2 import *
 import graphsettings
-import dimensions
-
-width = int(dimensions.total_width)
-height = int(dimensions.total_height)
 
 class PhysicalDevices(dict):
-    def __init__(self):
+    def __init__(self, width, height):
+        if type(width) is float and width.is_integer(): width = int(width)
+        if type(height) is float and height.is_integer(): height = int(height)
         print
         print '',
         if hasattr(g2, 'g2_open_PS'):
@@ -48,8 +46,8 @@ class PhysicalDevices(dict):
             d.g2_set_background(graphsettings.white_)
 
 class AllAtOnce(G2):
-    def __init__(self):
-        self.physicalDevices = PhysicalDevices()
+    def __init__(self, width, height):
+        self.physicalDevices = PhysicalDevices(width, height)
         for d in self.physicalDevices.values():
             self.g2_attach(d)
 

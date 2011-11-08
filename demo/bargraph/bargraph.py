@@ -153,7 +153,7 @@ while sys.argv:
     elif arg == '-a': # output to all available devices
         output = 'a'
         import devices
-        graph = devices.AllAtOnce()
+        graph = devices.AllAtOnce(total_width, total_height)
     elif arg == '-d': # followed by a data set ('nl' or 'tilburg')
         try:
             dataset = sys.argv.pop(0)
