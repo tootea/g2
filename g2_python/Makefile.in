@@ -22,7 +22,7 @@ g2module.@OBJEXT@: ../$(DEPENDENCY) g2module.c
 	python setup.py "$(DEFS)" "$(LIBS)" build_ext
 
 ../$(DEPENDENCY):
-	make -C .. $(DEPENDENCY)
+	-(cd .. ; make $(DEPENDENCY))
 
 # must be root
 install: build

@@ -123,7 +123,7 @@ If you don't need or like the concept of virtual devices, simply ignore it.
 \subsubsection Unix
 
     -# Extract package with <tt>gzip -dc g2-xxxx.tar.gz | tar xvf -</tt>
-    -# Optionally run <tt>autoconf</tt>
+    -# Optionally run <tt>autoconf -f</tt>
     -# Run <tt>./configure</tt>
     -# Optionally run <tt>make depend</tt>
     -# Run \c make

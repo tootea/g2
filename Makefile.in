@@ -88,7 +88,7 @@ all: libg2.a @PYTHON@
 	cp $(INS) ./include/
 
 g2_python/g2module.@OBJEXT@:
-	make -C g2_python
+	-(cd ./g2_python ; make)
 
 shared: libg2.@LD_SHARED_EXT@
 	@echo

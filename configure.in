@@ -125,7 +125,7 @@ if test "$PYTHON" = ""
 then
 	AC_SUBST(PYTHON_INSTALL,"")
 else
-	AC_SUBST(PYTHON_INSTALL,"make -C g2_python install")
+	AC_SUBST(PYTHON_INSTALL,"-(cd ./g2_python ; make install)")
 fi
 
 AC_HEADER_STDC
